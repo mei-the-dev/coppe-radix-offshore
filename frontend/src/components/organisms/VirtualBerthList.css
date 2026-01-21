@@ -1,0 +1,17 @@
+.virtual-berth-list {
+  /* Virtual scrolling container */
+}
+
+.berth-list-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-8);
+  min-height: 200px;
+}
+
+.empty-message {
+  color: var(--text-secondary);
+  font-size: var(--font-size-base);
+  text-align: center;
+}

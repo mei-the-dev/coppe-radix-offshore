@@ -1,0 +1,106 @@
+/**
+ * Card Molecule - Artifacts Aesthetic
+ * Sometimes no border needed, just subtle background difference
+ * Avoid "boxing" content unnecessarily
+ */
+
+.molecule-card {
+  border-radius: 0.75rem;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+/* Default - White background with subtle navy accent */
+.molecule-card--default {
+  background-color: var(--color-white, #ffffff) !important;
+  box-shadow: 0 1px 3px rgba(51, 78, 104, 0.08) !important;
+  border: 1px solid var(--color-primary-100, #d9e2ec) !important;
+  display: block !important; /* Ensure it's visible */
+}
+
+/* Elevated - White background with navy-tinted shadow */
+.molecule-card--elevated {
+  background-color: var(--color-white, #ffffff);
+  box-shadow: 0 4px 12px rgba(51, 78, 104, 0.12);
+  border: 1px solid var(--color-primary-100, #d9e2ec);
+}
+
+/* Outlined - Glassmorphism with #6c581b */
+.molecule-card--outlined {
+  /* Fallback solid background for browsers that don't support backdrop-filter */
+  background-color: rgba(108, 88, 27, 0.85) !important;
+  /* Glassmorphism effect */
+  backdrop-filter: blur(12px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(12px) saturate(180%) !important;
+  border: 1.5px solid rgba(108, 88, 27, 0.5) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Glass - Backdrop blur, semi-transparent */
+.molecule-card--glass {
+  background-color: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* Muted background - Very light gray with navy border */
+.molecule-card--muted {
+  background-color: var(--color-gray-50, #f9fafb);
+  box-shadow: none;
+  border: 1px solid var(--color-primary-100, #d9e2ec);
+}
+
+/* Padding variants - Breathable spacing */
+.molecule-card--padding-none {
+  padding: 0;
+}
+
+.molecule-card--padding-sm {
+  padding: 1rem;
+}
+
+.molecule-card--padding-md {
+  padding: 1.5rem !important; /* Ensure padding is applied */
+  /* Glassmorphism with #6c581b - only apply if also outlined */
+}
+
+.molecule-card--padding-lg {
+  padding: 2rem;
+}
+
+.molecule-card--padding-xl {
+  padding: 2.5rem;
+}
+
+/* Hoverable - Tactile interaction */
+.molecule-card--hoverable:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+/* Clickable - Button-like interaction */
+.molecule-card--clickable {
+  cursor: pointer;
+  user-select: none;
+}
+
+.molecule-card--clickable:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.molecule-card--clickable:active {
+  transform: translateY(0) scale(0.99);
+  transition-duration: 0.1s;
+}
+
+/* Focus state for clickable cards */
+.molecule-card--clickable:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px var(--color-white, #ffffff),
+    0 0 0 4px var(--color-primary-700, #334e68),
+    0 4px 12px rgba(0, 0, 0, 0.1);
+}

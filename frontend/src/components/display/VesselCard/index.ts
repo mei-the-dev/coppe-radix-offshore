@@ -1,0 +1,1 @@
+export { VesselCard } from './VesselCard';

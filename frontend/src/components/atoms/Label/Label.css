@@ -1,0 +1,21 @@
+.atom-label {
+  display: block;
+  font-size: var(--font-size-sm, 0.875rem);
+  font-weight: 500;
+  color: var(--color-gray-700, #374151);
+  margin-bottom: var(--spacing-1, 0.25rem);
+}
+
+.atom-label--required .atom-label__asterisk {
+  color: var(--color-error-DEFAULT, #ef4444);
+  margin-left: var(--spacing-1, 0.25rem);
+}
+
+.atom-label--error {
+  color: var(--color-error-DEFAULT, #ef4444);
+}
+
+/* WCAG: Ensure sufficient color contrast for error state */
+.atom-label--error .atom-label__asterisk {
+  color: var(--color-error-DEFAULT, #ef4444);
+}

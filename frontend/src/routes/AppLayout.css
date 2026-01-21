@@ -1,0 +1,110 @@
+.app-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-secondary);
+}
+
+.app-header {
+  background: var(--color-primary-gradient);
+  color: var(--text-inverse);
+  padding: var(--spacing-6) var(--spacing-8);
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.15);
+  position: relative;
+  z-index: var(--z-banner);
+}
+
+.header-content {
+  max-width: var(--container-xl);
+  margin: 0 auto;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+}
+
+.logo h1 {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: var(--letter-spacing-tight);
+  margin: 0 0 var(--spacing-1) 0;
+  color: var(--text-inverse);
+}
+
+.logo p {
+  opacity: 0.95;
+  font-size: var(--font-size-base);
+  color: var(--text-inverse);
+  font-weight: var(--font-weight-normal);
+  margin: 0;
+}
+
+.app-nav {
+  background: var(--surface-default);
+  border-bottom: 1px solid var(--border-default);
+  position: sticky;
+  top: 0;
+  z-index: var(--z-sticky);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.nav-container {
+  max-width: var(--container-xl);
+  margin: 0 auto;
+  padding: 0 var(--spacing-8);
+}
+
+.nav-tabs {
+  display: flex;
+  gap: var(--spacing-1);
+}
+
+.nav-tab {
+  padding: var(--spacing-4) var(--spacing-6);
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all var(--duration-fast) var(--timing-ease);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.nav-tab:hover {
+  color: var(--text-primary);
+  background-color: var(--surface-sunken);
+}
+
+.nav-tab--active,
+.nav-tab.active {
+  color: var(--interactive-default);
+  border-bottom-color: var(--interactive-default);
+  font-weight: var(--font-weight-semibold);
+  background-color: var(--surface-sunken);
+}
+
+.app-main {
+  flex: 1;
+  max-width: var(--container-xl);
+  width: 100%;
+  margin: 0 auto;
+  padding: var(--spacing-6) var(--spacing-8);
+}
+
+.loading-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+}
+
+.loading-spinner {
+  font-size: var(--font-size-2xl);
+  color: var(--text-secondary);
+}

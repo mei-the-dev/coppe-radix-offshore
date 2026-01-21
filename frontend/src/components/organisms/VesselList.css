@@ -1,0 +1,97 @@
+/**
+ * VesselList Organism - Modern 2025 Design
+ * Uses Card molecule and Badge atom for proper atomic design
+ */
+
+.vessel-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4, 1rem);
+}
+
+.vessel-list-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-8, 2rem);
+  min-height: 200px;
+}
+
+.vessel-list-empty .empty-message {
+  color: var(--text-secondary);
+  font-size: var(--font-size-base);
+  text-align: center;
+}
+
+/* Card molecule handles most styling, we just add organism-specific */
+.vessel-list .molecule-card.vessel-card,
+.vessel-list article.vessel-card {
+  background: var(--surface-default);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-sm);
+}
+
+.vessel-list .molecule-card.vessel-card:hover,
+.vessel-list article.vessel-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+  transition: all var(--duration-normal) var(--timing-ease);
+  border-color: var(--border-default);
+}
+
+.vessel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-4, 1rem);
+  gap: var(--spacing-3, 0.75rem);
+}
+
+.vessel-name {
+  color: var(--text-primary);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-tight);
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+}
+
+.vessel-details {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  line-height: var(--line-height-relaxed);
+}
+
+.vessel-type {
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+  font-size: var(--font-size-base);
+}
+
+.vessel-location {
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.vessel-capacity {
+  display: flex;
+  gap: var(--spacing-3, 0.75rem);
+  margin-top: var(--spacing-1, 0.25rem);
+  flex-wrap: wrap;
+}
+
+.capacity-item {
+  background: var(--surface-sunken);
+  padding: var(--spacing-1) var(--spacing-3);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  border: 1px solid var(--border-subtle);
+}

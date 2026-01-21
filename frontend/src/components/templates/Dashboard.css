@@ -1,0 +1,57 @@
+/**
+ * Dashboard Template - Modern 2025 Design
+ * Clean, professional layout with proper dark theme support
+ */
+
+.dashboard {
+  padding: var(--spacing-6) var(--spacing-8);
+  max-width: var(--container-xl);
+  margin: 0 auto;
+  min-height: calc(100vh - 200px);
+}
+
+.dashboard-header {
+  margin-bottom: var(--spacing-6);
+}
+
+.dashboard-header h2 {
+  color: var(--text-primary);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: var(--letter-spacing-tight);
+  margin: 0;
+}
+
+.dashboard-section {
+  background: var(--surface-default);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-6);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-subtle);
+  transition: all var(--duration-normal) var(--timing-ease);
+  height: fit-content;
+}
+
+.dashboard-section:hover {
+  box-shadow: var(--shadow-md);
+  border-color: var(--border-default);
+}
+
+.dashboard-section-wide {
+  grid-column: 1 / -1;
+}
+
+/* Ensure Grid children work properly */
+.dashboard .layout-grid {
+  width: 100%;
+}
+
+.dashboard-section h3 {
+  color: var(--text-primary);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-tight);
+  margin: 0 0 var(--spacing-4) 0;
+  padding-bottom: var(--spacing-3);
+  border-bottom: 1px solid var(--border-default);
+}

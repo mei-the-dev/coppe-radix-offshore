@@ -1,0 +1,1 @@
+export { BerthCard } from './BerthCard';

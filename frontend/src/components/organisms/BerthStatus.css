@@ -1,0 +1,107 @@
+/**
+ * BerthStatus Organism - Modern 2025 Design
+ * Uses Card molecule and Badge atom for proper atomic design
+ */
+
+.berth-status {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-4, 1rem);
+}
+
+.berth-status-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-8, 2rem);
+  min-height: 200px;
+}
+
+.berth-status-empty .empty-message {
+  color: var(--text-secondary);
+  font-size: var(--font-size-base);
+  text-align: center;
+}
+
+/* Card molecule handles most styling, we just add organism-specific */
+.berth-status .molecule-card.berth-card,
+.berth-status article.berth-card {
+  background: var(--surface-default);
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-sm);
+}
+
+.berth-status .molecule-card.berth-card:hover,
+.berth-status article.berth-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+  transition: all var(--duration-normal) var(--timing-ease);
+  border-color: var(--border-default);
+}
+
+.berth-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-4, 1rem);
+  gap: var(--spacing-3, 0.75rem);
+}
+
+.berth-name {
+  color: var(--text-primary);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-tight);
+  margin: 0;
+  flex: 1;
+}
+
+.berth-specs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  line-height: var(--line-height-relaxed);
+}
+
+.berth-spec-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-2) 0;
+}
+
+.berth-spec-label {
+  color: var(--text-secondary);
+  font-weight: var(--font-weight-normal);
+}
+
+.berth-spec-value {
+  color: var(--text-primary);
+  font-weight: var(--font-weight-semibold);
+}
+
+.berth-vessel {
+  margin-top: var(--spacing-4);
+  padding-top: var(--spacing-4);
+  border-top: 1px solid var(--border-default);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.berth-vessel-label {
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+  font-weight: var(--font-weight-medium);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+.berth-vessel-value {
+  font-size: var(--font-size-sm);
+  color: var(--text-primary);
+  font-weight: var(--font-weight-semibold);
+}

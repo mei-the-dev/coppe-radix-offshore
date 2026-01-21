@@ -1,0 +1,23 @@
+/* Import accessibility styles */
+@import './styles/accessibility.css';
+
+/* Reset and base styles using design system */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-family-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  transition: background-color var(--duration-normal) var(--timing-ease), color var(--duration-normal) var(--timing-ease);
+}
+
+#root {
+  min-height: 100vh;
+}

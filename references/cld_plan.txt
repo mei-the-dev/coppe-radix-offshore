@@ -1,0 +1,354 @@
+I'll help you create a comprehensive AI code agent implementation plan and visual reference for reworking your frontend. Based on the specification and screenshots, I can see you have a well-structured offshore logistics platform that could benefit from systematic improvements.I've created an interactive visual guide for your frontend rework. Now let me provide you with detailed AI code agent implementation instructions:
+
+## 🤖 AI Code Agent Implementation Instructions
+
+### Phase 1: Assessment & Planning (Week 1)
+
+**Objective**: Establish baseline metrics and identify improvement areas
+
+```bash
+# 1. Code Quality Analysis
+npx eslint . --ext .ts,.tsx --max-warnings 0
+npx tsc --noEmit --strict
+npx depcheck  # Find unused dependencies
+
+# 2. Bundle Analysis
+npm run build
+npx vite-bundle-visualizer
+
+# 3. Performance Baseline
+npx lighthouse http://localhost:5173 --view
+```
+
+**AI Agent Prompt Template**:
+```
+"Analyze the codebase in src/components and identify:
+1. Components that violate single responsibility principle
+2. Props that should be extracted to shared types
+3. Repeated code that can be abstracted
+4. Missing error boundaries
+5. Components lacking proper TypeScript types
+
+Provide refactoring suggestions with code examples."
+```
+
+### Phase 2: Architecture Improvements (Week 2-3)
+
+**State Management with Zustand**:
+
+```typescript
+// src/stores/useVesselStore.ts
+import { create } from 'zustand';
+import { devtools, persist } from 'zustand/middleware';
+
+interface VesselState {
+  vessels: Vessel[];
+  loading: boolean;
+  error: string | null;
+  fetchVessels: () => Promise<void>;
+  updateVessel: (id: string, data: Partial<Vessel>) => void;
+}
+
+export const useVesselStore = create<VesselState>()(
+  devtools(
+    persist(
+      (set, get) => ({
+        vessels: [],
+        loading: false,
+        error: null,
+        fetchVessels: async () => {
+          set({ loading: true });
+          try {
+            const vessels = await api.getVessels();
+            set({ vessels, loading: false });
+          } catch (error) {
+            set({ error: error.message, loading: false });
+          }
+        },
+        updateVessel: (id, data) => {
+          set((state) => ({
+            vessels: state.vessels.map((v) =>
+              v.id === id ? { ...v, ...data } : v
+            ),
+          }));
+        },
+      }),
+      { name: 'vessel-storage' }
+    )
+  )
+);
+```
+
+**React Query Integration**:
+
+```typescript
+// src/hooks/useVessels.ts
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+
+export function useVessels() {
+  return useQuery({
+    queryKey: ['vessels'],
+    queryFn: api.getVessels,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+}
+
+export function useUpdateVessel() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, data }: { id: string; data: Partial<Vessel> }) =>
+      api.updateVessel(id, data),
+    onMutate: async ({ id, data }) => {
+      // Optimistic update
+      await queryClient.cancelQueries({ queryKey: ['vessels'] });
+      const previous = queryClient.getQueryData(['vessels']);
+
+      queryClient.setQueryData(['vessels'], (old: Vessel[]) =>
+        old.map((v) => (v.id === id ? { ...v, ...data } : v))
+      );
+
+      return { previous };
+    },
+    onError: (err, variables, context) => {
+      queryClient.setQueryData(['vessels'], context.previous);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['vessels'] });
+    },
+  });
+}
+```
+
+**AI Agent Prompt**:
+```
+"Migrate all useState-based data fetching in DashboardPage.tsx to React Query.
+Create custom hooks for:
+- useVessels (with refetch interval)
+- useBerths
+- useLoadingPlans
+- useCreateLoadingPlan (with optimistic updates)
+
+Implement proper error handling and loading states."
+```
+
+### Phase 3: Component Enhancement (Week 4-5)
+
+**Compound Component Pattern for Complex UIs**:
+
+```typescript
+// src/components/display/VesselCard/VesselCard.tsx
+import React, { createContext, useContext } from 'react';
+
+const VesselCardContext = createContext<Vessel | null>(null);
+
+function Root({ vessel, children }: { vessel: Vessel; children: React.ReactNode }) {
+  return (
+    <VesselCardContext.Provider value={vessel}>
+      <div className="vessel-card">
+        {children}
+      </div>
+    </VesselCardContext.Provider>
+  );
+}
+
+function Header({ children }: { children: React.ReactNode }) {
+  return <div className="vessel-card__header">{children}</div>;
+}
+
+function Title() {
+  const vessel = useContext(VesselCardContext);
+  return <h3 className="vessel-card__title">{vessel?.name}</h3>;
+}
+
+function Status() {
+  const vessel = useContext(VesselCardContext);
+  return <Badge variant={getStatusVariant(vessel?.status)}>{vessel?.status}</Badge>;
+}
+
+function Capacity() {
+  const vessel = useContext(VesselCardContext);
+  return (
+    <div className="vessel-card__capacity">
+      <div>Deck: {vessel?.deckCargoCapacity}t</div>
+      <div>Liquid: {vessel?.liquidMudCapacity}m³</div>
+    </div>
+  );
+}
+
+export const VesselCard = {
+  Root,
+  Header,
+  Title,
+  Status,
+  Capacity,
+};
+
+// Usage:
+<VesselCard.Root vessel={vessel}>
+  <VesselCard.Header>
+    <VesselCard.Title />
+    <VesselCard.Status />
+  </VesselCard.Header>
+  <VesselCard.Capacity />
+</VesselCard.Root>
+```
+
+**AI Agent Prompt**:
+```
+"Refactor the VesselList organism to use compound components pattern.
+Create VesselCard compound component with:
+- Root (context provider)
+- Header
+- Title
+- Status
+- Capacity
+- Location
+- Actions
+
+Then update VesselList to use this new pattern."
+```
+
+### Phase 4: Design System Enhancement (Week 6)
+
+**Motion System Implementation**:
+
+```typescript
+// src/design-system/tokens/motion.ts
+export const motionTokens = {
+  duration: {
+    instant: '0ms',
+    fast: '150ms',
+    normal: '300ms',
+    slow: '500ms',
+    slower: '800ms',
+  },
+  easing: {
+    linear: 'linear',
+    ease: 'ease',
+    easeIn: 'cubic-bezier(0.4, 0, 1, 1)',
+    easeOut: 'cubic-bezier(0, 0, 0.2, 1)',
+    easeInOut: 'cubic-bezier(0.4, 0, 0.2, 1)',
+    spring: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
+  },
+};
+
+// Framer Motion presets
+export const animationPresets = {
+  fadeIn: {
+    initial: { opacity: 0 },
+    animate: { opacity: 1 },
+    exit: { opacity: 0 },
+    transition: { duration: 0.3 },
+  },
+  slideUp: {
+    initial: { y: 20, opacity: 0 },
+    animate: { y: 0, opacity: 1 },
+    exit: { y: -20, opacity: 0 },
+    transition: { duration: 0.3, ease: 'easeOut' },
+  },
+  scaleIn: {
+    initial: { scale: 0.9, opacity: 0 },
+    animate: { scale: 1, opacity: 1 },
+    exit: { scale: 0.9, opacity: 0 },
+    transition: { duration: 0.2, ease: 'easeOut' },
+  },
+};
+```
+
+### Phase 5: Performance Optimization (Week 7)
+
+**Virtual Scrolling for Lists**:
+
+```typescript
+// src/components/organisms/VirtualVesselList.tsx
+import { useVirtualizer } from '@tanstack/react-virtual';
+
+export function VirtualVesselList({ vessels }: { vessels: Vessel[] }) {
+  const parentRef = React.useRef<HTMLDivElement>(null);
+
+  const virtualizer = useVirtualizer({
+    count: vessels.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 120, // Estimated row height
+    overscan: 5, // Render 5 extra items outside viewport
+  });
+
+  return (
+    <div ref={parentRef} style={{ height: '600px', overflow: 'auto' }}>
+      <div
+        style={{
+          height: `${virtualizer.getTotalSize()}px`,
+          position: 'relative',
+        }}
+      >
+        {virtualizer.getVirtualItems().map((virtualRow) => (
+          <div
+            key={virtualRow.index}
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              transform: `translateY(${virtualRow.start}px)`,
+            }}
+          >
+            <VesselCard vessel={vessels[virtualRow.index]} />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+```
+
+### Recommended Tools & Libraries
+
+Install these for the rework:
+
+```bash
+npm install \
+  zustand \
+  @tanstack/react-query \
+  react-router-dom \
+  framer-motion \
+  @tanstack/react-virtual \
+  zod \
+  date-fns \
+  react-hook-form
+```
+
+### Testing Strategy
+
+```typescript
+// Example test with React Query
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { renderHook, waitFor } from '@testing-library/react';
+
+describe('useVessels', () => {
+  it('fetches vessels successfully', async () => {
+    const queryClient = new QueryClient();
+    const wrapper = ({ children }) => (
+      <QueryClientProvider client={queryClient}>
+        {children}
+      </QueryClientProvider>
+    );
+
+    const { result } = renderHook(() => useVessels(), { wrapper });
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(result.current.data).toHaveLength(5);
+  });
+});
+```
+
+### Priority Order for AI Agent
+
+1. **Week 1**: Run audits, establish baselines
+2. **Week 2-3**: Implement state management (Zustand + React Query)
+3. **Week 4-5**: Refactor components to compound patterns
+4. **Week 6**: Add animations and polish
+5. **Week 7**: Performance optimization and virtual scrolling
+6. **Week 8**: Testing and documentation
+
+Use the interactive guide above to track your progress through each phase. Each phase builds on the previous one, so follow the order for best results!

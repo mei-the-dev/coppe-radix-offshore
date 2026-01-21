@@ -1,0 +1,36 @@
+# Development Rules
+
+## Rendering Verification
+- **ALWAYS verify frontend rendering before completing tasks**
+- After making frontend changes:
+  1. Build the frontend: `cd frontend && npm run build`
+  2. Check for TypeScript/compilation errors
+  3. Verify the app loads in browser (check console for runtime errors)
+  4. Test key user interactions
+- If rendering fails, fix issues before marking tasks complete
+
+## Server Execution
+- **ALWAYS run frontend and backend dev servers in background mode**
+- Use `is_background: true` when starting servers
+- Never block the console with interactive processes
+- Example: `npm run dev` should always run in background
+
+## Design System
+- **Use Kira Design System from `frontend/src/design-system`**
+- Import tokens: `import { tokens } from '../design-system'` or `import { tokens } from '../design-system/tokens'`
+- Use CSS variables: `var(--color-primary-500)`, `var(--spacing-4)`, etc.
+- Follow atomic design principles (atoms, molecules, organisms)
+- Use component interfaces: `import type { ButtonProps } from '../design-system'`
+- Design system is consolidated from kira-ai/packages/design-system
+
+## Icons
+- **Use SVG icons instead of emojis**
+- Create reusable icon components in `frontend/src/assets/icons.tsx`
+- Icons should accept `className` and `size` props
+- Use proper SVG with `currentColor` for theming
+
+## Code Quality
+- Fix all TypeScript errors before completing tasks
+- Use `import type` for type-only imports
+- Follow project conventions from `openspec/project.md`
+- Write clean, maintainable code

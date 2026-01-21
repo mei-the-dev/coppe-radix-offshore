@@ -1,0 +1,18 @@
+.molecule-tab-button {
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  border-bottom: 2px solid transparent;
+  color: var(--text-secondary);
+  transition: all var(--duration-fast) var(--timing-ease);
+}
+
+.molecule-tab-button:hover {
+  color: var(--text-primary);
+  background-color: var(--surface-sunken);
+}
+
+.molecule-tab-button--active {
+  border-bottom-color: var(--interactive-default);
+  color: var(--interactive-default);
+  font-weight: var(--font-weight-semibold);
+  background-color: var(--surface-sunken);
+}

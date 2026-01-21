@@ -1,0 +1,116 @@
+/**
+ * Global Accessibility Styles
+ * WCAG 2.1 Level AA Compliance
+ */
+
+/* Screen reader only content */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.sr-only-focusable:focus,
+.sr-only-focusable:active {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: inherit;
+  margin: inherit;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+
+/* WCAG 2.4.7: Focus Visible - Ensure all focusable elements have visible focus */
+*:focus-visible {
+  outline: 3px solid var(--color-primary-700, #334e68);
+  outline-offset: 2px;
+}
+
+/* Remove outline for mouse users (but keep for keyboard) */
+*:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* WCAG 1.4.3: Minimum Contrast - Ensure sufficient color contrast */
+/* This is handled by design tokens, but we ensure text is readable */
+a, button, input, select, textarea {
+  color: var(--color-gray-900, #111827);
+}
+
+/* WCAG 2.3.3: Animation from Interactions - Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* WCAG 1.4.4: Resize text - Ensure text can be resized up to 200% */
+html {
+  font-size: 100%;
+}
+
+/* Ensure interactive elements are keyboard accessible */
+button, a, input, select, textarea, [tabindex] {
+  cursor: pointer;
+}
+
+button:disabled,
+input:disabled,
+select:disabled,
+textarea:disabled {
+  cursor: not-allowed;
+}
+
+/* WCAG 2.1.1: Keyboard - Ensure all functionality is keyboard accessible */
+[role="button"] {
+  cursor: pointer;
+}
+
+[role="button"]:focus-visible {
+  outline: 3px solid var(--color-primary-700, #334e68);
+  outline-offset: 2px;
+}
+
+/* Ensure form labels are properly associated */
+label {
+  cursor: pointer;
+}
+
+/* WCAG 4.1.2: Name, Role, Value - Ensure proper ARIA usage */
+[aria-hidden="true"] {
+  /* Content is hidden from assistive technologies */
+}
+
+[aria-live] {
+  /* Live regions for dynamic content updates */
+}
+
+/* Error states should be clearly visible */
+[aria-invalid="true"] {
+  border-color: var(--color-error-DEFAULT, #ef4444);
+}
+
+/* Loading states */
+[aria-busy="true"] {
+  cursor: wait;
+}
+
+/* Disabled states */
+[aria-disabled="true"] {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+}

@@ -1,0 +1,185 @@
+/**
+ * Unified Theme Definitions (Light/Dark Mode)
+ * Single source of truth for kira-tasks and kira-ai
+ */
+
+/* ===== Light Mode (Default) ===== */
+:root,
+[data-theme="light"] {
+  /* Backgrounds */
+  --bg-primary: var(--color-white);
+  --bg-secondary: var(--color-gray-50);
+  --bg-tertiary: var(--color-gray-100);
+  --bg-inverse: var(--color-gray-900);
+  --bg-overlay: rgb(0 0 0 / 0.5);
+
+  /* Surfaces */
+  --surface-default: var(--color-white);
+  --surface-raised: var(--color-white);
+  --surface-overlay: var(--color-white);
+  --surface-sunken: var(--color-gray-50);
+
+  /* Text */
+  --text-primary: var(--color-gray-900);
+  --text-secondary: var(--color-gray-600);
+  --text-tertiary: var(--color-gray-500);
+  --text-disabled: var(--color-gray-400);
+  --text-inverse: var(--color-white);
+  --text-link: var(--color-primary-600);
+  --text-link-hover: var(--color-primary-700);
+
+  /* Borders */
+  --border-default: var(--color-gray-200);
+  --border-strong: var(--color-gray-300);
+  --border-subtle: var(--color-gray-100);
+  --border-focus: var(--color-primary-500);
+
+  /* Interactive */
+  --interactive-default: var(--color-primary-500);
+  --interactive-hover: var(--color-primary-600);
+  --interactive-active: var(--color-primary-700);
+  --interactive-disabled: var(--color-gray-300);
+
+  /* Status Backgrounds */
+  --status-success-bg: #dcfce7;
+  --status-warning-bg: #fef9c3;
+  --status-error-bg: #fee2e2;
+  --status-info-bg: #dbeafe;
+
+  /* Glassmorphism */
+  --glass-bg: var(--glass-bg-enhanced);
+  --glass-border: var(--glass-border-enhanced);
+  --glass-blur: blur(12px);
+
+  /* Surface Elevation */
+  --surface-elevated: var(--surface-elevated-light);
+}
+
+/* ===== Dark Mode ===== */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg-primary: var(--color-gray-950);
+    --bg-secondary: var(--color-gray-900);
+    --bg-tertiary: var(--color-gray-800);
+    --bg-inverse: var(--color-white);
+    --bg-overlay: rgb(0 0 0 / 0.7);
+    --surface-default: var(--color-gray-900);
+    --surface-raised: var(--color-gray-800);
+    --surface-overlay: var(--color-gray-800);
+    --surface-sunken: var(--color-gray-950);
+    --text-primary: var(--color-gray-50);
+    --text-secondary: var(--color-gray-300);
+    --text-tertiary: var(--color-gray-400);
+    --text-disabled: var(--color-gray-600);
+    --text-inverse: var(--color-gray-900);
+    --text-link: var(--color-primary-400);
+    --text-link-hover: var(--color-primary-300);
+    --border-default: var(--color-gray-700);
+    --border-strong: var(--color-gray-600);
+    --border-subtle: var(--color-gray-800);
+    --border-focus: var(--color-primary-400);
+    --interactive-default: var(--color-primary-500);
+    --interactive-hover: var(--color-primary-400);
+    --interactive-active: var(--color-primary-300);
+    --interactive-disabled: var(--color-gray-700);
+    --status-success-bg: rgb(34 197 94 / 0.2);
+    --status-warning-bg: rgb(234 179 8 / 0.2);
+    --status-error-bg: rgb(239 68 68 / 0.2);
+    --status-info-bg: rgb(59 130 246 / 0.2);
+    --glass-bg: var(--glass-bg-dark);
+    --glass-border: var(--glass-border-dark);
+    --glass-blur: blur(12px);
+    --surface-elevated: rgba(31, 41, 55, 0.8);
+  }
+}
+
+[data-theme="dark"] {
+  --bg-primary: var(--color-gray-950);
+  --bg-secondary: var(--color-gray-900);
+  --bg-tertiary: var(--color-gray-800);
+  --bg-inverse: var(--color-white);
+  --bg-overlay: rgb(0 0 0 / 0.7);
+  --surface-default: var(--color-gray-900);
+  --surface-raised: var(--color-gray-800);
+  --surface-overlay: var(--color-gray-800);
+  --surface-sunken: var(--color-gray-950);
+  --text-primary: var(--color-gray-50);
+  --text-secondary: var(--color-gray-300);
+  --text-tertiary: var(--color-gray-400);
+  --text-disabled: var(--color-gray-600);
+  --text-inverse: var(--color-gray-900);
+  --text-link: var(--color-primary-400);
+  --text-link-hover: var(--color-primary-300);
+  --border-default: var(--color-gray-700);
+  --border-strong: var(--color-gray-600);
+  --border-subtle: var(--color-gray-800);
+  --border-focus: var(--color-primary-400);
+  --interactive-default: var(--color-primary-500);
+  --interactive-hover: var(--color-primary-400);
+  --interactive-active: var(--color-primary-300);
+  --interactive-disabled: var(--color-gray-700);
+  --status-success-bg: rgb(34 197 94 / 0.2);
+  --status-warning-bg: rgb(234 179 8 / 0.2);
+  --status-error-bg: rgb(239 68 68 / 0.2);
+  --status-info-bg: rgb(59 130 246 / 0.2);
+  --glass-bg: var(--glass-bg-dark);
+  --glass-border: var(--glass-border-dark);
+  --glass-blur: blur(12px);
+  --surface-elevated: rgba(31, 41, 55, 0.8);
+}
+
+/* ===== High Contrast Mode ===== */
+@media (prefers-contrast: more) {
+  :root {
+    --text-primary: var(--color-black);
+    --text-secondary: var(--color-gray-800);
+    --bg-primary: var(--color-white);
+    --border-default: var(--color-black);
+    --border-strong: var(--color-black);
+    --shadow-sm: none;
+    --shadow-default: none;
+    --shadow-md: none;
+    --shadow-lg: none;
+    --focus-ring-width: 4px;
+    --focus-ring-color: var(--color-black);
+  }
+}
+
+[data-theme="high-contrast"] {
+  --text-primary: var(--color-black);
+  --text-secondary: var(--color-gray-800);
+  --bg-primary: var(--color-white);
+  --border-default: var(--color-black);
+  --border-strong: var(--color-black);
+  --shadow-sm: none;
+  --shadow-default: none;
+  --shadow-md: none;
+  --shadow-lg: none;
+  --focus-ring-width: 4px;
+  --focus-ring-color: var(--color-black);
+}
+
+/* ===== Colorblind-Friendly Modes ===== */
+[data-theme="colorblind-protanopia"] {
+  /* Adjust colors for protanopia (red-green colorblindness) */
+  --color-primary-500: #486581; /* Keep navy but ensure contrast */
+  --color-success: #22c55e; /* Keep green but ensure contrast */
+  --color-error: #ef4444; /* Keep red but ensure contrast */
+}
+
+[data-theme="colorblind-deuteranopia"] {
+  /* Adjust colors for deuteranopia (red-green colorblindness) */
+  --color-primary-500: #486581; /* Keep navy but ensure contrast */
+  --color-success: #22c55e;
+  --color-error: #ef4444;
+}
+
+[data-theme="colorblind-tritanopia"] {
+  /* Adjust colors for tritanopia (blue-yellow colorblindness) */
+  --color-primary-500: #334e68; /* Keep navy */
+  --color-info: #ef4444; /* Red instead of blue */
+}
+
+
+
+

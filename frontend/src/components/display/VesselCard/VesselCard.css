@@ -1,0 +1,54 @@
+/**
+ * VesselCard Compound Component Styles
+ */
+
+.vessel-card {
+  /* Card component handles base styling */
+}
+
+.vessel-header {
+  margin-bottom: var(--spacing-4);
+}
+
+.vessel-name {
+  color: var(--text-primary);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-tight);
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+}
+
+.vessel-details {
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+  line-height: var(--line-height-relaxed);
+}
+
+.vessel-type {
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+  font-size: var(--font-size-base);
+}
+
+.vessel-location {
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.vessel-capacity {
+  margin-top: var(--spacing-1);
+}
+
+.capacity-item {
+  background: var(--surface-sunken);
+  padding: var(--spacing-1) var(--spacing-3);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  border: 1px solid var(--border-subtle);
+}
