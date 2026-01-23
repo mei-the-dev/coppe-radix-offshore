@@ -266,6 +266,7 @@ This application is configured for deployment to DigitalOcean. See **[DIGITALOCE
 
 ### Deployment Resources
 
+- **[DIGITALOCEAN_UI_QUICK_START.md](./DIGITALOCEAN_UI_QUICK_START.md)**: ⚡ Quick reference for UI deployment (Source Directory values)
 - **[DIGITALOCEAN_DEPLOYMENT_GUIDE.md](./DIGITALOCEAN_DEPLOYMENT_GUIDE.md)**: Complete deployment guide with step-by-step instructions
 - **[DEPLOYMENT_CHECKLIST.md](./DEPLOYMENT_CHECKLIST.md)**: Interactive checklist for tracking deployment progress
 - **[DEPLOYMENT.md](./DEPLOYMENT.md)**: General deployment documentation and Docker/Kubernetes options

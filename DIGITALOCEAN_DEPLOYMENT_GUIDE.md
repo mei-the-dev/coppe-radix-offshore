@@ -122,7 +122,7 @@ Since this is a monorepo, components must be configured manually.
 
 2. **Basic Settings**
    - **Name**: `backend`
-   - **Source Directory**: `backend` (⚠️ no leading slash)
+   - **Source Directory**: `backend` (⚠️ Enter exactly: `backend` - no leading slash, no trailing slash, no quotes)
    - **Environment**: Node.js
 
 3. **Build Settings**
@@ -144,7 +144,7 @@ Since this is a monorepo, components must be configured manually.
 
 2. **Basic Settings**
    - **Name**: `frontend`
-   - **Source Directory**: `frontend`
+   - **Source Directory**: `frontend` (⚠️ Enter exactly: `frontend` - no leading slash, no trailing slash, no quotes)
    - **Environment**: Node.js
 
 3. **Build Settings**
