@@ -15,7 +15,7 @@ databases:
 services:
   - name: backend
     github:
-      repo: your-username/offshore-logistics-app
+      repo: mei-the-dev/coppe-radix-offshore
       branch: main
       deploy_on_push: true
     source_dir: backend
@@ -62,7 +62,7 @@ services:
   # Frontend service (using buildpacks)
   - name: frontend
     github:
-      repo: your-username/offshore-logistics-app
+      repo: mei-the-dev/coppe-radix-offshore
       branch: main
       deploy_on_push: true
     source_dir: frontend
