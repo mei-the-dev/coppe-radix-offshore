@@ -131,7 +131,7 @@
 .data-section-title {
   font-size: var(--font-size-xl);
   font-weight: var(--font-weight-bold);
-  color: var(--text-primary);
+  color: var(--color-warning-dark, #d97706);
   margin: 0;
 }
 
@@ -149,14 +149,10 @@
 /* Table Cards */
 .data-table-card {
   margin-bottom: var(--spacing-4);
-  /* Glassmorphism with #6c581b - ensure it overrides all other styles */
-  /* Fallback solid background for browsers that don't support backdrop-filter */
-  background-color: rgba(108, 88, 27, 0.85) !important;
-  /* Glassmorphism effect */
-  backdrop-filter: blur(12px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(12px) saturate(180%) !important;
-  border: 1.5px solid rgba(108, 88, 27, 0.5) !important;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+  background: var(--surface-default, var(--color-white));
+  border: 1px solid var(--border-default, var(--color-gray-200));
+  border-radius: var(--radius-md, 0.5rem);
+  box-shadow: var(--shadow-sm, 0 1px 2px 0 rgb(0 0 0 / 0.05));
 }
 
 .data-table-header {
@@ -177,7 +173,7 @@
 .data-table-name {
   font-size: var(--font-size-lg);
   font-weight: var(--font-weight-semibold);
-  color: var(--text-primary);
+  color: var(--color-warning-dark, #d97706);
   margin: 0 0 var(--spacing-1) 0;
   font-family: var(--font-family-mono);
 }
@@ -204,7 +200,7 @@
 }
 
 .data-table-meta strong {
-  color: var(--text-primary);
+  color: var(--color-warning-dark, #d97706);
   font-weight: var(--font-weight-semibold);
   display: block;
   margin-bottom: var(--spacing-2);
@@ -227,11 +223,11 @@
 
 .data-table-fk-list code,
 .data-table-index-list code {
-  background: var(--surface-default);
-  padding: var(--spacing-1) var(--spacing-2);
-  border-radius: var(--radius-sm);
-  color: var(--color-primary-600);
-  font-size: var(--font-size-xs);
+  background: var(--surface-default, var(--color-white));
+  padding: var(--spacing-1, 0.25rem) var(--spacing-2, 0.5rem);
+  border-radius: var(--radius-sm, 0.125rem);
+  color: var(--color-warning-dark, #d97706);
+  font-size: var(--font-size-xs, 0.75rem);
 }
 
 .fk-note {
@@ -247,7 +243,7 @@
 .data-table-columns-title {
   font-size: var(--font-size-base);
   font-weight: var(--font-weight-semibold);
-  color: var(--text-primary);
+  color: var(--color-warning-dark, #d97706);
   margin-bottom: var(--spacing-3);
 }
 
@@ -283,7 +279,7 @@
   font-family: var(--font-family-mono);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-semibold);
-  color: var(--color-primary-600);
+  color: var(--color-warning-dark, #d97706);
 }
 
 .data-column-type {
@@ -320,16 +316,16 @@
 .views-title {
   font-size: var(--font-size-2xl);
   font-weight: var(--font-weight-bold);
-  color: var(--text-primary);
+  color: var(--color-warning-dark, #d97706);
   margin-bottom: var(--spacing-4);
 }
 
 .view-name {
   font-family: var(--font-family-mono);
-  font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-semibold);
-  color: var(--color-primary-600);
-  margin: 0 0 var(--spacing-2) 0;
+  font-size: var(--font-size-lg, 1.125rem);
+  font-weight: var(--font-weight-semibold, 600);
+  color: var(--color-warning-dark, #d97706);
+  margin: 0 0 var(--spacing-2, 0.5rem) 0;
 }
 
 .view-description {
@@ -350,7 +346,7 @@
 }
 
 .view-columns strong {
-  color: var(--text-primary);
+  color: var(--color-warning-dark, #d97706);
   font-weight: var(--font-weight-semibold);
 }
 

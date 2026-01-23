@@ -7,4 +7,5 @@ export { default as Simulation } from './Simulation';
 export { default as Visualization } from './Visualization';
 export { default as SimulationModel } from './SimulationModel';
 export { default as DataStructure } from './DataStructure';
+export { default as MetricsReport } from './MetricsReport';
 export { default as Tooltip } from './Tooltip';

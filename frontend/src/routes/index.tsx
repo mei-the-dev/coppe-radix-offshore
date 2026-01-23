@@ -8,6 +8,7 @@ const PlanningRoute = lazy(() => import('./PlanningRoute'));
 const SimulationRoute = lazy(() => import('./SimulationRoute'));
 const ModelRoute = lazy(() => import('./ModelRoute'));
 const DataStructureRoute = lazy(() => import('./DataStructureRoute'));
+const MetricsRoute = lazy(() => import('./MetricsRoute'));
 
 export const router = createBrowserRouter([
   {
@@ -20,6 +21,7 @@ export const router = createBrowserRouter([
       { path: 'simulation', element: <SimulationRoute /> },
       { path: 'model', element: <ModelRoute /> },
       { path: 'data', element: <DataStructureRoute /> },
+      { path: 'metrics', element: <MetricsRoute /> },
     ],
   },
 ]);

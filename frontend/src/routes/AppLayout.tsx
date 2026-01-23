@@ -12,6 +12,7 @@ export default function AppLayout() {
     { path: '/simulation', label: 'Visualization', icon: 'simulation' },
     { path: '/model', label: 'Model', icon: 'model' },
     { path: '/data', label: 'Data Structure', icon: 'data' },
+    { path: '/metrics', label: 'Metrics', icon: 'metrics' },
   ];
 
   return (
