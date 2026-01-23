@@ -18,21 +18,27 @@ DigitalOcean App Platform is a Platform-as-a-Service (PaaS) that automatically b
 
 1. **Prepare your repository**
    - Ensure all code is committed and pushed to your Git repository
-   - The `.do/app.yaml` file is already configured for App Platform
+   - The `app.yaml` file in the root directory is configured for App Platform
+   - Alternative: `app.yaml.buildpacks` uses buildpacks instead of Dockerfiles (simpler)
 
 2. **Create App on DigitalOcean**
    - Log in to [DigitalOcean Control Panel](https://cloud.digitalocean.com)
    - Navigate to **Apps** → **Create App**
    - Connect your Git repository
-   - DigitalOcean will detect the `.do/app.yaml` configuration
+   - **Important**: If you see "No components detected":
+     - Option A: Use the App Platform UI to manually configure components
+       - For backend: Set source directory to `backend`, use Node.js buildpack
+       - For frontend: Set source directory to `frontend`, use Node.js buildpack
+     - Option B: Copy `app.yaml.buildpacks` to `app.yaml` (uses buildpacks instead of Dockerfiles)
+     - Option C: Ensure `app.yaml` is in the repository root (not just in `.do/` directory)
 
 3. **Configure Environment Variables**
    In the App Platform dashboard, set the following environment variables:
-   
+
    **Backend Service:**
    - `JWT_SECRET`: Generate a strong random string (e.g., `openssl rand -hex 32`)
    - Database connection variables are automatically set from the database service
-   
+
    **Frontend Service:**
    - `VITE_API_URL`: Will be automatically set to the backend service URL
 
@@ -77,11 +83,11 @@ Deploy using Docker on DigitalOcean Droplets for more control.
    ```bash
    # SSH into your droplet
    ssh root@your-droplet-ip
-   
+
    # Install Docker
    curl -fsSL https://get.docker.com -o get-docker.sh
    sh get-docker.sh
-   
+
    # Install Docker Compose
    apt-get update
    apt-get install docker-compose-plugin
@@ -104,7 +110,7 @@ Deploy using Docker on DigitalOcean Droplets for more control.
      - Create a PostgreSQL database in DigitalOcean
      - Update `.env` with database connection details
      - Remove `postgres` service from `docker-compose.yml`
-   
+
    - Option B: Use Docker PostgreSQL
      - Keep `postgres` service in `docker-compose.yml`
      - Database will be created automatically
@@ -125,7 +131,7 @@ Deploy using Docker on DigitalOcean Droplets for more control.
    ```bash
    apt-get install nginx certbot python3-certbot-nginx
    ```
-   
+
    Configure Nginx to proxy to your services (backend on :3001, frontend on :80)
 
 9. **Set up SSL Certificate**
@@ -199,6 +205,34 @@ docker compose exec backend npm run migrate
 - Set up external monitoring (e.g., UptimeRobot, Pingdom)
 
 ## Troubleshooting
+
+### "No components detected" Error
+
+If DigitalOcean App Platform shows "No components detected", try these solutions:
+
+1. **Verify app.yaml location**
+   - Ensure `app.yaml` exists in the repository root
+   - DigitalOcean looks for `app.yaml` in the root directory
+
+2. **Check source directories**
+   - Verify `backend/package.json` exists
+   - Verify `frontend/package.json` exists
+   - App Platform needs these files to detect Node.js components
+
+3. **Use buildpacks instead of Dockerfiles**
+   - Copy `app.yaml.buildpacks` to `app.yaml`
+   - Buildpacks are simpler and more reliable for App Platform
+   - Dockerfiles require proper `dockerfile_path` configuration
+
+4. **Manual component configuration**
+   - In App Platform UI, manually add components
+   - Set source directory: `backend` for backend service
+   - Set source directory: `frontend` for frontend service
+   - App Platform will auto-detect Node.js from `package.json`
+
+5. **Verify Dockerfile paths** (if using Dockerfiles)
+   - `dockerfile_path` should be relative to `source_dir`
+   - Example: `source_dir: backend`, `dockerfile_path: Dockerfile`
 
 ### Backend Issues
 

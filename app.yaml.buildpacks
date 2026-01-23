@@ -11,7 +11,7 @@ databases:
     db_name: prio_logistics
     db_user: prio_user
 
-# Backend service
+# Backend service (using buildpacks)
 services:
   - name: backend
     github:
@@ -19,7 +19,8 @@ services:
       branch: main
       deploy_on_push: true
     source_dir: backend
-    dockerfile_path: Dockerfile
+    build_command: npm ci && npm run build
+    run_command: npm start
     environment_slug: node-js
     instance_count: 1
     instance_size_slug: basic-xxs
@@ -58,14 +59,15 @@ services:
         scope: RUN_TIME
         type: SECRET
 
-  # Frontend service
+  # Frontend service (using buildpacks)
   - name: frontend
     github:
       repo: your-username/offshore-logistics-app
       branch: main
       deploy_on_push: true
     source_dir: frontend
-    dockerfile_path: Dockerfile
+    build_command: npm ci && npm run build
+    run_command: npx vite preview --host 0.0.0.0 --port 80
     environment_slug: node-js
     instance_count: 1
     instance_size_slug: basic-xxs
