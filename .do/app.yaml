@@ -1,0 +1,83 @@
+name: offshore-logistics-app
+region: nyc
+
+# Database service (PostgreSQL with PostGIS)
+databases:
+  - name: prio-logistics-db
+    engine: PG
+    version: "15"
+    production: true
+    cluster_name: prio-logistics-cluster
+    db_name: prio_logistics
+    db_user: prio_user
+
+# Backend service
+services:
+  - name: backend
+    github:
+      repo: your-username/offshore-logistics-app
+      branch: main
+      deploy_on_push: true
+    source_dir: /backend
+    build_command: npm ci && npm run build
+    run_command: npm start
+    environment_slug: node-js
+    instance_count: 1
+    instance_size_slug: basic-xxs
+    http_port: 3001
+    health_check:
+      http_path: /health
+    envs:
+      - key: NODE_ENV
+        value: production
+        scope: RUN_TIME
+      - key: PORT
+        value: "3001"
+        scope: RUN_TIME
+      - key: DB_HOST
+        value: ${prio-logistics-db.HOSTNAME}
+        scope: RUN_TIME
+        type: SECRET
+      - key: DB_PORT
+        value: ${prio-logistics-db.PORT}
+        scope: RUN_TIME
+        type: SECRET
+      - key: DB_NAME
+        value: ${prio-logistics-db.DATABASE}
+        scope: RUN_TIME
+        type: SECRET
+      - key: DB_USER
+        value: ${prio-logistics-db.USERNAME}
+        scope: RUN_TIME
+        type: SECRET
+      - key: DB_PASSWORD
+        value: ${prio-logistics-db.PASSWORD}
+        scope: RUN_TIME
+        type: SECRET
+      - key: JWT_SECRET
+        value: ${JWT_SECRET}
+        scope: RUN_TIME
+        type: SECRET
+
+  # Frontend service
+  - name: frontend
+    github:
+      repo: your-username/offshore-logistics-app
+      branch: main
+      deploy_on_push: true
+    source_dir: /frontend
+    build_command: npm ci && npm run build
+    run_command: npm run preview
+    environment_slug: node-js
+    instance_count: 1
+    instance_size_slug: basic-xxs
+    http_port: 5173
+    routes:
+      - path: /
+    envs:
+      - key: VITE_API_URL
+        value: ${backend.PUBLIC_URL}
+        scope: RUN_AND_BUILD_TIME
+      - key: NODE_ENV
+        value: production
+        scope: RUN_TIME

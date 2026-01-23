@@ -241,6 +241,27 @@ npm start
 ```
 Production build will be in `backend/dist/`
 
+## Deployment
+
+This application is configured for deployment to DigitalOcean. See **[DEPLOYMENT.md](./DEPLOYMENT.md)** for detailed deployment instructions.
+
+### Quick Deploy Options
+
+**Option 1: DigitalOcean App Platform (Recommended)**
+- Uses `.do/app.yaml` configuration
+- Automatic builds and deployments from Git
+- Managed PostgreSQL database with PostGIS
+
+**Option 2: Docker on Droplets**
+- Use `docker-compose.yml` for containerized deployment
+- Supports both managed and self-hosted databases
+
+**Option 3: Kubernetes**
+- Advanced deployment option for scaling
+- Requires Kubernetes cluster setup
+
+For detailed instructions, environment variables, and troubleshooting, see [DEPLOYMENT.md](./DEPLOYMENT.md).
+
 ## Contributing
 
 This project uses OpenSpec for spec-driven development. See `openspec/AGENTS.md` for information on creating change proposals and contributing to the project.
