@@ -32,6 +32,7 @@ If you see "No components detected" (normal for monorepos):
 2. Fill in these fields:
    - **Name**: `backend`
    - **Source Directory**: `backend` ← Enter this exactly
+   - **Build Method**: Select **Buildpacks** (NOT Dockerfile) ⚠️ Important!
    - **Build Command**: `npm ci && npm run build`
    - **Run Command**: `npm start`
    - **HTTP Port**: `3001`
@@ -43,6 +44,7 @@ If you see "No components detected" (normal for monorepos):
 2. Fill in these fields:
    - **Name**: `frontend`
    - **Source Directory**: `frontend` ← Enter this exactly
+   - **Build Method**: Select **Buildpacks** (NOT Dockerfile) ⚠️ Important!
    - **Build Command**: `npm ci && npm run build`
    - **Run Command**: `npx vite preview --host 0.0.0.0 --port 80`
    - **HTTP Port**: `80`
