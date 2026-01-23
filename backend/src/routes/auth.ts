@@ -17,33 +17,32 @@ router.post('/login', async (req: Request, res: Response) => {
       });
     }
 
-    // In a real application, you would query the database for the user
-    // For now, we'll use a simple mock authentication
-    // TODO: Implement proper user authentication with database
-
-    // Mock user lookup (replace with actual database query)
-    const mockUser = {
-      id: 'user_123',
-      name: 'John Operator',
-      role: 'logistics_coordinator',
-      username: 'operator@prio.com',
-      password: '$2a$10$mockhashedpassword' // In production, hash passwords properly
+    // Simple authentication for team sharing
+    // Login: coppetec, Password: rotaviva
+    const validCredentials = {
+      username: 'coppetec',
+      password: 'rotaviva'
     };
 
-    // For demo purposes, accept any password for operator@prio.com
-    // In production, verify password with bcrypt.compare
-    if (username !== mockUser.username) {
+    if (username !== validCredentials.username || password !== validCredentials.password) {
       return res.status(401).json({
         error: 'unauthorized',
         message: 'Invalid credentials'
       });
     }
 
+    // User data for authenticated user
+    const user = {
+      id: 'coppetec_user',
+      name: 'COPPETEC Team',
+      role: 'logistics_coordinator'
+    };
+
     // Generate tokens
     const accessToken = generateToken({
-      id: mockUser.id,
-      name: mockUser.name,
-      role: mockUser.role
+      id: user.id,
+      name: user.name,
+      role: user.role
     });
 
     res.json({
@@ -52,9 +51,9 @@ router.post('/login', async (req: Request, res: Response) => {
       expires_in: 3600,
       refresh_token: 'refresh_token_string', // TODO: Implement refresh tokens
       user: {
-        id: mockUser.id,
-        name: mockUser.name,
-        role: mockUser.role
+        id: user.id,
+        name: user.name,
+        role: user.role
       }
     });
   } catch (error: any) {

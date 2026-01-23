@@ -2,23 +2,32 @@
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
-// Authentication disabled for now
-// Token storage (not used but kept for future)
-let authToken: string | null = null;
+// Token storage in localStorage for persistence
+const TOKEN_KEY = 'prio_auth_token';
 
 export const setAuthToken = (token: string | null) => {
-  authToken = token;
+  if (token) {
+    localStorage.setItem(TOKEN_KEY, token);
+  } else {
+    localStorage.removeItem(TOKEN_KEY);
+  }
 };
 
-export const getAuthToken = () => authToken;
+export const getAuthToken = () => {
+  return localStorage.getItem(TOKEN_KEY);
+};
 
 async function fetchAPI<T>(endpoint: string, options?: RequestInit): Promise<T> {
-  const headers: HeadersInit = {
+  const headers: Record<string, string> = {
     'Content-Type': 'application/json',
-    ...options?.headers,
+    ...(options?.headers as Record<string, string> || {}),
   };
 
-  // Authentication disabled - no token required
+  // Add authentication token if available
+  const token = getAuthToken();
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
 
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
     ...options,
@@ -80,7 +89,7 @@ export const auth = {
     setAuthToken(null);
   },
 
-  isAuthenticated: () => !!authToken,
+  isAuthenticated: () => !!getAuthToken(),
 };
 
 // Legacy API endpoints (for backward compatibility with existing components)

@@ -1,10 +1,13 @@
-import { Outlet, NavLink } from 'react-router-dom';
+import { Outlet, NavLink, Navigate } from 'react-router-dom';
 import { Suspense } from 'react';
 import { IconVessel } from '../assets/icons';
 import { Stack } from '../components/layout';
+import { Button } from '../components/action';
+import { useAuth } from '../contexts/AuthContext';
 import './AppLayout.css';
 
 export default function AppLayout() {
+  const { isAuthenticated, loading, logout } = useAuth();
 
   const navItems = [
     { path: '/dashboard', label: 'Dashboard', icon: 'dashboard' },
@@ -14,6 +17,22 @@ export default function AppLayout() {
     { path: '/data', label: 'Data Structure', icon: 'data' },
     { path: '/metrics', label: 'Metrics', icon: 'metrics' },
   ];
+
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="app-layout">
+        <div className="loading-fallback">
+          <div className="loading-spinner">Loading...</div>
+        </div>
+      </div>
+    );
+  }
+
+  // Redirect to login if not authenticated
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
 
   return (
     <div className="app-layout">
@@ -26,6 +45,9 @@ export default function AppLayout() {
               <p>PRIO Offshore Logistics - Platform Supply Vessel Loading Planning</p>
             </div>
           </div>
+          <Button variant="secondary" size="sm" onClick={logout}>
+            Logout
+          </Button>
         </div>
       </header>
 

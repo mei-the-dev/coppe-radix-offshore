@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
-import { auth, getAuthToken } from '../api/client';
+import { auth, getAuthToken, setAuthToken } from '../api/client';
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -18,7 +18,26 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     // Check if we have a token on mount
     const token = getAuthToken();
-    setIsAuthenticated(!!token);
+    if (token) {
+      // Verify token is still valid by checking expiration
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        const now = Math.floor(Date.now() / 1000);
+        if (payload.exp && payload.exp > now) {
+          setIsAuthenticated(true);
+        } else {
+          // Token expired, remove it
+          setAuthToken(null);
+          setIsAuthenticated(false);
+        }
+      } catch {
+        // Invalid token, remove it
+        setAuthToken(null);
+        setIsAuthenticated(false);
+      }
+    } else {
+      setIsAuthenticated(false);
+    }
     setLoading(false);
   }, []);
 
