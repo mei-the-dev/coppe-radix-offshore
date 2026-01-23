@@ -243,24 +243,34 @@ Production build will be in `backend/dist/`
 
 ## Deployment
 
-This application is configured for deployment to DigitalOcean. See **[DEPLOYMENT.md](./DEPLOYMENT.md)** for detailed deployment instructions.
+This application is configured for deployment to DigitalOcean. See **[DIGITALOCEAN_DEPLOYMENT_GUIDE.md](./DIGITALOCEAN_DEPLOYMENT_GUIDE.md)** for complete step-by-step instructions.
 
 ### Quick Deploy Options
 
 **Option 1: DigitalOcean App Platform (Recommended)**
-- Uses `.do/app.yaml` configuration
-- Automatic builds and deployments from Git
+- Uses `app.yaml` configuration in repository root
+- Automatic builds and deployments from GitHub
 - Managed PostgreSQL database with PostGIS
+- **Quick Start**: See [DIGITALOCEAN_DEPLOYMENT_GUIDE.md](./DIGITALOCEAN_DEPLOYMENT_GUIDE.md)
+- **Checklist**: Use [DEPLOYMENT_CHECKLIST.md](./DEPLOYMENT_CHECKLIST.md) during deployment
 
 **Option 2: Docker on Droplets**
 - Use `docker-compose.yml` for containerized deployment
 - Supports both managed and self-hosted databases
+- See [DEPLOYMENT.md](./DEPLOYMENT.md) for Docker deployment instructions
 
 **Option 3: Kubernetes**
 - Advanced deployment option for scaling
 - Requires Kubernetes cluster setup
+- See [DEPLOYMENT.md](./DEPLOYMENT.md) for Kubernetes deployment
 
-For detailed instructions, environment variables, and troubleshooting, see [DEPLOYMENT.md](./DEPLOYMENT.md).
+### Deployment Resources
+
+- **[DIGITALOCEAN_DEPLOYMENT_GUIDE.md](./DIGITALOCEAN_DEPLOYMENT_GUIDE.md)**: Complete deployment guide with step-by-step instructions
+- **[DEPLOYMENT_CHECKLIST.md](./DEPLOYMENT_CHECKLIST.md)**: Interactive checklist for tracking deployment progress
+- **[DEPLOYMENT.md](./DEPLOYMENT.md)**: General deployment documentation and Docker/Kubernetes options
+- **[DIGITALOCEAN_SETUP.md](./DIGITALOCEAN_SETUP.md)**: Troubleshooting guide for common setup issues
+- **`scripts/`**: Helper scripts for JWT secret generation, PostGIS setup, and deployment verification
 
 ## Contributing
 
