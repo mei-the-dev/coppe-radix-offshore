@@ -2,6 +2,12 @@
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
+// Log API URL in development and production for debugging
+if (typeof window !== 'undefined') {
+  console.log('API Base URL:', API_BASE_URL);
+  console.log('Environment:', import.meta.env.MODE);
+}
+
 // Token storage in localStorage for persistence
 const TOKEN_KEY = 'prio_auth_token';
 
@@ -29,60 +35,90 @@ async function fetchAPI<T>(endpoint: string, options?: RequestInit): Promise<T> 
     headers['Authorization'] = `Bearer ${token}`;
   }
 
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-    ...options,
-    headers,
-  });
-
-  if (!response.ok) {
-    if (response.status === 401) {
-      // Token expired or invalid
-      setAuthToken(null);
-      throw new Error('Authentication required. Please login again.');
-    }
-    const error = await response.json().catch(() => ({
-      error: 'Unknown error',
-      message: `HTTP ${response.status}`
-    }));
-    throw new Error(error.message || error.error || `HTTP ${response.status}`);
-  }
-
-  const data = await response.json();
-
-  // Debug logging (dynamic import to avoid circular dependencies)
-  if (import.meta.env.DEV) {
-    import('../utils/dataInspector').then(({ logAPIResponse }) => {
-      logAPIResponse(endpoint, data, {
-        method: options?.method || 'GET',
-        status: response.status,
-      });
-    }).catch(() => {
-      // Silently fail if debug utils not available
+  try {
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      ...options,
+      headers,
     });
-  }
 
-  return data;
+    if (!response.ok) {
+      if (response.status === 401) {
+        // Token expired or invalid
+        setAuthToken(null);
+        throw new Error('Authentication required. Please login again.');
+      }
+      const error = await response.json().catch(() => ({
+        error: 'Unknown error',
+        message: `HTTP ${response.status}`
+      }));
+      throw new Error(error.message || error.error || `HTTP ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    // Debug logging (dynamic import to avoid circular dependencies)
+    if (import.meta.env.DEV) {
+      import('../utils/dataInspector').then(({ logAPIResponse }) => {
+        logAPIResponse(endpoint, data, {
+          method: options?.method || 'GET',
+          status: response.status,
+        });
+      }).catch(() => {
+        // Silently fail if debug utils not available
+      });
+    }
+
+    return data;
+  } catch (error: any) {
+    // Handle network errors (failed to fetch)
+    if (error instanceof TypeError && error.message.includes('fetch')) {
+      console.error('Network error:', error);
+      console.error('API_BASE_URL:', API_BASE_URL);
+      console.error('Endpoint:', endpoint);
+      throw new Error(
+        `Unable to connect to the server at ${API_BASE_URL}${endpoint}. ` +
+        `Please check your internet connection and ensure the server is running.`
+      );
+    }
+    // Re-throw other errors
+    throw error;
+  }
 }
 
 // Authentication API
 export const auth = {
   login: async (username: string, password: string) => {
-    const response = await fetch(`${API_BASE_URL}/auth/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password }),
-    });
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password }),
+      });
 
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({ error: 'Login failed' }));
-      throw new Error(error.message || error.error || 'Login failed');
-    }
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({ error: 'Login failed' }));
+        throw new Error(error.message || error.error || 'Login failed');
+      }
 
-    const data = await response.json();
-    if (data.access_token) {
-      setAuthToken(data.access_token);
+      const data = await response.json();
+      if (data.access_token) {
+        setAuthToken(data.access_token);
+      }
+      return data;
+    } catch (error: any) {
+      // Handle network errors (failed to fetch)
+      if (error instanceof TypeError && error.message.includes('fetch')) {
+        console.error('Network error:', error);
+        throw new Error(
+          `Unable to connect to the server. Please check:\n` +
+          `1. Your internet connection\n` +
+          `2. The server is running at ${API_BASE_URL}\n` +
+          `3. CORS is properly configured`
+        );
+      }
+      // Re-throw other errors
+      throw error;
     }
-    return data;
   },
 
   logout: () => {
