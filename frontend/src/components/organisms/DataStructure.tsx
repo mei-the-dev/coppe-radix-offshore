@@ -878,7 +878,13 @@ export default function DataStructure({}: DataStructureProps) {
 
     return (
       <Card key={table.name} variant="outlined" padding="md" className="data-table-card">
-        <div className="data-table-header" onClick={() => toggleTable(tablePath)}>
+        <div 
+          className="data-table-header" 
+          onClick={() => toggleTable(tablePath)}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => e.key === 'Enter' && toggleTable(tablePath)}
+        >
           <div className="data-table-header-content">
             {isExpanded ? <IconChevronDown size={16} /> : <IconChevronRight size={16} />}
             <div className="data-table-info">
@@ -957,24 +963,29 @@ export default function DataStructure({}: DataStructureProps) {
     const isExpanded = expandedSections[sectionName];
 
     return (
-      <div key={sectionName} className="data-section">
+      <Card key={sectionName} className="data-section" variant="outlined">
         <div
           className="data-section-header"
           style={{ borderLeftColor: sectionData.color }}
           onClick={() => toggleSection(sectionName)}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => e.key === 'Enter' && toggleSection(sectionName)}
         >
-          <div className="data-section-header-content">
-            {isExpanded ? <IconChevronDown size={20} /> : <IconChevronRight size={20} />}
+          <div className="data-section-title">
             <div className="data-section-icon" style={{ color: sectionData.color }}>
               {sectionData.icon}
             </div>
             <div className="data-section-info">
-              <h2 className="data-section-title">{sectionName}</h2>
+              <h2>{sectionName}</h2>
               <span className="data-section-count">
                 {sectionData.tables.length} tables
               </span>
             </div>
           </div>
+          <span className="data-section-toggle">
+            {isExpanded ? '▼' : '▶'}
+          </span>
         </div>
         {isExpanded && (
           <div className="data-section-content">
@@ -983,7 +994,7 @@ export default function DataStructure({}: DataStructureProps) {
             </Stack>
           </div>
         )}
-      </div>
+      </Card>
     );
   };
 
