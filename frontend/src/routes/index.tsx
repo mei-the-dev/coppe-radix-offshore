@@ -6,9 +6,10 @@ import AppLayout from './AppLayout';
 const LoginPage = lazy(() => import('../pages/LoginPage'));
 
 // Lazy load routes for code splitting
-const DashboardRoute = lazy(() => import('./DashboardRoute'));
-const PlanningRoute = lazy(() => import('./PlanningRoute'));
-const SimulationRoute = lazy(() => import('./SimulationRoute'));
+// Dashboard, Planning, and Visualization routes are hidden (under development)
+// const DashboardRoute = lazy(() => import('./DashboardRoute'));
+// const PlanningRoute = lazy(() => import('./PlanningRoute'));
+// const SimulationRoute = lazy(() => import('./SimulationRoute'));
 const ModelRoute = lazy(() => import('./ModelRoute'));
 const DataStructureRoute = lazy(() => import('./DataStructureRoute'));
 const MetricsRoute = lazy(() => import('./MetricsRoute'));
@@ -26,10 +27,11 @@ export const router = createBrowserRouter([
     path: '/',
     element: <AppLayout />,
     children: [
-      { index: true, element: <Navigate to="/dashboard" replace /> },
-      { path: 'dashboard', element: <DashboardRoute /> },
-      { path: 'planning', element: <PlanningRoute /> },
-      { path: 'simulation', element: <SimulationRoute /> },
+      { index: true, element: <Navigate to="/data" replace /> },
+      // Dashboard, Planning, and Visualization routes are hidden (under development)
+      // { path: 'dashboard', element: <DashboardRoute /> },
+      // { path: 'planning', element: <PlanningRoute /> },
+      // { path: 'simulation', element: <SimulationRoute /> },
       { path: 'model', element: <ModelRoute /> },
       { path: 'data', element: <DataStructureRoute /> },
       { path: 'metrics', element: <MetricsRoute /> },

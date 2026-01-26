@@ -878,8 +878,8 @@ export default function DataStructure({}: DataStructureProps) {
 
     return (
       <Card key={table.name} variant="outlined" padding="md" className="data-table-card">
-        <div 
-          className="data-table-header" 
+        <div
+          className="data-table-header"
           onClick={() => toggleTable(tablePath)}
           role="button"
           tabIndex={0}
@@ -963,32 +963,28 @@ export default function DataStructure({}: DataStructureProps) {
     const isExpanded = expandedSections[sectionName];
 
     return (
-      <Card key={sectionName} className="data-section" variant="outlined">
+      <Card key={sectionName} className="metrics-section" variant="outlined">
         <div
-          className="data-section-header"
-          style={{ borderLeftColor: sectionData.color }}
+          className="metrics-section-header"
+          style={{ borderLeftColor: sectionData.color, borderLeftWidth: '5px', borderLeftStyle: 'solid' }}
           onClick={() => toggleSection(sectionName)}
           role="button"
           tabIndex={0}
           onKeyDown={(e) => e.key === 'Enter' && toggleSection(sectionName)}
         >
-          <div className="data-section-title">
-            <div className="data-section-icon" style={{ color: sectionData.color }}>
+          <div className="metrics-section-title">
+            <div style={{ color: sectionData.color }}>
               {sectionData.icon}
             </div>
-            <div className="data-section-info">
-              <h2>{sectionName}</h2>
-              <span className="data-section-count">
-                {sectionData.tables.length} tables
-              </span>
-            </div>
+            <h2>{sectionName}</h2>
+            <Badge variant="info" size="sm">{sectionData.tables.length} tables</Badge>
           </div>
-          <span className="data-section-toggle">
+          <span className="metrics-section-toggle">
             {isExpanded ? '▼' : '▶'}
           </span>
         </div>
         {isExpanded && (
-          <div className="data-section-content">
+          <div className="metrics-section-content">
             <Stack direction="column" gap="md">
               {sectionData.tables.map(table => renderTable(table, sectionName))}
             </Stack>
@@ -1005,71 +1001,73 @@ export default function DataStructure({}: DataStructureProps) {
   );
 
   return (
-    <div className="data-structure-viewer">
-      <div className="data-structure-header">
-        <h1 className="data-structure-title">
+    <div className="metrics-report">
+      <div className="metrics-header">
+        <h1>
           <IconDatabase size={32} />
           PRIO Offshore Logistics Database Schema
         </h1>
-        <p className="data-structure-subtitle">
+        <p className="metrics-subtitle">
           PostgreSQL database schema with PostGIS and TimescaleDB extensions.
           Click on sections and tables to expand and view detailed column definitions.
         </p>
-        <div className="data-structure-stats">
-          <div className="stat-box stat-box-blue">
-            <div className="stat-value">{Object.keys(databaseSchema).length}</div>
-            <div className="stat-label">Domains</div>
-          </div>
-          <div className="stat-box stat-box-green">
-            <div className="stat-value">{totalTables}</div>
-            <div className="stat-label">Tables</div>
-          </div>
-          <div className="stat-box stat-box-orange">
-            <div className="stat-value">{totalColumns}</div>
-            <div className="stat-label">Columns</div>
-          </div>
-          <div className="stat-box stat-box-purple">
-            <div className="stat-value">{materializedViews.length}</div>
-            <div className="stat-label">Materialized Views</div>
-          </div>
+        <div className="metrics-meta">
+          <Badge variant="info" size="sm">{Object.keys(databaseSchema).length} Domains</Badge>
+          <Badge variant="info" size="sm">{totalTables} Tables</Badge>
+          <Badge variant="info" size="sm">{totalColumns} Columns</Badge>
+          <Badge variant="info" size="sm">{materializedViews.length} Materialized Views</Badge>
         </div>
       </div>
 
-      <div className="data-structure-sections">
+      <div>
         {Object.entries(databaseSchema).map(([sectionName, sectionData]) =>
           renderSection(sectionName, sectionData)
         )}
       </div>
 
       {materializedViews.length > 0 && (
-        <div className="data-structure-views">
-          <h2 className="views-title">Materialized Views</h2>
-          <Stack direction="column" gap="md">
-            {materializedViews.map(view => (
-              <Card key={view.name} variant="outlined" padding="md">
-                <h3 className="view-name">{view.name}</h3>
-                <p className="view-description">{view.description}</p>
-                <div className="view-columns">
-                  <strong>Columns:</strong> {view.columns.join(', ')}
-                </div>
-              </Card>
-            ))}
-          </Stack>
-        </div>
+        <Card className="metrics-section">
+          <div className="metrics-section-header">
+            <div className="metrics-section-title">
+              <IconDatabase size={24} />
+              <h2>Materialized Views</h2>
+            </div>
+          </div>
+          <div className="metrics-section-content">
+            <Stack direction="column" gap="md">
+              {materializedViews.map(view => (
+                <Card key={view.name} variant="outlined" padding="md">
+                  <h3 className="view-name">{view.name}</h3>
+                  <p className="view-description">{view.description}</p>
+                  <div className="view-columns">
+                    <strong>Columns:</strong> {view.columns.join(', ')}
+                  </div>
+                </Card>
+              ))}
+            </Stack>
+          </div>
+        </Card>
       )}
 
-      <div className="data-structure-notes">
-        <h3 className="notes-title">Database Features</h3>
-        <ul className="notes-list">
-          <li>• <strong>PostGIS</strong>: Geographic data types (GEOGRAPHY) for location storage</li>
-          <li>• <strong>TimescaleDB</strong>: Time-series hypertable for weather_forecasts</li>
-          <li>• <strong>pg_trgm</strong>: Trigram indexes for text search on vessel and installation names</li>
-          <li>• <strong>Automatic triggers</strong>: Update timestamps and cost calculations</li>
-          <li>• <strong>Materialized views</strong>: Pre-computed analytics for inventory and performance</li>
-          <li>• <strong>Foreign key constraints</strong>: Referential integrity with CASCADE deletes where appropriate</li>
-          <li>• <strong>Check constraints</strong>: Data validation (enums, ranges, uniqueness)</li>
-        </ul>
-      </div>
+      <Card className="metrics-section">
+        <div className="metrics-section-header">
+          <div className="metrics-section-title">
+            <IconDatabase size={24} />
+            <h2>Database Features</h2>
+          </div>
+        </div>
+        <div className="metrics-section-content">
+          <ul className="notes-list">
+            <li>• <strong>PostGIS</strong>: Geographic data types (GEOGRAPHY) for location storage</li>
+            <li>• <strong>TimescaleDB</strong>: Time-series hypertable for weather_forecasts</li>
+            <li>• <strong>pg_trgm</strong>: Trigram indexes for text search on vessel and installation names</li>
+            <li>• <strong>Automatic triggers</strong>: Update timestamps and cost calculations</li>
+            <li>• <strong>Materialized views</strong>: Pre-computed analytics for inventory and performance</li>
+            <li>• <strong>Foreign key constraints</strong>: Referential integrity with CASCADE deletes where appropriate</li>
+            <li>• <strong>Check constraints</strong>: Data validation (enums, ranges, uniqueness)</li>
+          </ul>
+        </div>
+      </Card>
     </div>
   );
 }

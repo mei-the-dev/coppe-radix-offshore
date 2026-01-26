@@ -38,7 +38,6 @@ export default function MetricsReport({}: MetricsReportProps) {
           <Badge variant="info" size="sm">Versão 1.0</Badge>
           <Badge variant="info" size="sm">Janeiro 2026</Badge>
           <Badge variant="info" size="sm">25+ páginas</Badge>
-          <Badge variant="info" size="sm">Preparado por: Claude (Anthropic)</Badge>
         </div>
       </div>
 
