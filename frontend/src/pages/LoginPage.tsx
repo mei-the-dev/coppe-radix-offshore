@@ -21,7 +21,7 @@ export default function LoginPage() {
   // Redirect if already authenticated
   useEffect(() => {
     if (!authLoading && isAuthenticated) {
-      navigate('/dashboard', { replace: true });
+      navigate('/metrics', { replace: true });
     }
   }, [isAuthenticated, authLoading, navigate]);
 
@@ -32,7 +32,7 @@ export default function LoginPage() {
 
     try {
       await login(username, password);
-      navigate('/dashboard', { replace: true });
+      navigate('/metrics', { replace: true });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed. Please check your credentials.');
     } finally {
