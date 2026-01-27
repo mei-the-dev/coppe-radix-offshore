@@ -1,5 +1,14 @@
 # Deployment Troubleshooting Guide
 
+## Backend URL Configuration
+
+**Current deployment:** The backend is at the same origin as the frontend, under the path `/coppe-radix-offshore-backend`:
+
+- Frontend: `https://sea-lion-app-8l7y7.ondigitalocean.app/`
+- Backend: `https://sea-lion-app-8l7y7.ondigitalocean.app/coppe-radix-offshore-backend`
+
+The API client is configured to use this path when running on `ondigitalocean.app` and when `VITE_API_URL` is localhost or empty.
+
 ## Backend URL Configuration Issue
 
 If you're experiencing "failed to fetch" errors when trying to login, the frontend might not be able to find the backend URL.

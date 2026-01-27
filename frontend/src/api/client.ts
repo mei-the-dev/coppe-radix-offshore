@@ -1,52 +1,28 @@
 // API client for PRIO Offshore Logistics API
 
-// In production, if VITE_API_URL is not set, try to infer from current origin
-// This handles cases where the backend might be on a different subdomain
+// Backend path on DigitalOcean App Platform (same origin, path-based routing).
+const DEPLOYED_BACKEND_PATH = '/coppe-radix-offshore-backend';
+
+// In production, if VITE_API_URL is localhost or not set when we're on the deployed app,
+// use the known backend URL (same origin + path).
 const getApiBaseUrl = () => {
-  const envUrl = import.meta.env.VITE_API_URL;
-  if (envUrl && envUrl.trim() !== '') {
-    // Remove trailing slash if present
-    return envUrl.replace(/\/$/, '');
-  }
-  
-  // Development fallback
-  if (import.meta.env.DEV) {
-    return 'http://localhost:3001';
-  }
-  
-  // Production: In DigitalOcean App Platform, each service gets its own URL
-  // The backend URL should be set via ${backend.PUBLIC_URL} in app.yaml
-  // If it's not set, we can't reliably determine it, so throw an error
-  if (typeof window !== 'undefined') {
-    const hostname = window.location.hostname;
-    if (hostname.includes('ondigitalocean.app')) {
-      // Try to construct backend URL from app name pattern
-      // DigitalOcean services typically follow: <app-name>-<service-name>-<hash>.ondigitalocean.app
-      // Or: <service-name>-<hash>.ondigitalocean.app
-      // For now, we'll try a few patterns
-      const parts = hostname.split('.');
-      const domainPart = parts[0]; // e.g., "sea-lion-app-8l7y7" or "frontend-xxxxx"
-      
-      // Try to replace frontend/service name with "backend"
-      let backendHostname = domainPart;
-      if (domainPart.includes('frontend')) {
-        backendHostname = domainPart.replace(/frontend/i, 'backend');
-      } else if (domainPart.includes('sea-lion-app')) {
-        // If it's the app-level URL, try to construct backend service URL
-        // This is a guess - the actual URL depends on DigitalOcean's naming
-        backendHostname = domainPart.replace('sea-lion-app', 'backend');
-      } else {
-        // Last resort: try appending -backend
-        backendHostname = `${domainPart}-backend`;
-      }
-      
-      const backendUrl = `https://${backendHostname}.ondigitalocean.app`;
-      console.warn('VITE_API_URL not set. Attempting to use:', backendUrl);
-      console.warn('If this fails, please set VITE_API_URL environment variable in DigitalOcean App Platform');
-      return backendUrl;
+  const envUrl = (import.meta.env.VITE_API_URL || '').trim().replace(/\/$/, '');
+  const isLocalhost = (url: string) =>
+    !url || url.startsWith('http://localhost') || url.startsWith('http://127.0.0.1');
+
+  // When running on the deployed app (ondigitalocean.app), never use localhost.
+  // Backend is at same origin + /coppe-radix-offshore-backend.
+  if (typeof window !== 'undefined' && window.location.hostname.includes('ondigitalocean.app')) {
+    if (isLocalhost(envUrl) || !envUrl) {
+      const base = `${window.location.origin}${DEPLOYED_BACKEND_PATH}`;
+      console.warn('VITE_API_URL was localhost or empty on deployed app; using:', base);
+      return base;
     }
+    return envUrl;
   }
-  
+
+  if (envUrl && !isLocalhost(envUrl)) return envUrl;
+  if (import.meta.env.DEV) return 'http://localhost:3001';
   return 'http://localhost:3001';
 };
 
