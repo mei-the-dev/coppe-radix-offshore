@@ -1,11 +1,13 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
-import type { Vessel, Berth } from '../../types';
+import type { Vessel, Berth, Trip } from '../../types';
 import { IconVessel, IconPort, IconFPSO, IconPlatform, IconZoomIn, IconZoomOut, IconReset, IconClose } from '../../assets/icons';
 import { Card } from '../display';
 import { Badge } from '../display';
 import { Stack } from '../layout';
 import { IconButton } from '../action';
-import { api, prioAPI } from '../../api/client';
+import { prioAPI } from '../../api/client';
+import { useTrips } from '../../hooks/useTrips';
+import { useLoadingPlans } from '../../hooks/useLoadingPlans';
 import './Visualization.css';
 
 // Constants
@@ -16,12 +18,6 @@ const MAP_PADDING = 0.1;
 const BOUNDS_PADDING = 0.2;
 const MIN_PADDING_DEGREES = 0.3;
 const DEFAULT_MAP_SIZE = { width: 1000, height: 600 };
-const MACAE_PORT = {
-  id: 'macae-port',
-  name: 'Port of Macaé',
-  location: { latitude: -22.3833, longitude: -41.7833 },
-  port_code: 'BRMEA'
-};
 
 // Helper functions
 const isValidCoordinate = (value: number | undefined | null): value is number => {
@@ -83,11 +79,11 @@ interface VisualizationProps {
   berths?: Berth[];
 }
 
-type MarkerType = 'port' | 'installation' | 'vessel';
+type MarkerType = 'port' | 'installation' | 'vessel' | 'trip';
 
 interface MarkerData {
   type: MarkerType;
-  data: SupplyBase | Installation | Vessel;
+  data: SupplyBase | Installation | Vessel | Trip;
 }
 
 export default function Visualization({ vessels: propsVessels, berths: propsBerths }: VisualizationProps) {
@@ -100,9 +96,40 @@ export default function Visualization({ vessels: propsVessels, berths: propsBert
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Fetch trips data from database (SSO)
+  const { data: trips = [], isLoading: tripsLoading } = useTrips({
+    status: undefined, // Get all trips for now
+  });
+
+  // Log trips data source
+  useEffect(() => {
+    if (trips.length > 0) {
+      console.log('✅ Fetched trips from database (SSO):', trips.length);
+    } else if (!tripsLoading) {
+      console.warn('⚠️ No trips found in database. Please populate the trips table.');
+    }
+  }, [trips, tripsLoading]);
+
+  // Fetch orders/loading plans from database (SSO)
+  const { data: orders = [] } = useLoadingPlans();
+
+  // Log orders data source
+  useEffect(() => {
+    if (orders.length > 0) {
+      console.log('✅ Fetched orders from database (SSO):', orders.length);
+    }
+  }, [orders]);
+
   // Map navigation state
   const [selectedMarker, setSelectedMarker] = useState<MarkerData | null>(null);
+  const [selectedTrip, setSelectedTrip] = useState<Trip | null>(null);
   const [hoveredMarker, setHoveredMarker] = useState<MarkerData | null>(null);
+  const [hoveredTrip, setHoveredTrip] = useState<Trip | null>(null);
+  const [showTrips, setShowTrips] = useState(true); // Toggle trip routes
+  const [showCargoFlows, setShowCargoFlows] = useState(true); // Toggle cargo flows
+  const [showLoadingOps, setShowLoadingOps] = useState(true); // Toggle loading operations
+  const [filterStatus, setFilterStatus] = useState<string>('all'); // Filter by status
+  const [filterVessel, setFilterVessel] = useState<string>('all'); // Filter by vessel
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [isDragging, setIsDragging] = useState(false);
@@ -149,55 +176,57 @@ export default function Visualization({ vessels: propsVessels, berths: propsBert
       setLoading(true);
       setError(null);
 
-      // Fetch all vessels from database
-      let currentVessels = propsVessels || [];
-      try {
-        const vesselsResponse = await prioAPI.vessels.list();
-        const vesselsData = vesselsResponse.data || [];
+      // Fetch all vessels from database (SSO - Single Source of Truth)
+      const vesselsResponse = await prioAPI.vessels.list();
+      const vesselsData = vesselsResponse.data || [];
 
-        // Normalize vessel position data
-        const normalizedVessels = vesselsData.map((vessel: any) => {
-          // If position is not set but we have location data, use it
-          if (!vessel.position && vessel.location) {
-            if (typeof vessel.location === 'string' && vessel.location.startsWith('POINT')) {
-              const match = vessel.location.match(/POINT\(([^ ]+) ([^ ]+)\)/);
-              if (match) {
-                vessel.position = {
-                  lon: parseFloat(match[1]),
-                  lat: parseFloat(match[2]),
-                };
-              }
-            } else if (vessel.location.latitude !== undefined && vessel.location.longitude !== undefined) {
-              vessel.position = {
-                lat: vessel.location.latitude,
-                lon: vessel.location.longitude,
-              };
-            }
-          }
-          // If position uses lat/lon instead of lat/lon structure
-          else if (vessel.position && vessel.position.latitude !== undefined) {
-            vessel.position = {
-              lat: vessel.position.latitude,
-              lon: vessel.position.longitude,
-            };
-          }
-          return vessel;
-        });
-
-        currentVessels = normalizedVessels;
-        console.log('Fetched vessels:', normalizedVessels.length, normalizedVessels);
-        setVessels(normalizedVessels);
-      } catch (err) {
-        console.warn('Failed to fetch vessels from PRIO API, trying legacy endpoint:', err);
-        try {
-          const legacyVessels = await api.getVessels();
-          currentVessels = legacyVessels;
-          setVessels(legacyVessels);
-        } catch (legacyErr) {
-          console.error('Failed to fetch vessels from both APIs:', legacyErr);
-          // Keep existing vessels from props if available
+      // Normalize vessel position data from database
+      const normalizedVessels = vesselsData.map((vessel: any) => {
+        // Database returns current_lat and current_lon from PostGIS coordinates
+        let position = undefined;
+        if (vessel.current_lat !== null && vessel.current_lat !== undefined && 
+            vessel.current_lon !== null && vessel.current_lon !== undefined) {
+          position = {
+            lat: parseFloat(vessel.current_lat),
+            lon: parseFloat(vessel.current_lon),
+          };
         }
+        
+        // Map database fields to frontend Vessel type
+        const mappedVessel: Vessel = {
+          id: vessel.id,
+          name: vessel.name,
+          type: (vessel.class || vessel.type || 'Standard PSV') as Vessel['type'],
+          status: vessel.availability?.status === 'InUse' ? 'in_transit' :
+                 vessel.availability?.status === 'Available' ? 'available' :
+                 vessel.availability?.status === 'Maintenance' ? 'maintenance' :
+                 vessel.availability?.status === 'Drydock' ? 'maintenance' :
+                 vessel.status || 'available',
+          lengthOverall: vessel.specifications?.loa_m || vessel.lengthOverall || 0,
+          beam: vessel.specifications?.beam_m || vessel.beam || 0,
+          draughtLoaded: vessel.specifications?.draught_m || vessel.draughtLoaded || 0,
+          totalDeadweight: vessel.specifications?.total_deadweight_t || vessel.totalDeadweight || 0,
+          deckCargoCapacity: vessel.specifications?.deck_cargo_capacity_t || vessel.deckCargoCapacity || 0,
+          clearDeckArea: vessel.clearDeckArea || 0,
+          fuelOilCapacity: vessel.fuelOilCapacity || 0,
+          freshWaterCapacity: vessel.freshWaterCapacity || 0,
+          liquidMudCapacity: vessel.liquidMudCapacity || 0,
+          dryBulkCapacity: vessel.dryBulkCapacity || 0,
+          serviceSpeed: vessel.serviceSpeed || 0,
+          operationalSpeed: vessel.specifications?.operational_speed_kts || vessel.operationalSpeed || 0,
+          dpClass: (vessel.dp_class || vessel.dpClass || 'None') as Vessel['dpClass'],
+          currentLocation: vessel.availability?.current_location?.name || vessel.currentLocation,
+          position: position,
+        };
+        
+        return mappedVessel;
+      });
+
+      console.log('✅ Fetched vessels from database (SSO):', normalizedVessels.length);
+      if (normalizedVessels.length === 0) {
+        console.warn('⚠️ No vessels found in database. Please populate the vessels table.');
       }
+      setVessels(normalizedVessels);
 
       // Fetch all installations/platforms from database
       const installationsResponse = await prioAPI.installations.list({ include_storage: true });
@@ -227,7 +256,10 @@ export default function Visualization({ vessels: propsVessels, berths: propsBert
         return inst;
       });
 
-      console.log('Fetched installations:', normalizedInstallations.length, normalizedInstallations);
+      console.log('✅ Fetched installations from database (SSO):', normalizedInstallations.length);
+      if (normalizedInstallations.length === 0) {
+        console.warn('⚠️ No installations found in database. Please populate the installations table.');
+      }
       setInstallations(normalizedInstallations);
 
       // Fetch detailed data for each installation
@@ -242,37 +274,57 @@ export default function Visualization({ vessels: propsVessels, berths: propsBert
       }
       setDetailedInstallations(installationDetails);
 
-      // Fetch berths if not provided as props
-      let currentBerths = propsBerths || [];
+      // Fetch supply bases from database (SSO)
+      const supplyBasesResponse = await prioAPI.supplyBases.list();
+      const supplyBasesData = supplyBasesResponse.data || [];
+      
+      const fetchedSupplyBases: SupplyBase[] = supplyBasesData.map((base: any) => ({
+        id: base.id,
+        name: base.name,
+        location: base.location || {
+          latitude: base.latitude,
+          longitude: base.longitude,
+        },
+        port_code: base.port_code,
+        num_berths: base.specifications?.num_berths || 0,
+        operating_hours: base.specifications?.operating_hours || '24/7',
+        max_draught_m: base.specifications?.max_draught_m,
+        max_vessel_length_m: base.specifications?.max_vessel_length_m,
+      }));
+      
+      console.log('✅ Fetched supply bases from database (SSO):', fetchedSupplyBases.length);
+      if (fetchedSupplyBases.length === 0) {
+        console.warn('⚠️ No supply bases found in database. Please populate the supply_bases table.');
+      }
+      setSupplyBases(fetchedSupplyBases);
+
+      // Fetch berths from supply bases (database SSO)
       if (!propsBerths || propsBerths.length === 0) {
-        try {
-          const berthsData = await api.getBerths();
-          currentBerths = berthsData;
+        // Get berths from the first supply base (typically Macaé)
+        // In production, you might want to filter for a specific port
+        const primaryBase = fetchedSupplyBases.find(b => 
+          b.port_code === 'BRMEA' || 
+          b.name.toLowerCase().includes('macae')
+        ) || fetchedSupplyBases[0];
+        
+        if (primaryBase) {
+          const berthsData = await prioAPI.supplyBases.getBerths(primaryBase.id);
+          console.log('✅ Fetched berths from database (SSO):', berthsData.length);
+          if (berthsData.length === 0) {
+            console.warn('⚠️ No berths found for supply base. Check supply_bases.num_berths in database.');
+          }
           setBerths(berthsData);
-        } catch (err) {
-          console.warn('Failed to fetch berths:', err);
+        } else {
+          console.warn('No supply base found for berth retrieval');
+          setBerths([]);
         }
       }
 
-      // Fetch supply bases (berths are at Macaé port)
-      const supplyBaseData: SupplyBase[] = [{
-        id: 'macae-port',
-        name: 'Port of Macaé',
-        location: {
-          latitude: MACAE_PORT.location.latitude,
-          longitude: MACAE_PORT.location.longitude,
-        },
-        port_code: MACAE_PORT.port_code,
-        num_berths: currentBerths.length,
-        operating_hours: '24/7',
-      }];
-      setSupplyBases(supplyBaseData);
-
-      // Fetch detailed vessel data for all vessels
+      // Fetch detailed vessel data from database (SSO)
       const vesselDetails: Record<string, any> = {};
-      for (const vessel of currentVessels) {
+      for (const vessel of normalizedVessels) {
         try {
-          const detail = await api.getVessel(vessel.id);
+          const detail = await prioAPI.vessels.get(vessel.id);
           vesselDetails[vessel.id] = detail;
         } catch (err) {
           console.warn(`Failed to fetch details for vessel ${vessel.id}:`, err);
@@ -293,9 +345,7 @@ export default function Visualization({ vessels: propsVessels, berths: propsBert
   // Calculate map bounds
   const mapBounds = useMemo(() => {
     try {
-      const allPoints: Array<{ lat: number; lon: number }> = [
-        { lat: MACAE_PORT.location.latitude, lon: MACAE_PORT.location.longitude }
-      ];
+      const allPoints: Array<{ lat: number; lon: number }> = [];
 
       // Add supply bases
       supplyBases.forEach(base => {
@@ -319,8 +369,9 @@ export default function Visualization({ vessels: propsVessels, berths: propsBert
       });
 
       if (allPoints.length === 0) {
-        // Fallback to Campos Basin area
-        return { minLat: -23.0, maxLat: -21.0, minLon: -42.0, maxLon: -40.0 };
+        // If no data points, return empty bounds (will be handled by component)
+        console.warn('No valid data points found for map bounds calculation');
+        return { minLat: 0, maxLat: 0, minLon: 0, maxLon: 0 };
       }
 
       const lats = allPoints.map(p => p.lat);
@@ -525,10 +576,13 @@ export default function Visualization({ vessels: propsVessels, berths: propsBert
   // Render marker scale based on zoom
   const markerScale = Math.min(zoom, 1.5);
 
-  if (loading) {
+  // Combined loading state
+  const isLoading = loading || tripsLoading;
+
+  if (isLoading) {
     return (
       <div className="visualization-loading">
-        <div className="loading-spinner">Loading map data...</div>
+        <div className="loading-spinner">Loading map data from database...</div>
       </div>
     );
   }
@@ -536,8 +590,24 @@ export default function Visualization({ vessels: propsVessels, berths: propsBert
   if (error) {
     return (
       <div className="visualization-error">
-        <p>Error: {error}</p>
+        <p>Error loading data from database: {error}</p>
+        <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--text-secondary)', marginTop: 'var(--spacing-2)' }}>
+          Please ensure the database is connected and contains data.
+        </p>
         <button onClick={loadAllData}>Retry</button>
+      </div>
+    );
+  }
+
+  // Validate we have data from database
+  if (vessels.length === 0 && installations.length === 0 && supplyBases.length === 0) {
+    return (
+      <div className="visualization-error">
+        <p>No data available from database</p>
+        <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--text-secondary)', marginTop: 'var(--spacing-2)' }}>
+          The database appears to be empty. Please populate the database with vessels, installations, and supply bases.
+        </p>
+        <button onClick={loadAllData}>Refresh</button>
       </div>
     );
   }
@@ -546,6 +616,37 @@ export default function Visualization({ vessels: propsVessels, berths: propsBert
     <div className="visualization">
       <div className="visualization-header">
         <h2>Offshore Logistics Map</h2>
+        {/* Filter Controls */}
+        <div className="visualization-filters">
+          <div className="filter-group">
+            <label>Status</label>
+            <select
+              className="filter-select"
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value)}
+            >
+              <option value="all">All Status</option>
+              <option value="Planned">Planned</option>
+              <option value="InProgress">In Progress</option>
+              <option value="Completed">Completed</option>
+              <option value="Loading">Loading</option>
+              <option value="InTransit">In Transit</option>
+            </select>
+          </div>
+          <div className="filter-group">
+            <label>Vessel</label>
+            <select
+              className="filter-select"
+              value={filterVessel}
+              onChange={(e) => setFilterVessel(e.target.value)}
+            >
+              <option value="all">All Vessels</option>
+              {vessels.map(v => (
+                <option key={v.id} value={v.id}>{v.name}</option>
+              ))}
+            </select>
+          </div>
+        </div>
         <div className="visualization-legend">
           <div className="legend-item">
             <IconPort size={20} />
@@ -563,8 +664,167 @@ export default function Visualization({ vessels: propsVessels, berths: propsBert
             <IconVessel size={20} />
             <span>Vessel in Transit</span>
           </div>
+          {showTrips && (
+            <>
+              <div className="legend-item">
+                <div className="legend-line legend-line--planned" />
+                <span>Planned Trip</span>
+              </div>
+              <div className="legend-item">
+                <div className="legend-line legend-line--in-progress" />
+                <span>Active Trip</span>
+              </div>
+              <div className="legend-item">
+                <div className="legend-line legend-line--completed" />
+                <span>Completed Trip</span>
+              </div>
+            </>
+          )}
+        </div>
+        <div className="visualization-controls">
+          <button
+            className={`toggle-button ${showTrips ? 'toggle-button--active' : ''}`}
+            onClick={() => setShowTrips(!showTrips)}
+            aria-label={showTrips ? 'Hide trip routes' : 'Show trip routes'}
+          >
+            {showTrips ? 'Hide' : 'Show'} Trip Routes
+          </button>
+          <button
+            className={`toggle-button ${showCargoFlows ? 'toggle-button--active' : ''}`}
+            onClick={() => setShowCargoFlows(!showCargoFlows)}
+            aria-label={showCargoFlows ? 'Hide cargo flows' : 'Show cargo flows'}
+          >
+            {showCargoFlows ? 'Hide' : 'Show'} Cargo Flows
+          </button>
+          <button
+            className={`toggle-button ${showLoadingOps ? 'toggle-button--active' : ''}`}
+            onClick={() => setShowLoadingOps(!showLoadingOps)}
+            aria-label={showLoadingOps ? 'Hide loading ops' : 'Show loading ops'}
+          >
+            {showLoadingOps ? 'Hide' : 'Show'} Loading Ops
+          </button>
         </div>
       </div>
+
+      {/* Analytics Panel */}
+      <Card variant="outlined" padding="md" className="map-analytics-panel">
+        <Stack direction="column" gap="sm">
+          <h3>Operational KPIs</h3>
+          <div className="analytics-kpi">
+            <div className="analytics-kpi-label">Active Trips</div>
+            <div className="analytics-kpi-value">
+              {trips.filter(t => t.status === 'InProgress').length}
+            </div>
+            <div className="analytics-kpi-change">
+              {trips.filter(t => t.status === 'Planned').length} planned
+            </div>
+          </div>
+          <div className="analytics-kpi">
+            <div className="analytics-kpi-label">Cargo in Transit</div>
+            <div className="analytics-kpi-value">
+              {orders
+                .filter((o: any) => o.status === 'InTransit' || o.status === 'Loading')
+                .reduce((sum: number, o: any) => sum + (o.cargoItems?.length || 0), 0)}
+            </div>
+            <div className="analytics-kpi-change">items</div>
+          </div>
+          <div className="analytics-kpi">
+            <div className="analytics-kpi-label">Fleet Utilization</div>
+            <div className="analytics-kpi-value">
+              {vessels.length > 0 
+                ? `${Math.round((vessels.filter(v => v.status === 'in_transit' || v.status === 'at_platform').length / vessels.length) * 100)}%`
+                : '0%'}
+            </div>
+            <div className="analytics-kpi-change">
+              {vessels.filter(v => v.status === 'in_transit' || v.status === 'at_platform').length} / {vessels.length} vessels
+            </div>
+          </div>
+          <div className="analytics-kpi">
+            <div className="analytics-kpi-label">Total Distance Today</div>
+            <div className="analytics-kpi-value">
+              {trips
+                .filter(t => {
+                  const today = new Date().toISOString().split('T')[0];
+                  return t.route.some(wp => wp.planned_arrival?.startsWith(today));
+                })
+                .reduce((sum, t) => sum + (t.metrics?.total_distance_nm || 0), 0)
+                .toFixed(0)}
+            </div>
+            <div className="analytics-kpi-change">NM</div>
+          </div>
+        </Stack>
+      </Card>
+
+      {/* Loading Operations Panel */}
+      {showLoadingOps && orders.filter(o => o.status === 'Loading' || o.status === 'in_progress').length > 0 && (
+        <div className="map-loading-operation">
+          <Card variant="outlined" padding="md" className="loading-operation-card">
+            <div className="loading-operation-header">
+              <h4>Active Loading Operations</h4>
+              <Badge variant="info" size="sm">
+                {orders.filter(o => o.status === 'Loading' || o.status === 'in_progress').length}
+              </Badge>
+            </div>
+            <Stack direction="column" gap="sm">
+              {orders
+                .filter(o => o.status === 'Loading' || o.status === 'in_progress')
+                .slice(0, 3)
+                .map((order) => {
+                  const vessel = vessels.find(v => v.id === order.vesselId);
+                  const berth = berths.find(b => b.id === order.berthId);
+                  const startTime = new Date(order.scheduledStart);
+                  const endTime = new Date(order.scheduledEnd);
+                  const now = new Date();
+                  const progress = Math.max(0, Math.min(100, ((now.getTime() - startTime.getTime()) / (endTime.getTime() - startTime.getTime())) * 100));
+
+                  return (
+                    <div key={order.id} className="loading-operation-item">
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--spacing-1)' }}>
+                        <span style={{ fontWeight: 'var(--font-weight-semibold)' }}>
+                          {vessel?.name || 'Unknown Vessel'}
+                        </span>
+                        <Badge 
+                          variant={order.status === 'Loading' ? 'info' : 'warning'} 
+                          size="sm"
+                        >
+                          {order.status}
+                        </Badge>
+                      </div>
+                      {berth && (
+                        <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--text-secondary)', marginBottom: 'var(--spacing-1)' }}>
+                          Berth: {berth.name}
+                        </div>
+                      )}
+                      <div className="loading-operation-progress">
+                        <div 
+                          className="loading-operation-progress-bar" 
+                          style={{ width: `${progress}%` }}
+                        />
+                      </div>
+                      <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--text-secondary)', marginTop: 'var(--spacing-1)' }}>
+                        {order.cargoItems?.length || 0} cargo items
+                      </div>
+                      {order.cargoItems && order.cargoItems.length > 0 && (
+                        <div className="loading-operation-cargo">
+                          {order.cargoItems.slice(0, 3).map((item: any, idx: number) => (
+                            <span key={idx} className="loading-operation-cargo-item">
+                              {item.name || item.type}
+                            </span>
+                          ))}
+                          {order.cargoItems.length > 3 && (
+                            <span className="loading-operation-cargo-item">
+                              +{order.cargoItems.length - 3} more
+                            </span>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+            </Stack>
+          </Card>
+        </div>
+      )}
 
       <div className="visualization-map-container">
         {/* Statistics Panel */}
@@ -599,6 +859,18 @@ export default function Visualization({ vessels: propsVessels, berths: propsBert
               <span>Zoom:</span>
               <strong>{zoom.toFixed(1)}x</strong>
             </div>
+            {showTrips && (
+              <>
+                <div className="stat-row">
+                  <span>Active Trips:</span>
+                  <strong>{trips.filter(t => t.status === 'InProgress').length}</strong>
+                </div>
+                <div className="stat-row">
+                  <span>Total Trips:</span>
+                  <strong>{trips.length}</strong>
+                </div>
+              </>
+            )}
           </Stack>
         </Card>
 
@@ -648,6 +920,247 @@ export default function Visualization({ vessels: propsVessels, berths: propsBert
             </defs>
             <rect width="100%" height="100%" fill="url(#map-grid)" />
           </svg>
+
+          {/* Cargo Flow Lines - Show cargo movements from supply base to installations */}
+          {showCargoFlows && (
+            <svg className="map-cargo-flows" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 2 }}>
+              {orders
+                .filter(order => {
+                  // Filter by status if needed
+                  if (filterStatus !== 'all' && order.status !== filterStatus) return false;
+                  if (filterVessel !== 'all' && order.vesselId !== filterVessel) return false;
+                  return order.status === 'Loading' || order.status === 'InTransit' || order.status === 'Confirmed';
+                })
+                .map((order) => {
+                  // Get supply base (Macaé port) coordinates
+                  const supplyBase = supplyBases.find(b => b.id === 'macae-port');
+                  if (!supplyBase) return null;
+
+                  // Get destination installation
+                  const destination = installations.find(inst => {
+                    // Try to match by installation name or ID from order
+                    // Orders have destination.installation_id or cargoItems have destination
+                    return order.cargoItems?.some((item: any) => item.destination === inst.id) ||
+                           (order as any).destination?.installation_id === inst.id;
+                  });
+
+                  if (!destination || !destination.location) return null;
+
+                  const fromX = lonToX(supplyBase.location.longitude);
+                  const fromY = latToY(supplyBase.location.latitude);
+                  const toX = lonToX(destination.location.longitude);
+                  const toY = latToY(destination.location.latitude);
+
+                  // Calculate cargo flow properties
+                  const totalQuantity = order.cargoItems?.reduce((sum: number, item: any) => sum + (item.weight || item.volume || 0), 0) || 0;
+                  const strokeWidth = Math.max(2, Math.min(8, totalQuantity / 100)); // Scale line thickness
+                  
+                  // Determine cargo category color
+                  const cargoCategory = order.cargoItems?.[0]?.category || 'deck_cargo';
+                  const flowColor = 
+                    cargoCategory === 'liquid_bulk' ? 'var(--color-primary-500, #3b82f6)' :
+                    cargoCategory === 'dry_bulk' ? 'var(--color-warning, #f59e0b)' :
+                    'var(--color-text-secondary, #6b7280)';
+
+                  return (
+                    <g
+                      key={`cargo-flow-${order.id}`}
+                      style={{ pointerEvents: 'stroke', cursor: 'pointer' }}
+                      onClick={() => {
+                        setSelectedMarker({ type: 'vessel', data: vessels.find(v => v.id === order.vesselId) || {} as Vessel });
+                      }}
+                    >
+                      {/* Animated cargo flow line */}
+                      <path
+                        d={`M ${fromX} ${fromY} L ${toX} ${toY}`}
+                        fill="none"
+                        stroke={flowColor}
+                        strokeWidth={strokeWidth}
+                        strokeDasharray="10,5"
+                        opacity={0.6}
+                        style={{ 
+                          pointerEvents: 'stroke',
+                          animation: 'cargoFlow 3s linear infinite'
+                        }}
+                      />
+                      {/* Cargo label at midpoint */}
+                      <text
+                        x={(fromX + toX) / 2}
+                        y={(fromY + toY) / 2 - 10}
+                        fill={flowColor}
+                        fontSize="10px"
+                        fontWeight="bold"
+                        textAnchor="middle"
+                        style={{ pointerEvents: 'none' }}
+                      >
+                        {order.cargoItems?.length || 0} items
+                      </text>
+                    </g>
+                  );
+                })
+                .filter(Boolean)
+              }
+            </svg>
+          )}
+
+          {/* Trip Routes */}
+          {showTrips && (
+            <svg className="map-trip-routes" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 1 }}>
+              {trips
+                .filter(trip => trip.route && trip.route.length > 1)
+                .map((trip) => {
+                  // Get coordinates for all waypoints
+                  const waypointCoords = trip.route
+                    .map((waypoint) => {
+                      let lat: number | null = null;
+                      let lon: number | null = null;
+
+                      if (waypoint.type === 'SupplyBase') {
+                        const base = supplyBases.find(b => b.id === waypoint.location_id);
+                        if (base) {
+                          lat = base.location.latitude;
+                          lon = base.location.longitude;
+                        }
+                      } else if (waypoint.type === 'Installation') {
+                        const inst = installations.find(i => i.id === waypoint.location_id);
+                        if (inst && inst.location) {
+                          lat = inst.location.latitude;
+                          lon = inst.location.longitude;
+                        }
+                      }
+
+                      if (lat !== null && lon !== null && isValidCoordinate(lat) && isValidCoordinate(lon)) {
+                        return { x: lonToX(lon), y: latToY(lat), waypoint };
+                      }
+                      return null;
+                    })
+                    .filter((coord): coord is { x: number; y: number; waypoint: any } => coord !== null);
+
+                  if (waypointCoords.length < 2) return null;
+
+                  // Determine route color based on trip status
+                  const routeColor = 
+                    trip.status === 'Completed' ? 'var(--color-success, #10b981)' :
+                    trip.status === 'InProgress' ? 'var(--color-primary-500, #3b82f6)' :
+                    trip.status === 'Planned' ? 'var(--color-text-secondary, #6b7280)' :
+                    trip.status === 'Delayed' ? 'var(--color-error, #ef4444)' :
+                    'var(--color-text-secondary, #6b7280)';
+
+                  const isSelected = selectedTrip?.id === trip.id;
+                  const isHovered = hoveredTrip?.id === trip.id;
+                  const strokeWidth = isSelected || isHovered ? 3 : 2;
+                  const opacity = isSelected ? 1 : isHovered ? 0.8 : 0.5;
+
+                  // Create path string
+                  const pathData = waypointCoords
+                    .map((coord, idx) => `${idx === 0 ? 'M' : 'L'} ${coord.x} ${coord.y}`)
+                    .join(' ');
+
+                  return (
+                    <g
+                      key={trip.id}
+                      style={{ pointerEvents: 'stroke', cursor: 'pointer' }}
+                      onMouseEnter={() => setHoveredTrip(trip)}
+                      onMouseLeave={() => setHoveredTrip(null)}
+                      onClick={() => {
+                        setSelectedTrip(trip);
+                        setSelectedMarker({ type: 'trip', data: trip });
+                      }}
+                    >
+                      {/* Route line */}
+                      <path
+                        d={pathData}
+                        fill="none"
+                        stroke={routeColor}
+                        strokeWidth={strokeWidth}
+                        strokeDasharray={trip.status === 'Planned' ? '5,5' : 'none'}
+                        opacity={opacity}
+                        style={{ pointerEvents: 'stroke' }}
+                      />
+                      {/* Direction arrows */}
+                      {waypointCoords.length > 1 && waypointCoords.slice(0, -1).map((coord, idx) => {
+                        const next = waypointCoords[idx + 1];
+                        const dx = next.x - coord.x;
+                        const dy = next.y - coord.y;
+                        const angle = Math.atan2(dy, dx) * (180 / Math.PI);
+                        const midX = (coord.x + next.x) / 2;
+                        const midY = (coord.y + next.y) / 2;
+                        return (
+                          <g key={`arrow-${idx}`} transform={`translate(${midX}, ${midY}) rotate(${angle})`}>
+                            <path
+                              d="M 0 0 L -8 -4 L -8 4 Z"
+                              fill={routeColor}
+                              opacity={opacity}
+                            />
+                          </g>
+                        );
+                      })}
+                    </g>
+                  );
+                })}
+            </svg>
+          )}
+
+          {/* Trip Waypoint Markers */}
+          {showTrips && trips
+            .filter(trip => trip.route && trip.route.length > 0)
+            .flatMap(trip => 
+              trip.route.map((waypoint, idx) => {
+                let lat: number | null = null;
+                let lon: number | null = null;
+
+                if (waypoint.type === 'SupplyBase') {
+                  const base = supplyBases.find(b => b.id === waypoint.location_id);
+                  if (base) {
+                    lat = base.location.latitude;
+                    lon = base.location.longitude;
+                  }
+                } else if (waypoint.type === 'Installation') {
+                  const inst = installations.find(i => i.id === waypoint.location_id);
+                  if (inst && inst.location) {
+                    lat = inst.location.latitude;
+                    lon = inst.location.longitude;
+                  }
+                }
+
+                if (lat === null || lon === null || !isValidCoordinate(lat) || !isValidCoordinate(lon)) {
+                  return null;
+                }
+
+                const waypointY = latToY(lat);
+                const waypointX = lonToX(lon);
+                const isSelected = selectedTrip?.id === trip.id;
+
+                return (
+                  <div
+                    key={`${trip.id}-wp-${idx}`}
+                    className={`map-waypoint-marker ${isSelected ? 'map-waypoint-marker--selected' : ''}`}
+                    style={{
+                      top: `${waypointY}px`,
+                      left: `${waypointX}px`,
+                      transform: `translate(-50%, -50%) scale(${markerScale * 0.6})`,
+                    }}
+                    onMouseEnter={() => {
+                      setHoveredTrip(trip);
+                    }}
+                    onMouseLeave={() => {
+                      setHoveredTrip(null);
+                    }}
+                    onClick={() => {
+                      setSelectedTrip(trip);
+                      setSelectedMarker({ type: 'trip', data: trip });
+                    }}
+                    title={`${trip.vessel_name || 'Vessel'} - Waypoint ${idx + 1}: ${waypoint.location_name}`}
+                  >
+                    <div className="map-waypoint-content">
+                      <div className="map-waypoint-sequence">{idx + 1}</div>
+                    </div>
+                  </div>
+                );
+              })
+            )
+            .filter(Boolean)
+          }
 
           {/* Supply Bases (Macaé Port) */}
           {supplyBases.map((base) => {
@@ -732,7 +1245,7 @@ export default function Visualization({ vessels: propsVessels, berths: propsBert
         </div>
 
         {/* Hover Tooltip */}
-        {hoveredMarker && !selectedMarker && (
+        {hoveredMarker && !selectedMarker && hoveredMarker.type !== 'trip' && (
           <div
             className="map-hover-tooltip"
             style={{
@@ -750,9 +1263,28 @@ export default function Visualization({ vessels: propsVessels, berths: propsBert
             }}
           >
             <div className="map-hover-tooltip-name">
-              {hoveredMarker.data.name}
+              {(hoveredMarker.data as SupplyBase | Installation | Vessel).name}
             </div>
             <div className="map-hover-tooltip-hint">Click for details</div>
+          </div>
+        )}
+
+        {/* Trip Hover Tooltip */}
+        {hoveredTrip && !selectedTrip && (
+          <div
+            className="map-hover-tooltip map-hover-tooltip--trip"
+            style={{
+              top: '20px',
+              left: '50%',
+              transform: 'translateX(-50%)',
+            }}
+          >
+            <div className="map-hover-tooltip-name">
+              Trip: {hoveredTrip.vessel_name || hoveredTrip.vessel_id}
+            </div>
+            <div className="map-hover-tooltip-hint">
+              Status: {hoveredTrip.status} • {hoveredTrip.route.length} waypoints
+            </div>
           </div>
         )}
 
@@ -762,12 +1294,18 @@ export default function Visualization({ vessels: propsVessels, berths: propsBert
             <Stack direction="column" gap="md">
               <div className="map-detail-header">
                 <div>
-                  <h3>{selectedMarker.data.name}</h3>
+                  <h3>
+                    {selectedMarker.type === 'trip'
+                      ? `Trip: ${(selectedMarker.data as Trip).vessel_name || (selectedMarker.data as Trip).vessel_id}`
+                      : (selectedMarker.data as SupplyBase | Installation | Vessel).name}
+                  </h3>
                   <div className="map-detail-type">
                     {selectedMarker.type === 'port'
                       ? 'Supply Base'
                       : selectedMarker.type === 'installation'
                       ? (selectedMarker.data as Installation).type
+                      : selectedMarker.type === 'trip'
+                      ? 'Trip Route'
                       : (selectedMarker.data as Vessel).type}
                   </div>
                 </div>
@@ -983,6 +1521,99 @@ export default function Visualization({ vessels: propsVessels, berths: propsBert
                         <div className="map-detail-row">
                           <span>Availability:</span>
                           <strong>{details.availability_status}</strong>
+                        </div>
+                      )}
+                    </>
+                  );
+                })()}
+
+                {selectedMarker.type === 'trip' && (() => {
+                  const trip = selectedMarker.data as Trip;
+                  return (
+                    <>
+                      <div className="map-detail-row">
+                        <span>Vessel:</span>
+                        <strong>{trip.vessel_name || trip.vessel_id}</strong>
+                      </div>
+                      <div className="map-detail-row">
+                        <span>Status:</span>
+                        <Badge
+                          variant={
+                            trip.status === 'Completed' ? 'success' :
+                            trip.status === 'InProgress' ? 'info' :
+                            trip.status === 'Delayed' ? 'error' :
+                            'default'
+                          }
+                          size="sm"
+                        >
+                          {trip.status}
+                        </Badge>
+                      </div>
+                      {trip.metrics && (
+                        <div className="map-detail-section">
+                          <div className="map-detail-section-title">Trip Metrics:</div>
+                          <Stack direction="column" gap="xs">
+                            <div className="map-detail-row">
+                              <span>Distance:</span>
+                              <strong>{trip.metrics.total_distance_nm.toFixed(1)} NM</strong>
+                            </div>
+                            <div className="map-detail-row">
+                              <span>Duration:</span>
+                              <strong>{trip.metrics.total_duration_h.toFixed(1)} h</strong>
+                            </div>
+                            <div className="map-detail-row">
+                              <span>Fuel Consumed:</span>
+                              <strong>{trip.metrics.fuel_consumed_t.toFixed(1)} t</strong>
+                            </div>
+                            <div className="map-detail-row">
+                              <span>Total Cost:</span>
+                              <strong>${trip.metrics.total_cost_usd.toLocaleString()}</strong>
+                            </div>
+                          </Stack>
+                        </div>
+                      )}
+                      {trip.route && trip.route.length > 0 && (
+                        <div className="map-detail-section">
+                          <div className="map-detail-section-title">Route ({trip.route.length} waypoints):</div>
+                          <Stack direction="column" gap="xs">
+                            {trip.route.map((waypoint, idx) => (
+                              <div key={idx} className="map-detail-waypoint">
+                                <span className="map-detail-waypoint-seq">{idx + 1}</span>
+                                <div className="map-detail-waypoint-info">
+                                  <div className="map-detail-waypoint-name">{waypoint.location_name}</div>
+                                  <div className="map-detail-waypoint-type">{waypoint.type}</div>
+                                  {waypoint.planned_arrival && (
+                                    <div className="map-detail-waypoint-time">
+                                      Arrival: {new Date(waypoint.planned_arrival).toLocaleString()}
+                                    </div>
+                                  )}
+                                  {waypoint.operations && waypoint.operations.length > 0 && (
+                                    <div className="map-detail-waypoint-ops">
+                                      {waypoint.operations.join(', ')}
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            ))}
+                          </Stack>
+                        </div>
+                      )}
+                      {trip.cargo_manifest && trip.cargo_manifest.length > 0 && (
+                        <div className="map-detail-section">
+                          <div className="map-detail-section-title">Cargo Manifest:</div>
+                          <Stack direction="column" gap="xs">
+                            {trip.cargo_manifest.slice(0, 5).map((cargo, idx) => (
+                              <div key={idx} className="map-detail-row">
+                                <span>{cargo.cargo_name}:</span>
+                                <strong>{cargo.quantity} {cargo.unit} ({cargo.action})</strong>
+                              </div>
+                            ))}
+                            {trip.cargo_manifest.length > 5 && (
+                              <div className="map-detail-row">
+                                <span>+ {trip.cargo_manifest.length - 5} more items</span>
+                              </div>
+                            )}
+                          </Stack>
                         </div>
                       )}
                     </>

@@ -101,3 +101,6 @@ export interface Installation {
   name: string;
   distance: number; // NM
 }
+
+// Re-export trip types
+export * from './trips';

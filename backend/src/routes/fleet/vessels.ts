@@ -32,8 +32,14 @@ router.get('/', async (req: AuthRequest, res: Response) => {
         v.next_maintenance_due,
         v.availability_status,
         v.current_location_id,
-        ST_Y(v.current_location_coords::geometry) as current_lat,
-        ST_X(v.current_location_coords::geometry) as current_lon,
+        CASE 
+          WHEN v.current_location_coords IS NOT NULL THEN ST_Y(v.current_location_coords::geometry)
+          ELSE NULL
+        END as current_lat,
+        CASE 
+          WHEN v.current_location_coords IS NOT NULL THEN ST_X(v.current_location_coords::geometry)
+          ELSE NULL
+        END as current_lon,
         vs.status as schedule_status,
         vs.current_trip_id,
         vs.next_available,
@@ -97,6 +103,9 @@ router.get('/', async (req: AuthRequest, res: Response) => {
       id: v.id,
       name: v.name,
       class: v.class,
+      // Include position data directly for easier access
+      current_lat: v.current_lat ? parseFloat(v.current_lat) : null,
+      current_lon: v.current_lon ? parseFloat(v.current_lon) : null,
       specifications: {
         loa_m: parseFloat(v.loa_m || 0),
         beam_m: parseFloat(v.beam_m || 0),

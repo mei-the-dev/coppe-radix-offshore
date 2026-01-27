@@ -62,6 +62,9 @@ app.use('/auth', authRouter);
 // Network Management
 app.use('/installations', installationsRouter);
 app.use('/network/distances', distancesRouter);
+import supplyBasesRouter from './routes/supplyBases';
+app.use('/supply-bases', supplyBasesRouter);
+app.use('/supply-bases', require('./routes/supplyBases').default);
 
 // Fleet Management
 app.use('/fleet/vessels', fleetVesselsRouter);

@@ -142,7 +142,7 @@ export const api = {
   },
 
   getVessel: (id: string) =>
-    fetchAPI<any>(`/fleet/vessels/${id}`),
+    fetchAPI<any>(`/fleet/vessels/${id}`), // Uses database endpoint
 
   updateVesselStatus: (id: string, status: any) =>
     fetchAPI<any>(`/fleet/vessels/${id}/availability`, {
@@ -249,6 +249,11 @@ export const prioAPI = {
       if (params?.to) query.append('to', params.to);
       return fetchAPI<{ data: any[] }>(`/network/distances?${query}`);
     },
+  },
+
+  supplyBases: {
+    list: () => fetchAPI<{ data: any[] }>('/supply-bases'),
+    getBerths: (id: string) => fetchAPI<any[]>(`/supply-bases/${id}/berths`),
   },
 
   // Fleet Management

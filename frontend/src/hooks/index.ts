@@ -6,3 +6,4 @@
 export * from './useVessels';
 export * from './useBerths';
 export * from './useLoadingPlans';
+export * from './useTrips';
