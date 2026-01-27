@@ -12,7 +12,7 @@
 
 /* Default - White background with subtle navy accent */
 .molecule-card--default {
-  background-color: var(--color-white, #6c581b);
+  background-color: var(--color-white, #a5925b);
   box-shadow: 0 1px 3px rgba(51, 78, 104, 0.08);
   border: 1px solid var(--color-primary-100, #d9e2ec);
   display: block;
@@ -20,15 +20,15 @@
 
 /* Elevated - White background with navy-tinted shadow */
 .molecule-card--elevated {
-  background-color: var(--color-white, #6c581b);
+  background-color: var(--color-white, #a5925b);
   box-shadow: 0 4px 12px rgba(51, 78, 104, 0.12);
   border: 1px solid var(--color-primary-100, #d9e2ec);
 }
 
-/* Outlined - Glassmorphism with #6c581b */
+/* Outlined - Glassmorphism with #a5925b */
 .molecule-card--outlined {
   /* Fallback solid background for browsers that don't support backdrop-filter */
-  background-color: rgba(108, 88, 27, 0.85) !important;
+  background-color: rgba(206, 154, 44, 0.652) !important;
   /* Glassmorphism effect */
   backdrop-filter: blur(12px) saturate(180%) !important;
   -webkit-backdrop-filter: blur(12px) saturate(180%) !important;
@@ -47,9 +47,9 @@
 
 /* Muted background - Very light gray with navy border */
 .molecule-card--muted {
-  background-color: var(--color-gray-50, #6c581b);
+  background-color: var(--color-gray-50, #a5925b);
   box-shadow: none;
-  border: 1px solid var(--color-primary-100, #6c581b);
+  border: 1px solid var(--color-primary-100, #a5925b);
 }
 
 /* Padding variants - Breathable spacing */
@@ -63,7 +63,7 @@
 
 .molecule-card--padding-md {
   padding: 1.5rem !important; /* Ensure padding is applied */
-  /* Glassmorphism with #6c581b - only apply if also outlined */
+  /* Glassmorphism with #a5925b - only apply if also outlined */
 }
 
 .molecule-card--padding-lg {

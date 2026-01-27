@@ -1,5 +1,13 @@
 # Development Rules
 
+## Production & Deployment (push = deploy)
+
+This app is **deployed to production** at https://sea-lion-app-8l7y7.ondigitalocean.app/. **Every push to `main` triggers a new deployment.**
+
+- **Run tests before pushing to `main`:** `cd backend && npm test` and `cd frontend && npm test`.
+- **Do not put production secrets in the repo.** Use DigitalOcean App Platform env vars and local `.env` (gitignored).
+- **Full instructions:** See [DEVOPS_README.md](./DEVOPS_README.md) and the **devops-production-workflow** subagent (`.cursor/agents/devops-production-workflow.md`).
+
 ## Rendering Verification Rule
 
 **ALWAYS verify frontend rendering before completing tasks**
