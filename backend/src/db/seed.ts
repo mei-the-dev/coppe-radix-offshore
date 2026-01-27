@@ -654,7 +654,7 @@ async function seed() {
       { inst: 'fpso-valente', cargo: 'diesel', daily: 45, unit: 'm3', std_dev: 5, cv: 0.11, normal: 1.0, drilling: 1.8, workover: 1.3, low: 0.7 },
       { inst: 'fpso-valente', cargo: 'fresh_water', daily: 35, unit: 'm3', std_dev: 4, cv: 0.11, normal: 1.0, drilling: 1.5, workover: 1.2, low: 0.7 },
       { inst: 'fpso-valente', cargo: 'chemicals', daily: 14, unit: 'm3', std_dev: 2, cv: 0.14, normal: 1.0, drilling: 2.0, workover: 1.5, low: 0.6 },
-      { inst: 'fpso-valente', cargo: 'drilling_mud_obm', daily: 0, unit: 'm3', std_dev: 0, cv: 0, normal: 0, drilling: 114, workover: 0, low: 0 },
+      { inst: 'fpso-valente', cargo: 'drilling_mud_obm', daily: 0, unit: 'm3', std_dev: 0, cv: 0, normal: 0, drilling: 1.14, workover: 0, low: 0 },
       // FPSO Forte
       { inst: 'fpso-forte', cargo: 'diesel', daily: 60, unit: 'm3', std_dev: 6, cv: 0.10, normal: 1.0, drilling: 1.5, workover: 1.2, low: 0.7 },
       { inst: 'fpso-forte', cargo: 'fresh_water', daily: 50, unit: 'm3', std_dev: 5, cv: 0.10, normal: 1.0, drilling: 1.3, workover: 1.1, low: 0.7 },
@@ -786,11 +786,15 @@ async function seed() {
     await client.query('COMMIT');
     console.log('✅ Database seed completed successfully!');
     
-    // Refresh materialized views
+    // Refresh materialized views (use non-concurrent to avoid needing unique indexes)
     console.log('🔄 Refreshing materialized views...');
-    await client.query('REFRESH MATERIALIZED VIEW CONCURRENTLY mv_current_inventory;');
-    await client.query('REFRESH MATERIALIZED VIEW CONCURRENTLY mv_vessel_performance;');
-    console.log('✅ Materialized views refreshed!');
+    try {
+      await client.query('REFRESH MATERIALIZED VIEW mv_current_inventory;');
+      await client.query('REFRESH MATERIALIZED VIEW mv_vessel_performance;');
+      console.log('✅ Materialized views refreshed!');
+    } catch (mvErr: any) {
+      console.warn('⚠️  Materialized view refresh skipped:', mvErr?.message || mvErr);
+    }
 
   } catch (error: any) {
     await client.query('ROLLBACK');

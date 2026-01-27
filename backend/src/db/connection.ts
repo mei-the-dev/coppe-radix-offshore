@@ -13,15 +13,27 @@ function getDbPassword(): string {
   return p ?? 'postgres';
 }
 
+const dbHost = process.env.DB_HOST || 'localhost';
+const useSsl =
+  process.env.DB_SSLMODE === 'require' ||
+  (dbHost.includes('ondigitalocean.com') && process.env.DB_SSLMODE !== 'disable');
+
+const connectionTimeout = useSsl
+  ? parseInt(process.env.DB_CONNECT_TIMEOUT_MS || '15000')
+  : parseInt(process.env.DB_CONNECT_TIMEOUT_MS || '2000');
+
+const sslRejectUnauthorized = process.env.DB_SSL_REJECT_UNAUTHORIZED !== 'false' && process.env.DB_SSL_REJECT_UNAUTHORIZED !== '0';
+
 const pool = new Pool({
-  host: process.env.DB_HOST || 'localhost',
+  host: dbHost,
   port: parseInt(process.env.DB_PORT || '5432'),
   database: process.env.DB_NAME || 'prio_logistics',
   user: process.env.DB_USER || 'postgres',
   password: getDbPassword(),
   max: 20,
   idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 2000,
+  connectionTimeoutMillis: connectionTimeout,
+  ...(useSsl ? { ssl: { rejectUnauthorized: sslRejectUnauthorized } } : {}),
 });
 
 // Test connection

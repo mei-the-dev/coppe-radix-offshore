@@ -24,6 +24,9 @@ export function mountRoutes(app: Express): void {
   app.get('/health', (_req, res) => {
     res.json({ status: 'ok', timestamp: new Date().toISOString() });
   });
+  app.get('/', (_req, res) => {
+    res.json({ status: 'ok', message: 'PRIO Offshore Logistics API' });
+  });
 
   app.use('/api/vessels', vesselsRouter);
   app.use('/api/berths', berthsRouter);

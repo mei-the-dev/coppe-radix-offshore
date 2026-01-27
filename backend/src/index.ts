@@ -13,9 +13,11 @@ function start() {
     console.log(`🚢 PRIO Offshore Logistics API running on port ${PORT}`);
     console.log(`🌐 API available at http://localhost:${PORT}`);
     console.log(`📖 API Documentation: See references/prio_api_spec.md`);
-    // Run deck-area check after server is up; non-fatal so DB delay/errors don't block deploy.
-    runDeckAreaStartupCheck({ fatal: false }).catch((err: unknown) => {
-      console.error('Deck area startup check error:', err);
+    // Defer deck-area check so /health and /auth/login can respond before any DB work.
+    setImmediate(() => {
+      runDeckAreaStartupCheck({ fatal: false }).catch((err: unknown) => {
+        console.error('Deck area startup check error:', err);
+      });
     });
   });
 }

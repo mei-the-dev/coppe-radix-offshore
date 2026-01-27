@@ -12,10 +12,12 @@ const getDemoCredentials = () => ({
   password: process.env.AUTH_DEMO_PASSWORD || 'rotaviva',
 });
 
-// POST /auth/login
+// POST /auth/login — respond immediately; avoid any chance of hanging.
 router.post('/login', async (req: Request, res: Response) => {
   try {
-    const { username, password, scope } = req.body;
+    const body = req.body != null && typeof req.body === 'object' ? req.body : {};
+    const username = body.username;
+    const password = body.password;
 
     if (!username || !password) {
       return res.status(400).json({

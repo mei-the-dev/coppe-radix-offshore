@@ -59,6 +59,14 @@ router.get('/', async (req: AuthRequest, res: Response) => {
     });
   } catch (error: any) {
     console.error('Error fetching supply bases:', error);
+    const msg = String(error?.message || '');
+    const isDbError = /relation.*does not exist|connection refused|timeout|ECONNREFUSED|ETIMEDOUT|42P01|42703/i.test(msg) || error?.code === '42P01' || error?.code === '42703';
+    if (isDbError) {
+      return res.status(200).json({
+        data: [],
+        meta: { total: 0 }
+      });
+    }
     res.status(500).json({
       error: 'internal_error',
       message: 'An unexpected error occurred',
