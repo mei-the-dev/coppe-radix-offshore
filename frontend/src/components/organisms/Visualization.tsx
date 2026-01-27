@@ -8,24 +8,46 @@ import { IconButton } from '../action';
 import { prioAPI } from '../../api/client';
 import { useTrips } from '../../hooks/useTrips';
 import { useLoadingPlans } from '../../hooks/useLoadingPlans';
+import { MapContainer, TileLayer, Marker, Polyline, useMap } from 'react-leaflet';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 import './Visualization.css';
 
+/** Bubble pin colors: P=blue, F=purple, R=green, V=amber */
+function createPinIcon(
+  type: 'port' | 'fpso' | 'platform' | 'vessel',
+  label: string
+): L.DivIcon {
+  const letter = type === 'port' ? 'P' : type === 'fpso' ? 'F' : type === 'platform' ? 'R' : 'V';
+  const color =
+    type === 'port' ? '#0ea5e9' :
+    type === 'fpso' ? '#8b5cf6' :
+    type === 'platform' ? '#10b981' : '#f59e0b';
+  const html = `<span class="map-pin-bubble" style="background:${color}" title="${label.replace(/"/g, '&quot;')}"><span class="map-pin-bubble__letter">${letter}</span></span>`;
+  return L.divIcon({
+    html,
+    className: 'map-pin-bubble-container',
+    iconSize: [28, 28],
+    iconAnchor: [14, 14],
+  });
+}
+
+function MapRefOutlet({ mapRef }: { mapRef: React.MutableRefObject<L.Map | null> }) {
+  const map = useMap();
+  useEffect(() => {
+    mapRef.current = map;
+    return () => { mapRef.current = null; };
+  }, [map, mapRef]);
+  return null;
+}
+
 // Constants
-const ZOOM_MIN = 0.5;
-const ZOOM_MAX = 5;
-const ZOOM_STEP = 1.3;
-const MAP_PADDING = 0.1;
 const BOUNDS_PADDING = 0.2;
 const MIN_PADDING_DEGREES = 0.3;
-const DEFAULT_MAP_SIZE = { width: 1000, height: 600 };
 
 // Helper functions
 const isValidCoordinate = (value: number | undefined | null): value is number => {
   return typeof value === 'number' && !isNaN(value) && isFinite(value);
-};
-
-const clamp = (value: number, min: number, max: number): number => {
-  return Math.max(min, Math.min(max, value));
 };
 
 interface Installation {
@@ -122,52 +144,24 @@ export default function Visualization({ vessels: propsVessels, berths: propsBert
 
   // Map navigation state
   const [selectedMarker, setSelectedMarker] = useState<MarkerData | null>(null);
-  const [selectedTrip, setSelectedTrip] = useState<Trip | null>(null);
-  const [hoveredMarker, setHoveredMarker] = useState<MarkerData | null>(null);
-  const [hoveredTrip, setHoveredTrip] = useState<Trip | null>(null);
   const [showTrips, setShowTrips] = useState(true); // Toggle trip routes
   const [showCargoFlows, setShowCargoFlows] = useState(true); // Toggle cargo flows
   const [showLoadingOps, setShowLoadingOps] = useState(true); // Toggle loading operations
-  const [pan, setPan] = useState({ x: 0, y: 0 });
-  const [zoom, setZoom] = useState(1);
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
-  const mapRef = useRef<HTMLDivElement>(null);
-  const [mapSize, setMapSize] = useState(DEFAULT_MAP_SIZE);
+  const [mapInstanceKey, setMapInstanceKey] = useState<number | null>(null);
+  const leafletMapRef = useRef<L.Map | null>(null);
+  const mapWrapperRef = useRef<HTMLDivElement>(null);
 
   // Fetch all data on component mount
   useEffect(() => {
     loadAllData();
   }, []);
 
-  // Update map size on mount and resize using ResizeObserver
+  // Deferred mount for Leaflet map (avoids double-init issues)
   useEffect(() => {
-    const updateMapSize = () => {
-      if (mapRef.current) {
-        const { offsetWidth, offsetHeight } = mapRef.current;
-        if (offsetWidth > 0 && offsetHeight > 0) {
-          setMapSize({ width: offsetWidth, height: offsetHeight });
-        }
-      }
-    };
-
-    const timeoutId = setTimeout(updateMapSize, 0);
-
-    let observer: ResizeObserver | null = null;
-    if (mapRef.current && typeof ResizeObserver !== 'undefined') {
-      observer = new ResizeObserver(updateMapSize);
-      observer.observe(mapRef.current);
-    }
-
-    const handleResize = () => updateMapSize();
-    window.addEventListener('resize', handleResize);
-
-    return () => {
-      clearTimeout(timeoutId);
-      if (observer) observer.disconnect();
-      window.removeEventListener('resize', handleResize);
-    };
+    const id = setTimeout(() => setMapInstanceKey(Date.now()), 0);
+    return () => clearTimeout(id);
   }, []);
+
 
   const loadAllData = async () => {
     try {
@@ -427,146 +421,28 @@ export default function Visualization({ vessels: propsVessels, berths: propsBert
     }
   }, [supplyBases, installations, vesselsToShow]);
 
-  // Calculate map scales
-  const mapScales = useMemo(() => {
-    const width = mapSize.width;
-    const height = mapSize.height;
-    const latRange = mapBounds.maxLat - mapBounds.minLat;
-    const lonRange = mapBounds.maxLon - mapBounds.minLon;
-
-    if (latRange === 0 || lonRange === 0) {
-      return { scaleX: 1, scaleY: 1, padding: MAP_PADDING };
-    }
-
-    const boundsAspect = lonRange / latRange;
-    const mapAspect = width / height;
-    const availableWidth = width * (1 - MAP_PADDING * 2);
-    const availableHeight = height * (1 - MAP_PADDING * 2);
-
-    let scaleX: number, scaleY: number;
-    if (boundsAspect > mapAspect) {
-      scaleX = availableWidth / lonRange;
-      scaleY = scaleX;
-    } else {
-      scaleY = availableHeight / latRange;
-      scaleX = scaleY;
-    }
-
-    return { scaleX, scaleY, padding: MAP_PADDING };
-  }, [mapBounds, mapSize]);
-
-  // Calculate center offset
-  const centerOffset = useMemo(() => {
-    const width = mapSize.width;
-    const height = mapSize.height;
-    const centerLat = (mapBounds.minLat + mapBounds.maxLat) / 2;
-    const centerLon = (mapBounds.minLon + mapBounds.maxLon) / 2;
-
-    const centerX = (centerLon - mapBounds.minLon) * mapScales.scaleX;
-    const centerY = (mapBounds.maxLat - centerLat) * mapScales.scaleY;
-    const paddingX = width * mapScales.padding;
-    const paddingY = height * mapScales.padding;
-
-    return {
-      x: paddingX + (width - paddingX * 2) / 2 - centerX,
-      y: paddingY + (height - paddingY * 2) / 2 - centerY,
-    };
-  }, [mapBounds, mapSize, mapScales]);
-
-  // Coordinate conversion functions
-  const latToY = useCallback((lat: number): number => {
-    if (!isValidCoordinate(lat)) return mapSize.height / 2;
-    const baseY = (mapBounds.maxLat - lat) * mapScales.scaleY;
-    return (baseY * zoom) + pan.y + centerOffset.y;
-  }, [mapBounds, zoom, pan.y, centerOffset.y, mapScales, mapSize]);
-
-  const lonToX = useCallback((lon: number): number => {
-    if (!isValidCoordinate(lon)) return mapSize.width / 2;
-    const baseX = (lon - mapBounds.minLon) * mapScales.scaleX;
-    return (baseX * zoom) + pan.x + centerOffset.x;
-  }, [mapBounds, zoom, pan.x, centerOffset.x, mapScales, mapSize]);
-
-  // Mouse drag handlers
-  const handleMouseDown = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    if (e.button !== 0) return;
-    setIsDragging(true);
-    setDragStart({ x: e.clientX - pan.x, y: e.clientY - pan.y });
-    e.preventDefault();
-  }, [pan]);
-
-  const handleMouseMove = useCallback((e: MouseEvent) => {
-    if (!isDragging) return;
-    setPan({ x: e.clientX - dragStart.x, y: e.clientY - dragStart.y });
-  }, [isDragging, dragStart]);
-
-  const handleMouseUp = useCallback(() => {
-    setIsDragging(false);
-  }, []);
-
-  // Touch handlers
-  const handleTouchStart = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
-    if (e.touches.length !== 1) return;
-    const touch = e.touches[0];
-    setIsDragging(true);
-    setDragStart({ x: touch.clientX - pan.x, y: touch.clientY - pan.y });
-    e.preventDefault();
-  }, [pan]);
-
-  const handleTouchMove = useCallback((e: TouchEvent) => {
-    if (!isDragging || e.touches.length !== 1) return;
-    const touch = e.touches[0];
-    setPan({ x: touch.clientX - dragStart.x, y: touch.clientY - dragStart.y });
-    e.preventDefault();
-  }, [isDragging, dragStart]);
-
-  const handleTouchEnd = useCallback(() => {
-    setIsDragging(false);
-  }, []);
-
-  // Zoom handlers
+  // Zoom/reset via Leaflet map ref
   const handleZoomIn = useCallback(() => {
-    setZoom(prev => clamp(prev * ZOOM_STEP, ZOOM_MIN, ZOOM_MAX));
+    leafletMapRef.current?.zoomIn();
   }, []);
 
   const handleZoomOut = useCallback(() => {
-    setZoom(prev => clamp(prev / ZOOM_STEP, ZOOM_MIN, ZOOM_MAX));
+    leafletMapRef.current?.zoomOut();
   }, []);
 
   const handleResetView = useCallback(() => {
-    setPan({ x: 0, y: 0 });
-    setZoom(1);
     setSelectedMarker(null);
-    setSelectedTrip(null);
-    if (mapRef.current) {
-      setMapSize({
-        width: mapRef.current.offsetWidth,
-        height: mapRef.current.offsetHeight,
-      });
+    const m = leafletMapRef.current;
+    if (m && mapBounds.minLat !== mapBounds.maxLat && mapBounds.minLon !== mapBounds.maxLon) {
+      m.fitBounds(
+        L.latLngBounds(
+          [mapBounds.minLat, mapBounds.minLon],
+          [mapBounds.maxLat, mapBounds.maxLon]
+        ),
+        { padding: [40, 40] }
+      );
     }
-  }, []);
-
-  const handleWheel = useCallback((e: React.WheelEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    const delta = e.deltaY > 0 ? 0.9 : 1.1;
-    setZoom(prev => clamp(prev * delta, ZOOM_MIN, ZOOM_MAX));
-  }, []);
-
-  // Attach/detach event listeners
-  useEffect(() => {
-    if (!isDragging) return;
-
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', handleMouseUp);
-    document.addEventListener('touchmove', handleTouchMove, { passive: false });
-    document.addEventListener('touchend', handleTouchEnd);
-
-    return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
-      document.removeEventListener('touchmove', handleTouchMove);
-      document.removeEventListener('touchend', handleTouchEnd);
-    };
-  }, [isDragging, handleMouseMove, handleMouseUp, handleTouchMove, handleTouchEnd]);
+  }, [mapBounds]);
 
   // Filter vessels in transit for statistics
   const vesselsInTransit = useMemo(() =>
@@ -621,8 +497,12 @@ export default function Visualization({ vessels: propsVessels, berths: propsBert
     });
   }, [trips, supplyBases, installations, validInstallations, vesselsToShow]);
 
-  // Render marker scale based on zoom
-  const markerScale = Math.min(zoom, 1.5);
+  const mapCenter: [number, number] = useMemo(() => {
+    if (mapBounds.minLat !== mapBounds.maxLat && mapBounds.minLon !== mapBounds.maxLon) {
+      return [(mapBounds.minLat + mapBounds.maxLat) / 2, (mapBounds.minLon + mapBounds.maxLon) / 2];
+    }
+    return [-22.37, -41.79];
+  }, [mapBounds]);
 
   // Combined loading state
   const isLoading = loading || tripsLoading;
@@ -829,10 +709,6 @@ export default function Visualization({ vessels: propsVessels, berths: propsBert
               <span>Berths:</span>
               <strong>{berths.length}</strong>
             </div>
-            <div className="stat-row stat-row--zoom">
-              <span>Zoom:</span>
-              <strong>{zoom.toFixed(1)}x</strong>
-            </div>
             {showTrips && (
               <>
                 <div className="stat-row">
@@ -871,400 +747,125 @@ export default function Visualization({ vessels: propsVessels, berths: propsBert
         </div>
 
         <div
-          ref={mapRef}
-          className={`visualization-map ${isDragging ? 'map-dragging' : ''}`}
-          onMouseDown={handleMouseDown}
-          onTouchStart={handleTouchStart}
-          onWheel={handleWheel}
-          style={{
-            cursor: isDragging ? 'grabbing' : 'grab',
-          }}
+          ref={mapWrapperRef}
+          className="visualization-map leaflet-map-wrapper"
+          style={{ flex: 1, minHeight: 600, position: 'relative' }}
           role="img"
           aria-label="Interactive map of offshore installations and vessels"
         >
-          {/* Map background: neutral tone (design-system token; gradient/grid removed per UX) */}
-          <div className="map-background" aria-hidden="true" />
-
-          {/* Cargo Flow Lines - Show cargo movements from supply base to installations */}
-          {showCargoFlows && (
-            <svg className="map-cargo-flows" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 2 }}>
-              {orders
-                .filter(order => order.status === 'Loading' || order.status === 'InTransit' || order.status === 'Confirmed')
-                .map((order) => {
-                  // Get supply base (Macaé port) coordinates
-                  const supplyBase = supplyBases.find(b => b.id === 'macae-port');
-                  if (!supplyBase) return null;
-
-                  // Get destination installation
-                  const destination = installations.find(inst => {
-                    // Try to match by installation name or ID from order
-                    // Orders have destination.installation_id or cargoItems have destination
-                    return order.cargoItems?.some((item: any) => item.destination === inst.id) ||
-                           (order as any).destination?.installation_id === inst.id;
-                  });
-
-                  if (!destination || !destination.location) return null;
-
-                  const fromX = lonToX(supplyBase.location.longitude);
-                  const fromY = latToY(supplyBase.location.latitude);
-                  const toX = lonToX(destination.location.longitude);
-                  const toY = latToY(destination.location.latitude);
-
-                  // Calculate cargo flow properties
-                  const totalQuantity = order.cargoItems?.reduce((sum: number, item: any) => sum + (item.weight || item.volume || 0), 0) || 0;
-                  const strokeWidth = Math.max(2, Math.min(8, totalQuantity / 100)); // Scale line thickness
-                  
-                  // Determine cargo category color
-                  const cargoCategory = order.cargoItems?.[0]?.category || 'deck_cargo';
-                  const flowColor =
-                    cargoCategory === 'liquid_bulk' ? 'var(--color-primary-500)' :
-                    cargoCategory === 'dry_bulk' ? 'var(--color-warning)' :
-                    'var(--text-secondary)';
-
-                  return (
-                    <g
-                      key={`cargo-flow-${order.id}`}
-                      style={{ pointerEvents: 'stroke', cursor: 'pointer' }}
-                      onClick={() => {
-                        const v = vessels.find(x => x.id === order.vesselId);
-                        if (v) setSelectedMarker({ type: 'vessel', data: v });
-                      }}
-                    >
-                      {/* Animated cargo flow line */}
-                      <path
-                        d={`M ${fromX} ${fromY} L ${toX} ${toY}`}
-                        fill="none"
-                        stroke={flowColor}
-                        strokeWidth={strokeWidth}
-                        strokeDasharray="10,5"
-                        opacity={0.6}
-                        style={{ 
-                          pointerEvents: 'stroke',
-                          animation: 'cargoFlow 3s linear infinite'
+          {mapInstanceKey === null ? (
+            <div className="map-loading-placeholder">Loading map…</div>
+          ) : (
+            <MapContainer
+              key={mapInstanceKey}
+              center={mapCenter}
+              zoom={8}
+              style={{ height: '100%', width: '100%' }}
+              className="visualization-map-leaflet"
+            >
+              <TileLayer
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+              />
+              <MapRefOutlet mapRef={leafletMapRef} />
+              {showCargoFlows &&
+                orders
+                  .filter(o => o.status === 'Loading' || o.status === 'InTransit' || o.status === 'Confirmed')
+                  .map((order) => {
+                    const supplyBase = supplyBases.find(b => b.id === 'macae-port' || b.name?.toLowerCase().includes('macae')) ?? supplyBases[0];
+                    if (!supplyBase?.location) return null;
+                    const destination = installations.find(inst =>
+                      order.cargoItems?.some((item: any) => item.destination === inst.id) || (order as any).destination?.installation_id === inst.id
+                    );
+                    if (!destination?.location) return null;
+                    const positions: [number, number][] = [
+                      [supplyBase.location.latitude, supplyBase.location.longitude],
+                      [destination.location.latitude, destination.location.longitude],
+                    ];
+                    const cargoCategory = order.cargoItems?.[0]?.category || 'deck_cargo';
+                    const color = cargoCategory === 'liquid_bulk' ? '#3b82f6' : cargoCategory === 'dry_bulk' ? '#f59e0b' : '#6b7280';
+                    return (
+                      <Polyline
+                        key={`cargo-flow-${order.id}`}
+                        positions={positions}
+                        pathOptions={{ color, weight: 2, opacity: 0.6, dashArray: '10,5' }}
+                        eventHandlers={{
+                          click: () => {
+                            const v = vessels.find(x => x.id === order.vesselId);
+                            if (v) setSelectedMarker({ type: 'vessel', data: v });
+                          },
                         }}
                       />
-                      {/* Cargo label at midpoint */}
-                      <text
-                        x={(fromX + toX) / 2}
-                        y={(fromY + toY) / 2 - 10}
-                        fill={flowColor}
-                        fontSize="10px"
-                        fontWeight="bold"
-                        textAnchor="middle"
-                        style={{ pointerEvents: 'none' }}
-                      >
-                        {order.cargoItems?.length || 0} items
-                      </text>
-                    </g>
-                  );
-                })
-                .filter(Boolean)
-              }
-            </svg>
-          )}
+                    );
+                  })}
 
-          {/* Trip Routes */}
-          {showTrips && (
-            <svg className="map-trip-routes" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 1 }}>
-              {trips
-                .filter(trip => trip.route && trip.route.length > 1)
-                .map((trip) => {
-                  // Get coordinates for all waypoints
-                  const waypointCoords = trip.route
-                    .map((waypoint) => {
-                      let lat: number | null = null;
-                      let lon: number | null = null;
-
-                      if (waypoint.type === 'SupplyBase') {
-                        const base = supplyBases.find(b => b.id === waypoint.location_id || b.name === (waypoint as { location_name?: string }).location_name) ?? supplyBases[0];
-                        if (base?.location) {
-                          lat = base.location.latitude;
-                          lon = base.location.longitude;
-                        }
-                      } else if (waypoint.type === 'Installation') {
-                        const inst = installations.find(i => i.id === waypoint.location_id || i.name === (waypoint as { location_name?: string }).location_name) ?? installations[0];
-                        if (inst?.location) {
-                          lat = inst.location.latitude;
-                          lon = inst.location.longitude;
-                        }
+              {showTrips &&
+                trips
+                  .filter(t => t.route && t.route.length >= 2)
+                  .map((trip) => {
+                    const positions: [number, number][] = [];
+                    for (const wp of trip.route) {
+                      if (wp.type === 'SupplyBase') {
+                        const base = supplyBases.find(b => b.id === wp.location_id || b.name === (wp as { location_name?: string }).location_name) ?? supplyBases[0];
+                        if (base?.location) positions.push([base.location.latitude, base.location.longitude]);
+                      } else if (wp.type === 'Installation') {
+                        const inst = installations.find(i => i.id === wp.location_id || i.name === (wp as { location_name?: string }).location_name) ?? installations[0];
+                        if (inst?.location) positions.push([inst.location.latitude, inst.location.longitude]);
                       }
-
-                      if (lat !== null && lon !== null && isValidCoordinate(lat) && isValidCoordinate(lon)) {
-                        return { x: lonToX(lon), y: latToY(lat), waypoint };
-                      }
-                      return null;
-                    })
-                    .filter((coord): coord is { x: number; y: number; waypoint: any } => coord !== null);
-
-                  if (waypointCoords.length < 2) return null;
-
-                  // Determine route color based on trip status
-                  const routeColor = 
-                    trip.status === 'Completed' ? 'var(--color-success, #10b981)' :
-                    trip.status === 'InProgress' ? 'var(--color-primary-500, #3b82f6)' :
-                    trip.status === 'Planned' ? 'var(--color-text-secondary, #6b7280)' :
-                    trip.status === 'Delayed' ? 'var(--color-error, #ef4444)' :
-                    'var(--color-text-secondary, #6b7280)';
-
-                  const isSelected = selectedTrip?.id === trip.id;
-                  const isHovered = hoveredTrip?.id === trip.id;
-                  const strokeWidth = isSelected || isHovered ? 3 : 2;
-                  const opacity = isSelected ? 1 : isHovered ? 0.8 : 0.5;
-
-                  // Create path string
-                  const pathData = waypointCoords
-                    .map((coord, idx) => `${idx === 0 ? 'M' : 'L'} ${coord.x} ${coord.y}`)
-                    .join(' ');
-
-                  return (
-                    <g
-                      key={trip.id}
-                      style={{ pointerEvents: 'stroke', cursor: 'pointer' }}
-                      onMouseEnter={() => setHoveredTrip(trip)}
-                      onMouseLeave={() => setHoveredTrip(null)}
-                      onClick={() => {
-                        setSelectedTrip(trip);
-                        setSelectedMarker({ type: 'trip', data: trip });
-                      }}
-                    >
-                      {/* Route line */}
-                      <path
-                        d={pathData}
-                        fill="none"
-                        stroke={routeColor}
-                        strokeWidth={strokeWidth}
-                        strokeDasharray={trip.status === 'Planned' ? '5,5' : 'none'}
-                        opacity={opacity}
-                        style={{ pointerEvents: 'stroke' }}
+                    }
+                    if (positions.length < 2) return null;
+                    const color =
+                      trip.status === 'Completed' ? '#10b981' :
+                      trip.status === 'InProgress' ? '#3b82f6' :
+                      trip.status === 'Delayed' ? '#ef4444' : '#6b7280';
+                    return (
+                      <Polyline
+                        key={trip.id}
+                        positions={positions}
+                        pathOptions={{ color, weight: 2, dashArray: trip.status === 'Planned' ? '5,5' : undefined }}
+                        eventHandlers={{
+                          click: () => setSelectedMarker({ type: 'trip', data: trip }),
+                        }}
                       />
-                      {/* Direction arrows */}
-                      {waypointCoords.length > 1 && waypointCoords.slice(0, -1).map((coord, idx) => {
-                        const next = waypointCoords[idx + 1];
-                        const dx = next.x - coord.x;
-                        const dy = next.y - coord.y;
-                        const angle = Math.atan2(dy, dx) * (180 / Math.PI);
-                        const midX = (coord.x + next.x) / 2;
-                        const midY = (coord.y + next.y) / 2;
-                        return (
-                          <g key={`arrow-${idx}`} transform={`translate(${midX}, ${midY}) rotate(${angle})`}>
-                            <path
-                              d="M 0 0 L -8 -4 L -8 4 Z"
-                              fill={routeColor}
-                              opacity={opacity}
-                            />
-                          </g>
-                        );
-                      })}
-                    </g>
-                  );
-                })}
-              {exampleRoutes.map((route, idx) => {
-                if (route.positions.length < 2) return null;
-                const pathData = route.positions
-                  .map(([lat, lon], i) => `${i === 0 ? 'M' : 'L'} ${lonToX(lon)} ${latToY(lat)}`)
-                  .join(' ');
-                return (
-                  <g key={`example-${route.vesselId}-${idx}`} style={{ pointerEvents: 'none' }}>
-                    <path
-                      d={pathData}
-                      fill="none"
-                      stroke="var(--color-warning, #f59e0b)"
-                      strokeWidth={2}
-                      strokeDasharray="8,4"
-                      opacity={0.6}
-                    />
-                  </g>
-                );
-              })}
-            </svg>
+                    );
+                  })}
+              {showTrips &&
+                exampleRoutes.map((route, idx) => (
+                  <Polyline
+                    key={`example-${route.vesselId}-${idx}`}
+                    positions={route.positions}
+                    pathOptions={{ color: '#f59e0b', weight: 2, dashArray: '8,4', opacity: 0.6 }}
+                  />
+                ))}
+              {supplyBases
+                .filter(b => b.location && isValidCoordinate(b.location.latitude) && isValidCoordinate(b.location.longitude))
+                .map((base) => (
+                  <Marker
+                    key={base.id}
+                    position={[base.location.latitude, base.location.longitude]}
+                    icon={createPinIcon('port', base.name)}
+                    eventHandlers={{ click: () => setSelectedMarker({ type: 'port', data: base }) }}
+                  />
+                ))}
+              {validInstallations.map((inst) => (
+                <Marker
+                  key={inst.id}
+                  position={[inst.location.latitude, inst.location.longitude]}
+                  icon={createPinIcon(inst.type === 'FPSO' ? 'fpso' : 'platform', inst.name)}
+                  eventHandlers={{ click: () => setSelectedMarker({ type: 'installation', data: inst }) }}
+                />
+              ))}
+              {vesselsToShow.map((v) => (
+                <Marker
+                  key={v.id}
+                  position={[v.position!.lat, v.position!.lon]}
+                  icon={createPinIcon('vessel', v.name)}
+                  eventHandlers={{ click: () => setSelectedMarker({ type: 'vessel', data: v }) }}
+                />
+              ))}
+            </MapContainer>
           )}
-
-          {/* Trip Waypoint Markers */}
-          {showTrips && trips
-            .filter(trip => trip.route && trip.route.length > 0)
-            .flatMap(trip => 
-              trip.route.map((waypoint, idx) => {
-                let lat: number | null = null;
-                let lon: number | null = null;
-
-                if (waypoint.type === 'SupplyBase') {
-                  const base = supplyBases.find(b => b.id === waypoint.location_id || b.name === (waypoint as { location_name?: string }).location_name) ?? supplyBases[0];
-                  if (base?.location) {
-                    lat = base.location.latitude;
-                    lon = base.location.longitude;
-                  }
-                } else if (waypoint.type === 'Installation') {
-                  const inst = installations.find(i => i.id === waypoint.location_id || i.name === (waypoint as { location_name?: string }).location_name) ?? installations[0];
-                  if (inst?.location) {
-                    lat = inst.location.latitude;
-                    lon = inst.location.longitude;
-                  }
-                }
-
-                if (lat === null || lon === null || !isValidCoordinate(lat) || !isValidCoordinate(lon)) {
-                  return null;
-                }
-
-                const waypointY = latToY(lat);
-                const waypointX = lonToX(lon);
-                const isSelected = selectedTrip?.id === trip.id;
-
-                return (
-                  <div
-                    key={`${trip.id}-wp-${idx}`}
-                    className={`map-waypoint-marker ${isSelected ? 'map-waypoint-marker--selected' : ''}`}
-                    style={{
-                      top: `${waypointY}px`,
-                      left: `${waypointX}px`,
-                      transform: `translate(-50%, -50%) scale(${markerScale * 0.6})`,
-                    }}
-                    onMouseEnter={() => {
-                      setHoveredTrip(trip);
-                    }}
-                    onMouseLeave={() => {
-                      setHoveredTrip(null);
-                    }}
-                    onClick={() => {
-                      setSelectedTrip(trip);
-                      setSelectedMarker({ type: 'trip', data: trip });
-                    }}
-                    title={`${trip.vessel_name || 'Vessel'} - Waypoint ${idx + 1}: ${waypoint.location_name}`}
-                  >
-                    <div className="map-waypoint-content">
-                      <div className="map-waypoint-sequence">{idx + 1}</div>
-                    </div>
-                  </div>
-                );
-              })
-            )
-            .filter(Boolean)
-          }
-
-          {/* Supply Bases (Macaé Port) */}
-          {supplyBases.map((base) => {
-            const baseY = latToY(base.location.latitude);
-            const baseX = lonToX(base.location.longitude);
-            return (
-              <div
-                key={base.id}
-                className="map-marker map-marker--base"
-                style={{
-                  top: `${baseY}px`,
-                  left: `${baseX}px`,
-                  transform: `translate(-50%, -50%) scale(${markerScale})`,
-                }}
-                onMouseEnter={() => setHoveredMarker({ type: 'port', data: base })}
-                onMouseLeave={() => setHoveredMarker(null)}
-                onClick={() => setSelectedMarker({ type: 'port', data: base })}
-              >
-                <div className="map-marker-content">
-                  <div className="map-marker-halo map-marker-halo--base" />
-                  <IconPort size={32} />
-                  <div className="map-marker-label">{base.name}</div>
-                </div>
-              </div>
-            );
-          })}
-
-          {/* Installations */}
-          {validInstallations.map((installation) => {
-            const instY = latToY(installation.location.latitude);
-            const instX = lonToX(installation.location.longitude);
-            return (
-              <div
-                key={installation.id}
-                className={`map-marker map-marker--installation map-marker--${installation.type.toLowerCase()}`}
-                style={{
-                  top: `${instY}px`,
-                  left: `${instX}px`,
-                  transform: `translate(-50%, -50%) scale(${markerScale})`,
-                }}
-                onMouseEnter={() => setHoveredMarker({ type: 'installation', data: installation })}
-                onMouseLeave={() => setHoveredMarker(null)}
-                onClick={() => setSelectedMarker({ type: 'installation', data: installation })}
-              >
-                <div className="map-marker-content">
-                  <div className={`map-marker-halo ${installation.type === 'FPSO' ? 'map-marker-halo--fpso' : 'map-marker-halo--platform'}`} />
-                  {installation.type === 'FPSO' ? (
-                    <IconFPSO size={28} />
-                  ) : (
-                    <IconPlatform size={28} />
-                  )}
-                  <div className="map-marker-label">{installation.name}</div>
-                </div>
-              </div>
-            );
-          })}
-
-          {/* All Vessels with Positions */}
-          {vesselsToShow.map((vessel) => {
-            const vesselY = latToY(vessel.position!.lat);
-            const vesselX = lonToX(vessel.position!.lon);
-            return (
-              <div
-                key={vessel.id}
-                className={`map-marker map-marker--vessel map-marker--vessel-${vessel.status?.replace('_', '-') || 'default'}`}
-                style={{
-                  top: `${vesselY}px`,
-                  left: `${vesselX}px`,
-                  transform: `translate(-50%, -50%) scale(${markerScale})`,
-                }}
-                onMouseEnter={() => setHoveredMarker({ type: 'vessel', data: vessel })}
-                onMouseLeave={() => setHoveredMarker(null)}
-                onClick={() => setSelectedMarker({ type: 'vessel', data: vessel })}
-              >
-                <div className="map-marker-content">
-                  <div className="map-marker-halo map-marker-halo--vessel" />
-                  <IconVessel size={24} />
-                </div>
-              </div>
-            );
-          })}
         </div>
-
-        {/* Hover Tooltip */}
-        {hoveredMarker && !selectedMarker && hoveredMarker.type !== 'trip' && (
-          <div
-            className="map-hover-tooltip"
-            style={{
-              top: hoveredMarker.type === 'port'
-                ? `${latToY((hoveredMarker.data as SupplyBase).location.latitude) + 50}px`
-                : hoveredMarker.type === 'installation'
-                ? `${latToY((hoveredMarker.data as Installation).location.latitude) + 50}px`
-                : `${latToY((hoveredMarker.data as Vessel).position!.lat) + 40}px`,
-              left: hoveredMarker.type === 'port'
-                ? `${lonToX((hoveredMarker.data as SupplyBase).location.longitude)}px`
-                : hoveredMarker.type === 'installation'
-                ? `${lonToX((hoveredMarker.data as Installation).location.longitude)}px`
-                : `${lonToX((hoveredMarker.data as Vessel).position!.lon)}px`,
-              transform: 'translateX(-50%)',
-            }}
-          >
-            <div className="map-hover-tooltip-name">
-              {(hoveredMarker.data as SupplyBase | Installation | Vessel).name}
-            </div>
-            <div className="map-hover-tooltip-hint">Click for details</div>
-          </div>
-        )}
-
-        {/* Trip Hover Tooltip */}
-        {hoveredTrip && !selectedTrip && (
-          <div
-            className="map-hover-tooltip map-hover-tooltip--trip"
-            style={{
-              top: '20px',
-              left: '50%',
-              transform: 'translateX(-50%)',
-            }}
-          >
-            <div className="map-hover-tooltip-name">
-              Trip: {hoveredTrip.vessel_name || hoveredTrip.vessel_id}
-            </div>
-            <div className="map-hover-tooltip-hint">
-              Status: {hoveredTrip.status} • {hoveredTrip.route.length} waypoints
-            </div>
-          </div>
-        )}
 
         {/* Detail Panel */}
         {selectedMarker && selectedMarker.data && (

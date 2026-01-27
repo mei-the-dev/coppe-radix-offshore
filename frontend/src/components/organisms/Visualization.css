@@ -69,18 +69,52 @@
   overflow: hidden;
 }
 
-/* Map background: neutral, always visible (design-system token with solid fallback) */
-.map-background {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+.leaflet-map-wrapper {
+  flex: 1;
   width: 100%;
+  min-height: 600px;
+  position: relative;
+}
+
+.leaflet-map-wrapper .leaflet-container {
   height: 100%;
+  width: 100%;
+  min-height: 600px;
+  border-radius: inherit;
+}
+
+.map-loading-placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background: var(--surface-sunken, var(--color-gray-200));
-  pointer-events: none;
-  z-index: 1;
+  color: var(--text-secondary);
+  font-size: var(--font-size-lg);
+}
+
+/* Bubble pins (createPinIcon): no default Leaflet pin graphic */
+.map-pin-bubble-container {
+  background: transparent !important;
+  border: none !important;
+}
+
+.map-pin-bubble {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  box-shadow: var(--shadow-drop-sm);
+  color: var(--color-white);
+  font-weight: var(--font-weight-bold);
+}
+
+.map-pin-bubble__letter {
+  font-size: 12px;
+  line-height: 1;
 }
 
 .visualization-map.map-dragging {
