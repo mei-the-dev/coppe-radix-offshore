@@ -1,3 +1,4 @@
+/* Layout: sea-canvas supplies vibrant background; all chrome is glass (per references/glass) */
 .app-layout {
   min-height: 100vh;
   display: flex;
@@ -6,14 +7,17 @@
   color: var(--text-on-glass);
 }
 
+/* Glass header – semi-transparent + blur + border + shadow + rounded bottom (glassmorphism) */
 .app-header {
-  background: var(--glass-bg);
+  background: rgba(255, 255, 255, 0.12);
   backdrop-filter: blur(12px) saturate(180%);
   -webkit-backdrop-filter: blur(12px) saturate(180%);
-  border-bottom: 1px solid var(--glass-border);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-top: none;
+  border-radius: 0 0 var(--glass-radius-lg) var(--glass-radius-lg);
   color: var(--text-on-glass);
   padding: var(--spacing-6) var(--spacing-8);
-  box-shadow: var(--glass-shadow);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   position: relative;
   z-index: var(--z-banner);
 }
@@ -62,15 +66,18 @@
   margin: 0;
 }
 
+/* Glass nav – same recipe as header so both read as glass */
 .app-nav {
-  background: var(--glass-bg);
+  background: rgba(255, 255, 255, 0.12);
   backdrop-filter: blur(12px) saturate(180%);
   -webkit-backdrop-filter: blur(12px) saturate(180%);
-  border-bottom: 1px solid var(--glass-border);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-top: none;
+  border-radius: 0 0 var(--glass-radius-lg) var(--glass-radius-lg);
   position: sticky;
   top: 0;
   z-index: var(--z-sticky);
-  box-shadow: var(--glass-nav-shadow);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
 @supports not (backdrop-filter: blur(12px)) {
@@ -124,8 +131,7 @@
   box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.9);
 }
 
-/* Main content: liquid-glass for WCAG contrast (dark text on near-opaque light) */
-/* Scope text tokens so content is always readable on light panel, including in dark mode */
+/* Main content: glass panel (frosted, readable). Per references/glass – semi-transparent + blur + border + radius */
 .app-main {
   flex: 1;
   display: flex;
@@ -135,12 +141,12 @@
   width: 100%;
   margin: var(--spacing-6) auto;
   padding: var(--spacing-6) var(--spacing-8);
-  background: var(--glass-content-bg);
+  background: rgba(255, 255, 255, 0.88);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid var(--glass-content-border);
+  border: 1px solid rgba(255, 255, 255, 0.5);
   border-radius: var(--glass-radius-lg);
-  box-shadow: var(--glass-shadow);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   --text-primary: var(--color-gray-900);
   --text-secondary: var(--color-gray-700);
   --text-tertiary: var(--color-gray-600);
@@ -154,18 +160,19 @@
   flex-direction: column;
   overflow-y: auto;
   overflow-x: hidden;
+  background: transparent;
 }
 
 @supports not (backdrop-filter: blur(12px)) {
   .app-main {
-    background: var(--glass-content-bg);
+    background: rgba(255, 255, 255, 0.96);
   }
 }
 
-/* WCAG: light background for sections and cards inside main (Simulation, Data, Metrics) */
+/* Section wrapper: transparent so main’s glass shows through (single glass surface) */
 .app-main .dashboard-section {
-  background: var(--glass-content-bg);
-  border: 1px solid var(--glass-content-border);
+  background: transparent;
+  border: none;
   border-radius: var(--radius-xl);
   padding: var(--spacing-6);
   color: var(--color-gray-900);
