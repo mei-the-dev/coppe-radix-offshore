@@ -199,6 +199,7 @@ export default function DataStructure({}: DataStructureProps) {
             { name: 'beam_m', type: 'DECIMAL(5,2)', nullable: true },
             { name: 'draught_m', type: 'DECIMAL(5,2)', nullable: true },
             { name: 'deck_cargo_capacity_t', type: 'DECIMAL(10,2)', nullable: true },
+            { name: 'clear_deck_area_m2', type: 'DECIMAL(10,2)', nullable: true, description: 'Clear deck area (m²)' },
             { name: 'total_deadweight_t', type: 'DECIMAL(10,2)', nullable: true },
             { name: 'service_speed_kts', type: 'DECIMAL(5,2)', nullable: true },
             { name: 'operational_speed_kts', type: 'DECIMAL(5,2)', nullable: true },

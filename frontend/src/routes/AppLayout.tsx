@@ -33,7 +33,7 @@ export default function AppLayout() {
           <div className="logo">
             <IconVessel size={32} className="header-icon" aria-hidden="true" />
             <div>
-              <h1>Macaé Loading Dashboard</h1>
+              <h1>ROTAVIVA</h1>
               <p>PRIO Offshore Logistics - Platform Supply Vessel Loading Planning</p>
             </div>
           </div>

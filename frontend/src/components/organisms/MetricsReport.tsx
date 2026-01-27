@@ -990,7 +990,7 @@ export default function MetricsReport({}: MetricsReportProps) {
         )}
       </Card>
 
-      {/* 9. CONCLUSÕES */}
+      {/* 9. CONCLUSÕES – card commented out
       <Card className="metrics-section">
         <div
           className="metrics-section-header"
@@ -1113,6 +1113,7 @@ export default function MetricsReport({}: MetricsReportProps) {
           </div>
         )}
       </Card>
+      */}
     </div>
   );
 }
