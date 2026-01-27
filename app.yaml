@@ -56,6 +56,7 @@ services:
         value: ${prio-logistics-db.PASSWORD}
         scope: RUN_TIME
         type: SECRET
+      # Required: set JWT_SECRET in App Platform (backend → Environment Variables). Use e.g. openssl rand -hex 32.
       - key: JWT_SECRET
         value: ${JWT_SECRET}
         scope: RUN_TIME

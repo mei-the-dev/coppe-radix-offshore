@@ -17,6 +17,24 @@
 
 See `frontend/.env.example` for frontend env template. Backend uses `dotenv` and reads from App Platform env.
 
+## Missing JWT_SECRET (deployment failure)
+
+If the platform reports **"Missing jwt_secret environment variable"** or the backend fails on first deploy:
+
+1. **Generate a secret** (at least 16 characters; 32 recommended):
+   ```bash
+   openssl rand -hex 32
+   ```
+2. **In DigitalOcean App Platform:**
+   - Open your app → **backend** component → **Settings** (or **App-Level** if your app uses shared env).
+   - Go to **Environment Variables**.
+   - **Add** or **Edit**: key = `JWT_SECRET`, value = the string from step 1.
+   - Set **Type** = **Secret** (encrypted).
+   - Set **Scope** = **Run Time** (or **All**).
+3. **Redeploy** the app (e.g. trigger a new deployment from the Deployments tab).
+
+The `app.yaml` backend env already declares `JWT_SECRET` with `value: ${JWT_SECRET}`. That means the **value** must be supplied in the App Platform UI (or via a linked secret). It is not stored in the repo.
+
 ## Backend URL Configuration
 
 **Current deployment:** The backend is at the same origin as the frontend, under the path `/coppe-radix-offshore-backend`:
