@@ -5,6 +5,7 @@ FROM node:20-alpine AS base
 FROM base AS deps
 WORKDIR /app
 COPY package*.json ./
+COPY .npmrc ./
 RUN npm ci
 
 # Build the application
