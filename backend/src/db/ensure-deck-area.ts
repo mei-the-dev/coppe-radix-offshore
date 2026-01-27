@@ -88,7 +88,14 @@ export async function ensureDeckArea(): Promise<DeckAreaCheckResult> {
   return result;
 }
 
-export async function runDeckAreaStartupCheck(): Promise<void> {
+export interface DeckAreaStartupOptions {
+  /** If false, never process.exit(1); log and return. Use at server startup so deploy health checks pass. */
+  fatal?: boolean;
+}
+
+export async function runDeckAreaStartupCheck(options: DeckAreaStartupOptions = {}): Promise<void> {
+  const { fatal = true } = options;
+
   if (process.env.SKIP_DECK_AREA_CHECK === '1') {
     console.log('⏭️  Deck area check skipped (SKIP_DECK_AREA_CHECK=1)');
     return;
@@ -98,7 +105,8 @@ export async function runDeckAreaStartupCheck(): Promise<void> {
     const r = await ensureDeckArea();
     if (!r.ok) {
       console.error('❌ Deck area startup check failed:', r.message);
-      process.exit(1);
+      if (fatal) process.exit(1);
+      return;
     }
     if (r.columnAdded) {
       console.log('📏 Deck area: column added on start. Run "npm run seed" to populate.');
@@ -107,9 +115,10 @@ export async function runDeckAreaStartupCheck(): Promise<void> {
     } else if (r.vesselCount > 0 && r.populatedCount > 0) {
       console.log(`📏 Deck area: column present, ${r.populatedCount}/${r.vesselCount} vessels populated.`);
     }
-  } catch (err: any) {
-    console.error('❌ Deck area startup check error:', err?.message || err);
-    process.exit(1);
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error('❌ Deck area startup check error:', msg);
+    if (fatal) process.exit(1);
   }
 }
 
