@@ -1,11 +1,41 @@
 // API client for PRIO Offshore Logistics API
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+// In production, if VITE_API_URL is not set, try to infer from current origin
+// This handles cases where the backend might be on a different subdomain
+const getApiBaseUrl = () => {
+  const envUrl = import.meta.env.VITE_API_URL;
+  if (envUrl) return envUrl;
+  
+  // Development fallback
+  if (import.meta.env.DEV) {
+    return 'http://localhost:3001';
+  }
+  
+  // Production: try to construct backend URL from frontend URL
+  // DigitalOcean App Platform services get URLs like: service-name-xxxxx.ondigitalocean.app
+  // If frontend is at sea-lion-app-8l7y7.ondigitalocean.app,
+  // backend might be at backend-xxxxx.ondigitalocean.app or similar
+  if (typeof window !== 'undefined') {
+    const hostname = window.location.hostname;
+    // If we're on ondigitalocean.app, try to find backend URL
+    if (hostname.includes('ondigitalocean.app')) {
+      // For now, return the same origin - backend should be accessible via PUBLIC_URL
+      // This will be set by DigitalOcean at build time
+      console.warn('VITE_API_URL not set in production. Using same origin as fallback.');
+      return window.location.origin;
+    }
+  }
+  
+  return 'http://localhost:3001';
+};
+
+const API_BASE_URL = getApiBaseUrl();
 
 // Log API URL in development and production for debugging
 if (typeof window !== 'undefined') {
   console.log('API Base URL:', API_BASE_URL);
   console.log('Environment:', import.meta.env.MODE);
+  console.log('VITE_API_URL env:', import.meta.env.VITE_API_URL);
 }
 
 // Token storage in localStorage for persistence
