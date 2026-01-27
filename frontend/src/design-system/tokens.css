@@ -83,10 +83,24 @@
   --color-border-interactive: rgba(51, 78, 104, 0.2);
   --color-surface-hover: rgba(51, 78, 104, 0.12);
   --color-border-hover: rgba(51, 78, 104, 0.3);
-  --glass-bg-enhanced: rgba(255, 255, 255, 0.7);
-  --glass-border-enhanced: rgba(255, 255, 255, 0.3);
-  --glass-bg-dark: rgba(17, 24, 39, 0.8);
-  --glass-border-dark: rgba(51, 78, 104, 0.15);
+  /* Glassmorphism (per references/glass): light glass on dark/vibrant canvas */
+  --glass-bg: rgba(255, 255, 255, 0.12);
+  --glass-bg-hover: rgba(255, 255, 255, 0.18);
+  --glass-border: rgba(255, 255, 255, 0.2);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  --glass-shadow-hover: 0 12px 48px rgba(0, 0, 0, 0.15);
+  --glass-radius: 16px;
+  --glass-radius-lg: 20px;
+  --glass-radius-xl: 24px;
+  /* Fallback when backdrop-filter is not supported */
+  --glass-bg-fallback: rgba(255, 255, 255, 0.92);
+  /* Vibrant canvas for glass (glass needs something to blur) */
+  --bg-canvas: linear-gradient(135deg, #334e68 0%, #0d9488 40%, #243b53 100%);
+  /* Legacy aliases (keep for compatibility, align with correct glass values) */
+  --glass-bg-enhanced: rgba(255, 255, 255, 0.12);
+  --glass-border-enhanced: rgba(255, 255, 255, 0.2);
+  --glass-bg-dark: rgba(17, 24, 39, 0.85);
+  --glass-border-dark: rgba(255, 255, 255, 0.1);
   --surface-elevated: rgba(31, 41, 55, 0.8);
   --surface-elevated-light: rgba(255, 255, 255, 0.95);
 

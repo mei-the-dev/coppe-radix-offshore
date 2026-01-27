@@ -1,16 +1,25 @@
 .simulation-model {
-  padding: var(--spacing-6, 1.5rem);
-  background: white;
-  border-radius: var(--radius-lg, 0.75rem);
-  box-shadow: var(--shadow-lg, 0 10px 15px -3px rgba(0, 0, 0, 0.1));
+  padding: var(--spacing-6);
+  background: var(--glass-bg);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--glass-radius-lg);
+  box-shadow: var(--glass-shadow);
   max-width: 1200px;
   margin: 0 auto;
 }
 
+@supports not (backdrop-filter: blur(8px)) {
+  .simulation-model {
+    background: var(--glass-bg-fallback);
+  }
+}
+
 .model-header {
-  margin-bottom: var(--spacing-8, 2rem);
-  padding-bottom: var(--spacing-4, 1rem);
-  border-bottom: 2px solid var(--color-gray-200, #e2e8f0);
+  margin-bottom: var(--spacing-8);
+  padding-bottom: var(--spacing-4);
+  border-bottom: 2px solid var(--glass-border);
 }
 
 .model-header h2 {
@@ -32,10 +41,11 @@
 }
 
 .model-section {
-  background: var(--color-gray-50, #f9fafb);
-  padding: var(--spacing-6, 1.5rem);
-  border-radius: var(--radius-lg, 0.75rem);
-  border: 1px solid var(--color-gray-200, #e5e7eb);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--glass-radius-lg);
+  box-shadow: var(--glass-shadow);
+  padding: var(--spacing-6);
 }
 
 .model-section h3 {

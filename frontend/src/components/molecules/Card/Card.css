@@ -25,24 +25,27 @@
   border: 1px solid var(--color-primary-100, #d9e2ec);
 }
 
-/* Outlined - Glassmorphism with #6c581b */
+/* Outlined - subtle border, no glass */
 .molecule-card--outlined {
-  /* Fallback solid background for browsers that don't support backdrop-filter */
-  background-color: rgba(108, 88, 27, 0.85) !important;
-  /* Glassmorphism effect */
-  backdrop-filter: blur(12px) saturate(180%) !important;
-  -webkit-backdrop-filter: blur(12px) saturate(180%) !important;
-  border: 1.5px solid rgba(108, 88, 27, 0.5) !important;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+  background-color: var(--surface-default, var(--color-white));
+  border: 1px solid var(--border-strong, var(--color-primary-200));
+  box-shadow: var(--shadow-sm);
 }
 
-/* Glass - Backdrop blur, semi-transparent */
+/* Glass - per references/glass: semi-transparent + blur + border + shadow (on vibrant canvas) */
 .molecule-card--glass {
-  background-color: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  border-radius: var(--glass-radius-lg);
+}
+
+@supports not (backdrop-filter: blur(10px)) {
+  .molecule-card--glass {
+    background: var(--glass-bg-fallback);
+  }
 }
 
 /* Muted background - Very light gray with navy border */

@@ -3,6 +3,8 @@
 
 These instructions are for AI assistants working in this project.
 
+**Production & DevOps:** The app is deployed at https://sea-lion-app-8l7y7.ondigitalocean.app/. Pushes to `main` trigger deployment. For test-before-commit, production vs development, and deployment rules, use the **devops-production-workflow** subagent or see `DEVOPS_README.md`.
+
 Always open `@/openspec/AGENTS.md` when the request:
 - Mentions planning or proposals (words like proposal, spec, change, plan)
 - Introduces new capabilities, breaking changes, architecture shifts, or big performance/security work

@@ -23,20 +23,22 @@
   text-align: center;
 }
 
-/* Card molecule handles most styling, we just add organism-specific */
+/* Card: glassmorphism per design-system (references/glass) */
 .berth-status .molecule-card.berth-card,
 .berth-status article.berth-card {
-  background: var(--surface-default);
-  border: 1px solid var(--border-subtle);
-  box-shadow: var(--shadow-sm);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  border-radius: var(--glass-radius-lg);
 }
 
 .berth-status .molecule-card.berth-card:hover,
 .berth-status article.berth-card:hover {
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--glass-shadow-hover);
   transform: translateY(-2px);
   transition: all var(--duration-normal) var(--timing-ease);
-  border-color: var(--border-default);
+  border-color: var(--glass-border);
+  background: var(--glass-bg-hover);
 }
 
 .berth-header {

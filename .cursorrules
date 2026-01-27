@@ -16,12 +16,12 @@
 - Example: `npm run dev` should always run in background
 
 ## Design System
-- **Use Kira Design System from `frontend/src/design-system`**
+- **Use the in-repo design system from `frontend/src/design-system`** (no external package)
+- All design-system files live in this project: `tokens.css`, `themes.css`, `glass.css`, `tokens/`, etc. See `frontend/src/design-system/DESIGN_SYSTEM.md`
 - Import tokens: `import { tokens } from '../design-system'` or `import { tokens } from '../design-system/tokens'`
-- Use CSS variables: `var(--color-primary-500)`, `var(--spacing-4)`, etc.
+- Use CSS variables: `var(--color-primary-500)`, `var(--spacing-4)`, `var(--glass-bg)`, etc.
 - Follow atomic design principles (atoms, molecules, organisms)
 - Use component interfaces: `import type { ButtonProps } from '../design-system'`
-- Design system is consolidated from kira-ai/packages/design-system
 
 ## Icons
 - **Use SVG icons instead of emojis**
