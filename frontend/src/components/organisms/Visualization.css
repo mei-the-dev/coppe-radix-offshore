@@ -6,6 +6,8 @@
   display: flex;
   flex-direction: column;
   gap: var(--spacing-6);
+  min-height: 75vh;
+  flex: 1;
   height: 100%;
 }
 
@@ -45,6 +47,8 @@
 .visualization-map-container {
   flex: 1;
   min-height: 600px;
+  display: flex;
+  flex-direction: column;
   background: var(--surface-default);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-md);
@@ -53,9 +57,10 @@
   position: relative;
 }
 
+
 .visualization-map {
+  flex: 1;
   width: 100%;
-  height: 100%;
   min-height: 600px;
   position: relative;
   z-index: 0;
@@ -64,8 +69,8 @@
   overflow: hidden;
 }
 
-/* Map background: ocean chart style so the offshore logistics map reads as a real map */
-.map-ocean-background {
+/* Map background: neutral, always visible (design-system token with solid fallback) */
+.map-background {
   position: absolute;
   top: 0;
   left: 0;
@@ -73,90 +78,21 @@
   bottom: 0;
   width: 100%;
   height: 100%;
-  /* Nautical chart–style ocean: deeper blues with subtle depth gradient */
-  background:
-    linear-gradient(180deg, #0c4a6e 0%, #0e7490 15%, #0891b2 35%, #06b6d4 55%, #22d3ee 75%, #67e8f9 100%);
+  background: var(--surface-sunken, var(--color-gray-200));
   pointer-events: none;
   z-index: 1;
-}
-
-/* Optional: subtle wave texture so it reads as water, not flat fill */
-.map-ocean-background::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image:
-    radial-gradient(circle at 20% 80%, rgba(255,255,255,0.03) 0%, transparent 40%),
-    radial-gradient(circle at 80% 20%, rgba(255,255,255,0.04) 0%, transparent 35%),
-    radial-gradient(circle at 50% 50%, rgba(255,255,255,0.02) 0%, transparent 60%);
-  pointer-events: none;
-}
-
-.map-grid-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  opacity: 0.35;
-  z-index: 2;
-  color: rgba(255, 255, 255, 0.4);
 }
 
 .visualization-map.map-dragging {
   cursor: grabbing !important;
 }
 
-/* Informative bubble pins by type (Port, FPSO, Platform, Vessel) */
-.map-pin-bubble-container {
-  border: none !important;
-  background: transparent !important;
-}
-
-.map-pin-bubble {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 50% 50% 50% 0;
-  transform: rotate(-45deg);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-  border: 2px solid rgba(255, 255, 255, 0.9);
-  cursor: pointer;
-  transition: transform 0.15s ease;
-}
-
-.map-pin-bubble:hover {
-  transform: rotate(-45deg) scale(1.1);
-}
-
-.map-pin-bubble__letter {
-  transform: rotate(45deg);
-  font-size: 12px;
-  font-weight: 700;
-  color: #fff;
-  text-shadow: 0 0 1px rgba(0,0,0,0.5);
-  line-height: 1;
-}
-
-.map-pin-bubble__label {
-  display: none;
-}
-
-.map-pin-bubble--port { /* P - Supply base */ }
-.map-pin-bubble--fpso { /* F - FPSO */ }
-.map-pin-bubble--platform { /* R - Platform / rig */ }
-.map-pin-bubble--vessel { /* V - Vessel */ }
-
 .map-marker {
   position: absolute;
   cursor: pointer;
   transition: all var(--duration-fast) var(--timing-ease);
   z-index: 10;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+  filter: drop-shadow(var(--shadow-drop-sm));
   pointer-events: auto;
 }
 
@@ -230,12 +166,12 @@
   color: var(--text-primary);
   white-space: nowrap;
   pointer-events: none;
-  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+  text-shadow: var(--text-shadow-on-dark);
 }
 
 .map-marker:hover {
   z-index: 20;
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+  filter: drop-shadow(var(--shadow-drop-md));
 }
 
 .map-marker:hover svg {
@@ -559,21 +495,21 @@
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  background: var(--color-primary-500, #3b82f6);
-  border: 2px solid var(--surface-default, #ffffff);
+  background: var(--color-primary-500);
+  border: 2px solid var(--surface-default);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--shadow-drop-sm);
 }
 
 .map-waypoint-marker--selected .map-waypoint-content {
-  background: var(--color-success, #10b981);
+  background: var(--color-success);
   box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.3);
 }
 
 .map-waypoint-sequence {
-  color: white;
+  color: var(--color-white);
   font-size: 10px;
   font-weight: var(--font-weight-bold);
   line-height: 1;
@@ -587,16 +523,21 @@
 }
 
 .legend-line--planned {
-  background: var(--color-text-secondary, #6b7280);
-  border-top: 2px dashed var(--color-text-secondary, #6b7280);
+  background: var(--text-secondary);
+  border-top: 2px dashed var(--text-secondary);
 }
 
 .legend-line--in-progress {
-  background: var(--color-primary-500, #3b82f6);
+  background: var(--color-primary-500);
 }
 
 .legend-line--completed {
-  background: var(--color-success, #10b981);
+  background: var(--color-success);
+}
+
+.legend-line--example {
+  border-top: 2px dashed var(--color-warning);
+  background: transparent;
 }
 
 /* Visualization Controls */
@@ -608,8 +549,8 @@
 
 .toggle-button {
   padding: var(--spacing-2) var(--spacing-4);
-  background: var(--surface-elevated, #f9fafb);
-  border: 1px solid var(--border-default, #e5e7eb);
+  background: var(--surface-elevated);
+  border: 1px solid var(--border-default);
   border-radius: var(--radius-md);
   color: var(--text-primary);
   font-size: var(--font-size-sm);
@@ -619,19 +560,19 @@
 }
 
 .toggle-button:hover {
-  background: var(--surface-hover, #f3f4f6);
-  border-color: var(--border-hover, #d1d5db);
+  background: var(--surface-hover);
+  border-color: var(--border-hover);
 }
 
 .toggle-button--active {
-  background: var(--color-primary-500, #3b82f6);
-  color: white;
-  border-color: var(--color-primary-500, #3b82f6);
+  background: var(--color-primary-500);
+  color: var(--color-white);
+  border-color: var(--color-primary-500);
 }
 
 .toggle-button--active:hover {
-  background: var(--color-primary-600, #2563eb);
-  border-color: var(--color-primary-600, #2563eb);
+  background: var(--color-primary-600);
+  border-color: var(--color-primary-600);
 }
 
 /* Trip Detail Styles */
@@ -652,8 +593,8 @@
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  background: var(--color-primary-500, #3b82f6);
-  color: white;
+  background: var(--color-primary-500);
+  color: var(--color-white);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -687,7 +628,7 @@
 
 .map-detail-waypoint-ops {
   font-size: var(--font-size-xs);
-  color: var(--color-primary-500, #3b82f6);
+  color: var(--color-primary-500);
   font-style: italic;
 }
 
@@ -731,8 +672,8 @@
 }
 
 .loading-operation-card {
-  background: var(--surface-elevated, #ffffff);
-  border: 2px solid var(--color-primary-500, #3b82f6);
+  background: var(--surface-elevated);
+  border: 2px solid var(--color-primary-500);
   border-radius: var(--radius-lg);
   padding: var(--spacing-4);
   box-shadow: var(--shadow-lg);
@@ -749,7 +690,7 @@
 .loading-operation-progress {
   width: 100%;
   height: 8px;
-  background: var(--surface-default, #f3f4f6);
+  background: var(--surface-default);
   border-radius: var(--radius-full);
   overflow: hidden;
   margin: var(--spacing-2) 0;
@@ -757,7 +698,7 @@
 
 .loading-operation-progress-bar {
   height: 100%;
-  background: var(--color-primary-500, #3b82f6);
+  background: var(--color-primary-500);
   transition: width var(--duration-normal) var(--timing-ease);
   border-radius: var(--radius-full);
 }
@@ -771,7 +712,7 @@
 
 .loading-operation-cargo-item {
   padding: var(--spacing-1) var(--spacing-2);
-  background: var(--surface-default, #f3f4f6);
+  background: var(--surface-default);
   border-radius: var(--radius-sm);
   font-size: var(--font-size-xs);
   color: var(--text-secondary);
@@ -784,9 +725,9 @@
   flex-wrap: wrap;
   align-items: center;
   padding: var(--spacing-3);
-  background: var(--surface-elevated, #ffffff);
+  background: var(--surface-elevated);
   border-radius: var(--radius-lg);
-  border: 1px solid var(--border-default, #e5e7eb);
+  border: 1px solid var(--border-default);
   margin-bottom: var(--spacing-4);
 }
 
@@ -804,8 +745,8 @@
 
 .filter-select {
   padding: var(--spacing-2) var(--spacing-3);
-  background: var(--surface-default, #ffffff);
-  border: 1px solid var(--border-default, #e5e7eb);
+  background: var(--surface-default);
+  border: 1px solid var(--border-default);
   border-radius: var(--radius-md);
   font-size: var(--font-size-sm);
   color: var(--text-primary);
@@ -814,13 +755,13 @@
 }
 
 .filter-select:hover {
-  border-color: var(--border-hover, #d1d5db);
+  border-color: var(--border-hover);
 }
 
 .filter-select:focus {
   outline: none;
-  border-color: var(--color-primary-500, #3b82f6);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: var(--color-primary-500);
+  box-shadow: var(--focus-ring-glow-primary);
 }
 
 /* Analytics Panel */
@@ -838,9 +779,9 @@
   flex-direction: column;
   gap: var(--spacing-1);
   padding: var(--spacing-3);
-  background: var(--surface-elevated, #ffffff);
+  background: var(--surface-elevated);
   border-radius: var(--radius-md);
-  border: 1px solid var(--border-default, #e5e7eb);
+  border: 1px solid var(--border-default);
   margin-bottom: var(--spacing-2);
 }
 
@@ -858,11 +799,11 @@
 
 .analytics-kpi-change {
   font-size: var(--font-size-xs);
-  color: var(--color-success, #10b981);
+  color: var(--color-success);
 }
 
 .analytics-kpi-change.negative {
-  color: var(--color-error, #ef4444);
+  color: var(--color-error);
 }
 
 @media (max-width: 768px) {

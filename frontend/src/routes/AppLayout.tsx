@@ -10,10 +10,10 @@ export default function AppLayout() {
   const { isAuthenticated, loading, logout } = useAuth();
 
   const navItems = [
-    // Dashboard, Planning are hidden (under development)
+    // Dashboard and Planning are hidden (under development)
     // { path: '/dashboard', label: 'Dashboard', icon: 'dashboard' },
     // { path: '/planning', label: 'Planning', icon: 'planning' },
-    { path: '/simulation', label: 'Simulation', icon: 'simulation' },
+    { path: '/simulation', label: 'Visualization', icon: 'simulation' },
     { path: '/model', label: 'Model', icon: 'model' },
     { path: '/data', label: 'Data Structure', icon: 'data' },
     { path: '/metrics', label: 'Metrics', icon: 'metrics' },
@@ -22,7 +22,7 @@ export default function AppLayout() {
   // Show loading state
   if (loading) {
     return (
-      <div className="app-layout">
+      <div className="app-layout sea-canvas">
         <div className="loading-fallback">
           <div className="loading-spinner">Loading...</div>
         </div>
@@ -36,7 +36,7 @@ export default function AppLayout() {
   }
 
   return (
-    <div className="app-layout">
+    <div className="app-layout sea-canvas">
       <header className="app-header" role="banner">
         <div className="header-content">
           <div className="logo">

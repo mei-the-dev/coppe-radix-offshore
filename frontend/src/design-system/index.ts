@@ -9,10 +9,11 @@
 
 export { tokens, voiceStates, alertSeverity } from './tokens/index';
 
-// In-repo CSS (tokens, themes, glass utilities)
+// In-repo CSS (tokens, themes, glass, sea canvas)
 import './tokens.css';
 import './themes.css';
 import './glass.css';
+import './sea-canvas.css';
 
 /**
  * Get CSS variable value

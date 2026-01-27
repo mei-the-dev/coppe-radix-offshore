@@ -14,7 +14,7 @@
   background: var(--color-primary-gradient);
   color: var(--text-inverse);
   padding: var(--spacing-6) var(--spacing-8);
-  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.15);
+  box-shadow: var(--glass-shadow);
   border: none;
   position: relative;
   z-index: var(--z-banner);
@@ -54,35 +54,35 @@
 }
 
 .loading-spinner {
-  font-size: var(--font-size-2xl, 1.5rem);
-  color: var(--color-info-DEFAULT, #3b82f6);
+  font-size: var(--font-size-2xl);
+  color: var(--color-info);
 }
 
 .app-error h2 {
-  color: var(--color-error-DEFAULT, #ef4444);
-  margin-bottom: var(--spacing-4, 1rem);
-  font-size: var(--font-size-2xl, 1.5rem);
-  font-weight: var(--font-weight-semibold, 600);
-  letter-spacing: var(--letter-spacing-tight, -0.025em);
+  color: var(--color-error);
+  margin-bottom: var(--spacing-4);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-tight);
 }
 
 .app-error button {
-  margin-top: var(--spacing-4, 1rem);
-  padding: var(--spacing-3, 0.75rem) var(--spacing-6, 1.5rem);
-  background: var(--color-info-DEFAULT, #3b82f6);
-  color: var(--color-white, #ffffff);
+  margin-top: var(--spacing-4);
+  padding: var(--spacing-3) var(--spacing-6);
+  background: var(--color-info);
+  color: var(--color-white);
   border: none;
-  border-radius: var(--radius-md, 0.5rem);
+  border-radius: var(--radius-md);
   cursor: pointer;
-  font-size: var(--font-size-base, 1rem);
-  font-weight: var(--font-weight-medium, 500);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
   transition: all var(--duration-fast) var(--timing-ease);
-  box-shadow: 0 1px 3px rgba(59, 130, 246, 0.2);
+  box-shadow: var(--shadow-sm);
 }
 
 .app-error button:hover {
-  background: var(--color-info-dark, #2563eb);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+  background: var(--color-info-dark);
+  box-shadow: var(--shadow-md);
   transform: translateY(-1px);
 }
 

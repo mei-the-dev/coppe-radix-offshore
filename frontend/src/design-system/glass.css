@@ -96,13 +96,34 @@
   }
 }
 
-/* Text on glass (over dark/vibrant canvas): ensure contrast */
+/* Liquid glass – readable content panels (dark text on light). Use for /model, /data, /metrics, forms. */
+.liquid-glass {
+  background: var(--glass-content-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-content-border);
+  box-shadow: var(--glass-shadow);
+  border-radius: var(--glass-radius-lg);
+  color: var(--text-primary);
+}
+
+@supports not (backdrop-filter: blur(12px)) {
+  .liquid-glass {
+    background: var(--glass-content-bg);
+  }
+}
+
+/* Text on glass (over dark/vibrant canvas) – uses design tokens */
 .text-on-glass {
-  color: rgba(255, 255, 255, 0.95);
+  color: var(--text-on-glass);
 }
 
 .text-on-glass-secondary {
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--text-on-glass-muted);
+}
+
+.text-on-glass-subtle {
+  color: var(--text-on-glass-subtle);
 }
 
 /* Glass-surface: design-system glass look without blur (for inner cards/sections) */
@@ -123,7 +144,8 @@
 @media (max-width: 768px) {
   .glass,
   .glass-card,
-  .glass-panel {
+  .glass-panel,
+  .liquid-glass {
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
   }

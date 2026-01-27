@@ -5,24 +5,24 @@
  */
 
 .molecule-card {
-  border-radius: 0.75rem;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: var(--radius-xl, 0.75rem);
+  transition: all var(--duration-fast, 150ms) var(--timing-ease, cubic-bezier(0.4, 0, 0.2, 1));
   position: relative;
 }
 
 /* Default - White background with subtle navy accent */
 .molecule-card--default {
-  background-color: var(--color-white, #a5925b);
-  box-shadow: 0 1px 3px rgba(51, 78, 104, 0.08);
-  border: 1px solid var(--color-primary-100, #d9e2ec);
+  background-color: var(--color-white);
+  box-shadow: var(--shadow-base);
+  border: 1px solid var(--color-primary-100);
   display: block;
 }
 
 /* Elevated - White background with navy-tinted shadow */
 .molecule-card--elevated {
-  background-color: var(--color-white, #a5925b);
-  box-shadow: 0 4px 12px rgba(51, 78, 104, 0.12);
-  border: 1px solid var(--color-primary-100, #d9e2ec);
+  background-color: var(--color-white);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--color-primary-100);
 }
 
 /* Outlined - subtle border, no glass */
@@ -50,9 +50,9 @@
 
 /* Muted background - Very light gray with navy border */
 .molecule-card--muted {
-  background-color: var(--color-gray-50, #a5925b);
+  background-color: var(--color-gray-50);
   box-shadow: none;
-  border: 1px solid var(--color-primary-100, #a5925b);
+  border: 1px solid var(--color-primary-100);
 }
 
 /* Padding variants - Breathable spacing */
@@ -65,8 +65,7 @@
 }
 
 .molecule-card--padding-md {
-  padding: 1.5rem !important; /* Ensure padding is applied */
-  /* Glassmorphism with #a5925b - only apply if also outlined */
+  padding: var(--spacing-6) !important;
 }
 
 .molecule-card--padding-lg {
@@ -92,19 +91,19 @@
 
 .molecule-card--clickable:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-md);
 }
 
 .molecule-card--clickable:active {
   transform: translateY(0) scale(0.99);
-  transition-duration: 0.1s;
+  transition-duration: var(--duration-fast, 150ms);
 }
 
 /* Focus state for clickable cards */
 .molecule-card--clickable:focus-visible {
   outline: none;
   box-shadow:
-    0 0 0 2px var(--surface-default),
-    0 0 0 4px var(--border-focus),
+    0 0 0 var(--focus-ring-width, 2px) var(--surface-default),
+    0 0 0 calc(var(--focus-ring-width, 2px) * 2) var(--border-focus, var(--focus-ring-color)),
     var(--shadow-md);
 }

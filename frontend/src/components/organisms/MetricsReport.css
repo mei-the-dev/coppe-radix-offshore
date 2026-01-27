@@ -33,21 +33,22 @@
   flex-wrap: wrap;
 }
 
-/* Sections: glassmorphism per design-system (references/glass) */
+/* Sections: liquid glass for readable content (dark text on light) */
 .metrics-section {
   margin-bottom: var(--spacing-6);
-  background: var(--glass-bg);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid var(--glass-border);
+  background: var(--glass-content-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-content-border);
   border-radius: var(--glass-radius-lg);
   box-shadow: var(--glass-shadow);
   overflow: hidden;
+  color: var(--text-primary);
 }
 
-@supports not (backdrop-filter: blur(8px)) {
+@supports not (backdrop-filter: blur(12px)) {
   .metrics-section {
-    background: var(--glass-bg-fallback);
+    background: var(--glass-content-bg);
   }
 }
 
@@ -56,13 +57,14 @@
   justify-content: space-between;
   align-items: center;
   padding: var(--spacing-4) var(--spacing-6);
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--color-gray-50);
+  border-bottom: 1px solid var(--border-default);
   cursor: pointer;
   transition: background-color var(--duration-fast) var(--timing-ease);
 }
 
 .metrics-section-header:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--color-gray-100);
 }
 
 .metrics-section-header:focus {
@@ -77,15 +79,15 @@
 }
 
 .metrics-section-title h2 {
-  color: var(--text-primary, var(--color-gray-900));
-  font-size: var(--font-size-xl, 1.25rem);
-  font-weight: var(--font-weight-semibold, 600);
+  color: var(--text-primary);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
   margin: 0;
 }
 
 .metrics-section-toggle {
-  color: var(--text-tertiary, var(--color-gray-500));
-  font-size: var(--font-size-lg, 1.125rem);
+  color: var(--text-tertiary);
+  font-size: var(--font-size-lg);
   user-select: none;
 }
 
@@ -103,20 +105,20 @@
 }
 
 .metrics-subsection h3 {
-  color: var(--color-warning-dark, #d97706);
-  font-size: var(--font-size-lg, 1.125rem);
-  font-weight: var(--font-weight-semibold, 600);
-  margin-bottom: var(--spacing-3, 0.75rem);
-  padding-bottom: var(--spacing-2, 0.5rem);
-  border-bottom: 2px solid var(--color-warning, #f59e0b);
+  color: var(--color-primary-700);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--spacing-3);
+  padding-bottom: var(--spacing-2);
+  border-bottom: 2px solid var(--color-primary-200);
 }
 
 .metrics-subsection h4 {
-  color: var(--color-warning-dark, #d97706);
-  font-size: var(--font-size-base, 1rem);
-  font-weight: var(--font-weight-semibold, 600);
-  margin-top: var(--spacing-4, 1rem);
-  margin-bottom: var(--spacing-2, 0.5rem);
+  color: var(--text-primary);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  margin-top: var(--spacing-4);
+  margin-bottom: var(--spacing-2);
 }
 
 .metrics-subsection p {
@@ -143,28 +145,28 @@
 }
 
 .code-block {
-  background: var(--color-gray-900, #111827);
-  color: var(--color-gray-100, #f3f4f6);
-  padding: var(--spacing-4, 1rem);
-  border-radius: var(--radius-md, 0.5rem);
-  margin: var(--spacing-4, 1rem) 0;
+  background: var(--color-gray-900);
+  color: var(--color-gray-100);
+  padding: var(--spacing-4) var(--spacing-4);
+  border-radius: var(--radius-md);
+  margin: var(--spacing-4) 0;
   overflow-x: auto;
 }
 
 .code-block pre {
   margin: 0;
-  font-family: var(--font-family-mono, 'Monaco', 'Menlo', 'Ubuntu Mono', monospace);
-  font-size: var(--font-size-sm, 0.875rem);
-  line-height: var(--line-height-normal, 1.5);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
 }
 
 .code-block code {
-  color: var(--color-gray-100, #f3f4f6);
+  color: var(--color-gray-100);
   font-family: inherit;
 }
 
 .info-box {
-  background: rgba(59, 130, 246, 0.12);
+  background: var(--color-info-light);
   border: 1px solid var(--color-info);
   border-radius: var(--glass-radius);
   box-shadow: var(--glass-shadow);
@@ -173,7 +175,7 @@
 }
 
 .info-box h4 {
-  color: var(--color-info-dark, #2563eb);
+  color: var(--color-info-dark);
   margin-top: 0;
 }
 
@@ -190,15 +192,15 @@
 }
 
 .metric-card {
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
+  background: var(--glass-content-bg);
+  border: 1px solid var(--glass-content-border);
   border-radius: var(--glass-radius);
   box-shadow: var(--glass-shadow);
   padding: var(--spacing-4);
 }
 
 .metric-card h4 {
-  color: var(--color-warning-dark, #d97706);
+  color: var(--color-primary-700);
   margin-top: 0;
   margin-bottom: var(--spacing-3, 0.75rem);
 }
@@ -208,8 +210,8 @@
 }
 
 .tree-diagram {
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
+  background: var(--glass-content-bg);
+  border: 1px solid var(--glass-content-border);
   border-radius: var(--glass-radius);
   box-shadow: var(--glass-shadow);
   padding: var(--spacing-4);
@@ -243,15 +245,16 @@
 .metrics-table {
   width: 100%;
   border-collapse: collapse;
-  background: var(--glass-bg);
+  background: var(--glass-content-bg);
   border-radius: var(--glass-radius);
   overflow: hidden;
   box-shadow: var(--glass-shadow);
-  border: 1px solid var(--glass-border);
+  border: 1px solid var(--glass-content-border);
+  color: var(--text-primary);
 }
 
 .metrics-table thead {
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--color-gray-50);
 }
 
 .metrics-table th {
@@ -259,17 +262,17 @@
   text-align: left;
   font-weight: var(--font-weight-semibold);
   color: var(--text-primary);
-  border-bottom: 2px solid var(--glass-border);
+  border-bottom: 2px solid var(--border-default);
 }
 
 .metrics-table td {
   padding: var(--spacing-3) var(--spacing-4);
-  border-bottom: 1px solid var(--glass-border);
+  border-bottom: 1px solid var(--border-default);
   color: var(--text-secondary);
 }
 
 .metrics-table tbody tr:hover {
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--color-gray-50);
 }
 
 .metrics-table tbody tr:last-child td {
@@ -335,8 +338,8 @@
 }
 
 .finding-card {
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
+  background: var(--glass-content-bg);
+  border: 1px solid var(--glass-content-border);
   border-radius: var(--glass-radius);
   box-shadow: var(--glass-shadow);
   padding: var(--spacing-4);
@@ -348,7 +351,7 @@
 }
 
 .finding-card h4 {
-  color: var(--color-warning-dark, #d97706);
+  color: var(--color-primary-700);
   margin-top: 0;
   margin-bottom: var(--spacing-2, 0.5rem);
 }
@@ -366,8 +369,8 @@
 }
 
 .roadmap-quarter {
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
+  background: var(--glass-content-bg);
+  border: 1px solid var(--glass-content-border);
   border-radius: var(--glass-radius);
   box-shadow: var(--glass-shadow);
   padding: var(--spacing-4);
@@ -408,8 +411,8 @@
 }
 
 .value-card {
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
+  background: var(--glass-content-bg);
+  border: 1px solid var(--glass-content-border);
   border-radius: var(--glass-radius);
   box-shadow: var(--glass-shadow);
   padding: var(--spacing-4);
@@ -468,8 +471,8 @@
 }
 
 .domain-box {
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
+  background: var(--glass-content-bg);
+  border: 1px solid var(--glass-content-border);
   border-left: 4px solid var(--color-primary-500);
   border-radius: var(--glass-radius);
   box-shadow: var(--glass-shadow);
@@ -495,8 +498,8 @@
 }
 
 .tech-card {
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
+  background: var(--glass-content-bg);
+  border: 1px solid var(--glass-content-border);
   border-radius: var(--glass-radius);
   box-shadow: var(--glass-shadow);
   padding: var(--spacing-4);
@@ -533,8 +536,8 @@
 }
 
 .installation-card {
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
+  background: var(--glass-content-bg);
+  border: 1px solid var(--glass-content-border);
   border-left: 4px solid var(--color-info);
   border-radius: var(--glass-radius);
   box-shadow: var(--glass-shadow);
@@ -559,8 +562,8 @@
 }
 
 .fleet-card {
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
+  background: var(--glass-content-bg);
+  border: 1px solid var(--glass-content-border);
   border-radius: var(--glass-radius);
   box-shadow: var(--glass-shadow);
   padding: var(--spacing-4);
@@ -585,8 +588,8 @@
 }
 
 .cargo-category {
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
+  background: var(--glass-content-bg);
+  border: 1px solid var(--glass-content-border);
   border-radius: var(--glass-radius);
   box-shadow: var(--glass-shadow);
   padding: var(--spacing-4);
@@ -614,8 +617,8 @@
 }
 
 .weather-stat-card {
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
+  background: var(--glass-content-bg);
+  border: 1px solid var(--glass-content-border);
   border-radius: var(--glass-radius);
   box-shadow: var(--glass-shadow);
   padding: var(--spacing-4);
@@ -632,8 +635,8 @@
 }
 
 .cost-hierarchy {
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
+  background: var(--glass-content-bg);
+  border: 1px solid var(--glass-content-border);
   border-radius: var(--glass-radius);
   box-shadow: var(--glass-shadow);
   padding: var(--spacing-4);

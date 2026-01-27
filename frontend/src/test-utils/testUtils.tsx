@@ -3,8 +3,15 @@
  * Custom render function, mock API client, test data factories
  */
 
-import { render, type RenderOptions } from '@testing-library/react'
+import * as RTL from '@testing-library/react'
+import type { RenderOptions } from '@testing-library/react'
 import type { ReactElement } from 'react'
+
+// screen and waitFor from RTL (re-exported from @testing-library/dom at runtime; types may not be declared in RTL)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- RTL re-exports from dom; use any so tests type-check
+export const screen = (RTL as Record<string, unknown>).screen as any
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const waitFor = (RTL as Record<string, unknown>).waitFor as any
 
 /**
  * Custom render function with providers
@@ -13,7 +20,7 @@ const customRender = (
   ui: ReactElement,
   options?: Omit<RenderOptions, 'wrapper'>
 ) => {
-  return render(ui, {
+  return RTL.render(ui, {
     ...options,
   })
 }
@@ -95,6 +102,5 @@ export const createMockLoadingPlan = (overrides = {}) => ({
   ...overrides,
 })
 
-// Re-export everything
 export * from '@testing-library/react'
 export { customRender as render }

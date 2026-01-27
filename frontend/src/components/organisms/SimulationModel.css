@@ -1,299 +1,321 @@
+/**
+ * Simulation Model (/model) – liquid glass content panel
+ * UX: high-contrast text on light surface. All body/list/callout text uses
+ * dark tokens (gray-800/900) for ≥4.5:1 contrast on --glass-content-bg.
+ */
+
 .simulation-model {
   padding: var(--spacing-6);
-  background: var(--glass-bg);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid var(--glass-border);
+  background: var(--glass-content-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-content-border);
   border-radius: var(--glass-radius-lg);
   box-shadow: var(--glass-shadow);
   max-width: 1200px;
   margin: 0 auto;
+  color: var(--color-gray-900);
 }
 
-@supports not (backdrop-filter: blur(8px)) {
+@supports not (backdrop-filter: blur(12px)) {
   .simulation-model {
-    background: var(--glass-bg-fallback);
+    background: var(--glass-content-bg);
   }
 }
 
 .model-header {
   margin-bottom: var(--spacing-8);
   padding-bottom: var(--spacing-4);
-  border-bottom: 2px solid var(--glass-border);
+  border-bottom: 2px solid var(--border-default);
 }
 
 .model-header h2 {
-  color: var(--color-gray-900, #111827);
-  font-size: var(--font-size-3xl, 1.875rem);
-  font-weight: 700;
-  margin-bottom: var(--spacing-2, 0.5rem);
+  color: var(--color-gray-900);
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--spacing-2);
 }
 
 .model-subtitle {
-  color: var(--color-gray-600, #4b5563);
-  font-size: var(--font-size-lg, 1.125rem);
+  color: var(--color-gray-700);
+  font-size: var(--font-size-lg);
 }
 
 .model-content {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-8, 2rem);
+  gap: var(--spacing-8);
 }
 
 .model-section {
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
+  background: var(--glass-content-bg);
+  border: 1px solid var(--glass-content-border);
   border-radius: var(--glass-radius-lg);
-  box-shadow: var(--glass-shadow);
+  box-shadow: var(--shadow-sm);
   padding: var(--spacing-6);
+  color: var(--color-gray-800);
 }
 
 .model-section h3 {
-  color: var(--color-primary-700, #334e68);
-  font-size: var(--font-size-xl, 1.25rem);
-  font-weight: 600;
-  margin-bottom: var(--spacing-4, 1rem);
-  padding-bottom: var(--spacing-2, 0.5rem);
-  border-bottom: 2px solid var(--color-primary-200, #bcccdc);
+  color: var(--color-primary-700);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--spacing-4);
+  padding-bottom: var(--spacing-2);
+  border-bottom: 2px solid var(--color-primary-200);
 }
 
 .model-section h4 {
-  color: var(--color-gray-800, #1f2937);
-  font-size: var(--font-size-base, 1rem);
-  font-weight: 600;
-  margin-top: var(--spacing-4, 1rem);
-  margin-bottom: var(--spacing-2, 0.5rem);
+  color: var(--color-gray-900);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  margin-top: var(--spacing-4);
+  margin-bottom: var(--spacing-2);
 }
 
-.model-section p {
-  color: var(--color-gray-700, #374151);
-  line-height: var(--line-height-relaxed, 1.625);
-  margin-bottom: var(--spacing-4, 1rem);
+.model-section p,
+.model-section ul {
+  color: var(--color-gray-800);
+  line-height: var(--line-height-relaxed);
+  margin-bottom: var(--spacing-4);
 }
 
 .model-section ul {
-  color: var(--color-gray-700, #374151);
-  line-height: var(--line-height-relaxed, 1.625);
-  margin-left: var(--spacing-6, 1.5rem);
-  margin-bottom: var(--spacing-4, 1rem);
+  margin-left: var(--spacing-6);
 }
 
 .model-section li {
-  margin-bottom: var(--spacing-2, 0.5rem);
+  margin-bottom: var(--spacing-2);
 }
 
 .model-section li strong {
-  color: var(--color-gray-900, #111827);
-  font-weight: 600;
+  color: var(--color-gray-900);
+  font-weight: var(--font-weight-semibold);
 }
 
 .model-section code {
-  background: var(--color-gray-100, #f3f4f6);
-  padding: 0.125rem 0.375rem;
-  border-radius: var(--radius-sm, 0.25rem);
-  font-family: var(--font-family-mono, ui-monospace, monospace);
+  background: var(--color-gray-100);
+  padding: var(--spacing-1) var(--spacing-2);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-family-mono);
   font-size: 0.9em;
-  color: var(--color-primary-700, #334e68);
+  color: var(--color-primary-700);
 }
 
+/* Info / callout boxes – high-contrast text on light tint (WCAG AA) */
 .info-box {
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(51, 78, 104, 0.1) 100%);
-  border-left: 4px solid var(--color-primary-700, #334e68);
-  padding: var(--spacing-4, 1rem);
-  border-radius: var(--radius-md, 0.5rem);
-  margin: var(--spacing-4, 1rem) 0;
-  color: var(--color-gray-800, #1f2937);
-  line-height: var(--line-height-relaxed, 1.625);
+  background: var(--color-info-light);
+  border-left: 4px solid var(--color-primary-700);
+  padding: var(--spacing-4);
+  border-radius: var(--radius-md);
+  margin: var(--spacing-4) 0;
+  color: var(--color-gray-900);
+  line-height: var(--line-height-relaxed);
 }
 
 .info-box strong {
-  color: var(--color-primary-700, #334e68);
-  font-weight: 600;
+  color: var(--color-primary-800);
+  font-weight: var(--font-weight-semibold);
 }
 
 .info-box.warning {
-  background: linear-gradient(135deg, rgba(234, 179, 8, 0.1) 0%, rgba(245, 158, 11, 0.1) 100%);
-  border-left-color: var(--color-warning, #eab308);
+  background: var(--color-warning-light);
+  border-left-color: var(--color-warning);
+  color: var(--color-gray-900);
 }
 
 .info-box.warning strong {
-  color: var(--color-warning-dark, #a16207);
+  color: var(--color-warning-dark);
 }
 
+/* State cards – liquid glass style, token colors */
 .state-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: var(--spacing-4, 1rem);
-  margin-top: var(--spacing-4, 1rem);
+  gap: var(--spacing-4);
+  margin-top: var(--spacing-4);
 }
 
 .state-card {
-  background: white;
-  padding: var(--spacing-4, 1rem);
-  border-radius: var(--radius-md, 0.5rem);
-  border: 2px solid var(--color-gray-200, #e5e7eb);
-  box-shadow: var(--shadow-sm, 0 1px 2px rgba(0, 0, 0, 0.05));
-  transition: all 0.3s ease;
+  background: var(--glass-content-bg);
+  padding: var(--spacing-4);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--glass-content-border);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--duration-fast) var(--timing-ease),
+    box-shadow var(--duration-fast) var(--timing-ease);
+  color: var(--color-gray-800);
 }
 
 .state-card:hover {
   transform: translateY(-2px);
-  box-shadow: var(--shadow-md, 0 4px 6px -1px rgba(0, 0, 0, 0.1));
+  box-shadow: var(--shadow-md);
 }
 
 .state-card h4 {
   margin-top: 0;
-  margin-bottom: var(--spacing-2, 0.5rem);
-  font-size: var(--font-size-lg, 1.125rem);
+  margin-bottom: var(--spacing-2);
+  font-size: var(--font-size-lg);
+  color: var(--color-gray-900);
+}
+
+.state-card p {
+  color: var(--color-gray-800);
 }
 
 .state-loading {
-  border-left: 4px solid var(--color-warning, #eab308);
+  border-left: 4px solid var(--color-warning);
 }
 
 .state-loading h4 {
-  color: var(--color-warning-dark, #a16207);
+  color: var(--color-warning-dark);
 }
 
 .state-transit {
-  border-left: 4px solid var(--color-info, #3b82f6);
+  border-left: 4px solid var(--color-info);
 }
 
 .state-transit h4 {
-  color: var(--color-info-dark, #1d4ed8);
+  color: var(--color-info-dark);
 }
 
 .state-platform {
-  border-left: 4px solid var(--color-success, #22c55e);
+  border-left: 4px solid var(--color-success);
 }
 
 .state-platform h4 {
-  color: var(--color-success-dark, #15803d);
+  color: var(--color-success-dark);
 }
 
 .state-returning {
-  border-left: 4px solid var(--color-secondary-600, #0d9488);
+  border-left: 4px solid var(--color-secondary-600);
 }
 
 .state-returning h4 {
-  color: var(--color-secondary-700, #0f766e);
+  color: var(--color-secondary-700);
 }
 
 .state-card ul {
-  margin-left: var(--spacing-4, 1rem);
-  margin-top: var(--spacing-2, 0.5rem);
+  margin-left: var(--spacing-4);
+  margin-top: var(--spacing-2);
   margin-bottom: 0;
+  color: var(--color-gray-800);
 }
 
 .state-card li {
-  font-size: var(--font-size-sm, 0.875rem);
-  margin-bottom: var(--spacing-1, 0.25rem);
+  font-size: var(--font-size-sm);
+  margin-bottom: var(--spacing-1);
 }
 
+/* Fleet table – token colors, readable */
 .fleet-table {
   overflow-x: auto;
-  margin: var(--spacing-4, 1rem) 0;
+  margin: var(--spacing-4) 0;
 }
 
 .fleet-table table {
   width: 100%;
   border-collapse: collapse;
-  background: white;
-  border-radius: var(--radius-md, 0.5rem);
+  background: var(--color-white);
+  border-radius: var(--radius-md);
   overflow: hidden;
-  box-shadow: var(--shadow-sm, 0 1px 2px rgba(0, 0, 0, 0.05));
+  box-shadow: var(--shadow-sm);
 }
 
 .fleet-table thead {
-  background: linear-gradient(135deg, var(--color-primary-700, #334e68) 0%, var(--color-secondary-600, #0d9488) 100%);
-  color: white;
+  background: var(--color-primary-gradient);
+  color: var(--color-white);
 }
 
 .fleet-table th {
-  padding: var(--spacing-3, 0.75rem);
+  padding: var(--spacing-3);
   text-align: left;
-  font-weight: 600;
-  font-size: var(--font-size-sm, 0.875rem);
+  font-weight: var(--font-weight-semibold);
+  font-size: var(--font-size-sm);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: var(--letter-spacing-wide);
 }
 
 .fleet-table td {
-  padding: var(--spacing-3, 0.75rem);
-  border-bottom: 1px solid var(--color-gray-200, #e5e7eb);
-  color: var(--color-gray-700, #374151);
+  padding: var(--spacing-3);
+  border-bottom: 1px solid var(--border-default);
+  color: var(--color-gray-800);
 }
 
 .fleet-table tbody tr:hover {
-  background: var(--color-gray-50, #f9fafb);
+  background: var(--color-gray-50);
 }
 
 .fleet-table tbody tr:last-child td {
   border-bottom: none;
 }
 
+/* Platform list – token harmony */
 .platform-list {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: var(--spacing-3, 0.75rem);
-  margin: var(--spacing-4, 1rem) 0;
+  gap: var(--spacing-3);
+  margin: var(--spacing-4) 0;
 }
 
 .platform-item {
-  background: white;
-  padding: var(--spacing-3, 0.75rem);
-  border-radius: var(--radius-md, 0.5rem);
-  border: 1px solid var(--color-gray-200, #e5e7eb);
-  color: var(--color-gray-700, #374151);
-  font-size: var(--font-size-sm, 0.875rem);
+  background: var(--color-white);
+  padding: var(--spacing-3);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-default);
+  color: var(--color-gray-800);
+  font-size: var(--font-size-sm);
 }
 
 .platform-item strong {
-  color: var(--color-primary-700, #334e68);
-  font-weight: 600;
+  color: var(--color-primary-700);
+  font-weight: var(--font-weight-semibold);
 }
 
+/* Assumptions – semantic colors */
 .assumptions-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: var(--spacing-4, 1rem);
-  margin-top: var(--spacing-4, 1rem);
+  gap: var(--spacing-4);
+  margin-top: var(--spacing-4);
 }
 
 .assumption-card {
-  background: white;
-  padding: var(--spacing-4, 1rem);
-  border-radius: var(--radius-md, 0.5rem);
-  border: 2px solid var(--color-gray-200, #e5e7eb);
+  background: var(--glass-content-bg);
+  padding: var(--spacing-4);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--glass-content-border);
+  color: var(--color-gray-800);
 }
 
 .assumption-card h4 {
   margin-top: 0;
-  margin-bottom: var(--spacing-3, 0.75rem);
-  font-size: var(--font-size-lg, 1.125rem);
+  margin-bottom: var(--spacing-3);
+  font-size: var(--font-size-lg);
 }
 
 .assumption-card:first-child h4 {
-  color: var(--color-success-dark, #15803d);
+  color: var(--color-success-dark);
 }
 
 .assumption-card:last-child h4 {
-  color: var(--color-error-dark, #dc2626);
+  color: var(--color-error-dark);
 }
 
 .assumption-card ul {
-  margin-left: var(--spacing-4, 1rem);
+  margin-left: var(--spacing-4);
   margin-bottom: 0;
+  color: var(--color-gray-800);
 }
 
 .assumption-card li {
-  font-size: var(--font-size-sm, 0.875rem);
-  margin-bottom: var(--spacing-2, 0.5rem);
+  font-size: var(--font-size-sm);
+  margin-bottom: var(--spacing-2);
 }
 
 @media (max-width: 768px) {
   .simulation-model {
-    padding: var(--spacing-4, 1rem);
+    padding: var(--spacing-4);
   }
 
   .state-grid,
@@ -302,6 +324,6 @@
   }
 
   .fleet-table {
-    font-size: var(--font-size-sm, 0.875rem);
+    font-size: var(--font-size-sm);
   }
 }

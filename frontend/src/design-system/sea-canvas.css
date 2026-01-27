@@ -1,0 +1,127 @@
+/**
+ * Sea-themed animated background for offshore logistics
+ * Full-viewport, noticeable motion. Sits behind glassmorphism UI.
+ * Uses design tokens. Respects prefers-reduced-motion.
+ */
+
+/* Keyframes: noticeable gradient drift (ocean depth / light shift) */
+@keyframes sea-shimmer {
+  0% {
+    background-position: 0% 50%;
+  }
+  33% {
+    background-position: 100% 80%;
+  }
+  66% {
+    background-position: 50% 0%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Keyframes: visible wave band (horizon-style) */
+@keyframes sea-wave {
+  0%, 100% {
+    opacity: 0.55;
+    transform: translateY(0) scale(1.1);
+  }
+  50% {
+    opacity: 0.95;
+    transform: translateY(-4%) scale(1.25);
+  }
+}
+
+/* Keyframes: visible radial pulse (depth / breathing water) */
+@keyframes sea-pulse {
+  0%, 100% {
+    opacity: 0.2;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.45;
+    transform: scale(1.1);
+  }
+}
+
+/**
+ * Sea canvas – full-viewport animated background
+ * Overrides .app-layout background when class "sea-canvas" is used.
+ */
+.app-layout.sea-canvas {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100dvh;
+  width: 100%;
+  overflow: hidden;
+  /* Large gradient so drift is very noticeable; cover full viewport */
+  background: linear-gradient(
+    160deg,
+    var(--color-primary-800) 0%,
+    var(--color-primary-700) 20%,
+    var(--color-secondary-700) 45%,
+    var(--color-secondary-600) 65%,
+    var(--color-primary-800) 100%
+  );
+  background-attachment: fixed;
+  background-size: 400% 400%;
+  background-position: 0% 50%;
+  background-repeat: no-repeat;
+  animation: sea-shimmer 18s ease-in-out infinite;
+}
+
+/* Radial overlay – “light from below”, more visible */
+.app-layout.sea-canvas::before {
+  content: '';
+  position: absolute;
+  inset: -20%;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 120% 80% at 50% 110%,
+    var(--sea-pulse-from) 0%,
+    var(--sea-pulse-mid) 30%,
+    transparent 55%
+  );
+  animation: sea-pulse 6s ease-in-out infinite;
+}
+
+/* Wave band – horizon-style, larger and more noticeable */
+.app-layout.sea-canvas::after {
+  content: '';
+  position: absolute;
+  left: -20%;
+  right: -20%;
+  top: 20%;
+  height: 50%;
+  z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.04) 20%,
+    var(--sea-wave-mid) 50%,
+    rgba(255, 255, 255, 0.04) 80%,
+    transparent 100%
+  );
+  border-radius: 50%;
+  animation: sea-wave 10s ease-in-out infinite;
+}
+
+/* Ensure layout and glass content stay above the canvas layers */
+.app-layout.sea-canvas > * {
+  position: relative;
+  z-index: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-layout.sea-canvas {
+    animation: none;
+    background-size: 100% 100%;
+    background-position: 0% 50%;
+  }
+  .app-layout.sea-canvas::before,
+  .app-layout.sea-canvas::after {
+    animation: none;
+  }
+}

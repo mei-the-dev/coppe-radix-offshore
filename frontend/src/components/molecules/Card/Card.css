@@ -12,17 +12,17 @@
 
 /* Default - White background with subtle navy accent */
 .molecule-card--default {
-  background-color: var(--color-white, #ffffff) !important;
-  box-shadow: 0 1px 3px rgba(51, 78, 104, 0.08) !important;
-  border: 1px solid var(--color-primary-100, #d9e2ec) !important;
-  display: block !important; /* Ensure it's visible */
+  background-color: var(--color-white) !important;
+  box-shadow: var(--shadow-base) !important;
+  border: 1px solid var(--color-primary-100) !important;
+  display: block !important;
 }
 
 /* Elevated - White background with navy-tinted shadow */
 .molecule-card--elevated {
-  background-color: var(--color-white, #ffffff);
-  box-shadow: 0 4px 12px rgba(51, 78, 104, 0.12);
-  border: 1px solid var(--color-primary-100, #d9e2ec);
+  background-color: var(--color-white);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--color-primary-100);
 }
 
 /* Outlined - subtle border, no glass */
@@ -50,9 +50,9 @@
 
 /* Muted background - Very light gray with navy border */
 .molecule-card--muted {
-  background-color: var(--color-gray-50, #f9fafb);
+  background-color: var(--color-gray-50);
   box-shadow: none;
-  border: 1px solid var(--color-primary-100, #d9e2ec);
+  border: 1px solid var(--color-primary-100);
 }
 
 /* Padding variants - Breathable spacing */
@@ -65,8 +65,7 @@
 }
 
 .molecule-card--padding-md {
-  padding: 1.5rem !important; /* Ensure padding is applied */
-  /* Glassmorphism with #6c581b - only apply if also outlined */
+  padding: var(--spacing-6) !important;
 }
 
 .molecule-card--padding-lg {
@@ -80,7 +79,7 @@
 /* Hoverable - Tactile interaction */
 .molecule-card--hoverable:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  box-shadow: var(--shadow-lg);
 }
 
 /* Clickable - Button-like interaction */
@@ -91,7 +90,7 @@
 
 .molecule-card--clickable:hover {
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-md);
 }
 
 .molecule-card--clickable:active {
@@ -103,7 +102,7 @@
 .molecule-card--clickable:focus-visible {
   outline: none;
   box-shadow:
-    0 0 0 2px var(--color-white, #ffffff),
-    0 0 0 4px var(--color-primary-700, #334e68),
-    0 4px 12px rgba(0, 0, 0, 0.1);
+    0 0 0 var(--focus-ring-width) var(--color-white),
+    0 0 0 calc(var(--focus-ring-width) * 2) var(--focus-ring-color),
+    var(--shadow-md);
 }
