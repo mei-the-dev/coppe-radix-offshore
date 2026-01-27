@@ -35,14 +35,39 @@ If the platform reports **"Missing jwt_secret environment variable"** or the bac
 
 The `app.yaml` backend env already declares `JWT_SECRET` with `value: ${JWT_SECRET}`. That means the **value** must be supplied in the App Platform UI (or via a linked secret). It is not stored in the repo.
 
-## Backend URL Configuration
+## Frontend not reaching backend (path-based routing)
 
-**Current deployment:** The backend is at the same origin as the frontend, under the path `/coppe-radix-offshore-backend`:
+**Your setup:** Frontend at `/`, backend at `/coppe-radix-offshore-backend` on the same app.
 
-- Frontend: `https://sea-lion-app-8l7y7.ondigitalocean.app/`
-- Backend: `https://sea-lion-app-8l7y7.ondigitalocean.app/coppe-radix-offshore-backend`
+At runtime the frontend uses **same-origin + path**: `https://<your-app-host>/coppe-radix-offshore-backend`. It does **not** use `backend/.env` in production; that file is for local dev only. Production env vars are set in DigitalOcean App Platform.
 
-The API client is configured to use this path when running on `ondigitalocean.app` and when `VITE_API_URL` is localhost or empty.
+**If the frontend still can’t reach the backend:**
+
+1. **Set frontend env explicitly**  
+   In App Platform → **frontend** component → **Environment Variables**:
+   - Key: `VITE_API_URL`
+   - Value: `https://<app-host>/coppe-radix-offshore-backend`  
+     Replace `<app-host>` with the host you see in the browser (e.g. `sea-lion-app-8l7y7.ondigitalocean.app` or your custom domain).
+   - Scope: **RUN_AND_BUILD_TIME**
+   - Save and **redeploy** (frontend must be rebuilt for this to apply).
+
+2. **Check routing**  
+   In the app’s component routing:
+   - Frontend: path `/`
+   - Backend: path `/coppe-radix-offshore-backend`  
+   Requests to `https://<app-host>/coppe-radix-offshore-backend/health` should hit the backend.
+
+3. **Browser check**  
+   Open DevTools → Network, try login or any API call. The request URL should be `https://<app-host>/coppe-radix-offshore-backend/...`. If it’s `http://localhost:3001/...`, the built app didn’t get the correct base URL; set `VITE_API_URL` as above and redeploy.
+
+## Backend URL Configuration (reference)
+
+**Path-based routing (same app):**
+
+- Frontend: `https://<app-host>/`
+- Backend: `https://<app-host>/coppe-radix-offshore-backend`
+
+The API client uses `window.location.origin + '/coppe-radix-offshore-backend'` at runtime when no external `VITE_API_URL` is set, so it works on any host (including custom domains).
 
 ## Backend URL Configuration Issue
 

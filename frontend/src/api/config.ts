@@ -12,12 +12,12 @@ function isLocalhost(url: string): boolean {
 
 export function getApiBaseUrl(): string {
   const envUrl = (import.meta.env.VITE_API_URL || '').trim().replace(/\/$/, '');
-  if (typeof window !== 'undefined' && window.location.hostname.includes('ondigitalocean.app')) {
-    if (isLocalhost(envUrl) || !envUrl) {
-      return `${window.location.origin}${DEPLOYED_BACKEND_PATH}`;
-    }
-    return envUrl;
+  // In browser: when no explicit external backend URL, use same-origin backend path (works for path-based routing on any domain).
+  if (typeof window !== 'undefined') {
+    if (envUrl && !isLocalhost(envUrl)) return envUrl;
+    return `${window.location.origin}${DEPLOYED_BACKEND_PATH}`;
   }
+  // Build time / SSR: use env or default.
   if (envUrl && !isLocalhost(envUrl)) return envUrl;
   return import.meta.env.DEV ? 'http://localhost:3001' : 'http://localhost:3001';
 }

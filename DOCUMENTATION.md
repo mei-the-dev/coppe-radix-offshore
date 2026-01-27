@@ -13,6 +13,7 @@ This document is the **master index** for all documentation in the offshore logi
 | **Deployment (DigitalOcean)** | [DIGITALOCEAN_DEPLOYMENT_GUIDE.md](DIGITALOCEAN_DEPLOYMENT_GUIDE.md) | Step-by-step deploy to App Platform |
 | **Deployment troubleshooting** | [DEPLOYMENT_TROUBLESHOOTING.md](DEPLOYMENT_TROUBLESHOOTING.md) | Missing JWT_SECRET, DB_PASSWORD, backend URL, login issues |
 | **Deployment checklist** | [DEPLOYMENT_CHECKLIST.md](DEPLOYMENT_CHECKLIST.md) | Pre- and post-deploy checklist |
+| **DigitalOcean MCP** | [docs/DIGITALOCEAN_MCP.md](docs/DIGITALOCEAN_MCP.md) | Configure and use the DO MCP server in Cursor for app list, logs, deployment status |
 | **Architecture** | [ARCHITECTURE.md](ARCHITECTURE.md) | Module boundaries, backend/frontend structure |
 | **Development rules** | [DEVELOPMENT_RULES.md](DEVELOPMENT_RULES.md) | Worktrees, design system, rendering checks, server usage |
 | **DevOps & production** | [DEVOPS_README.md](DEVOPS_README.md) | Production vs dev, deploy flow, test-before-commit |
@@ -34,6 +35,7 @@ This document is the **master index** for all documentation in the offshore logi
 2. [docs/ENVIRONMENT_VARIABLES.md](docs/ENVIRONMENT_VARIABLES.md) – **App-Level** vars: **JWT_SECRET** and **DB_PASSWORD** (and where to get DB_PASSWORD).
 3. [DEPLOYMENT_TROUBLESHOOTING.md](DEPLOYMENT_TROUBLESHOOTING.md) – “Missing JWT_SECRET”, “Missing DB_PASSWORD”, backend URL.
 4. [DEPLOYMENT_CHECKLIST.md](DEPLOYMENT_CHECKLIST.md) – final checks.
+5. [docs/DIGITALOCEAN_MCP.md](docs/DIGITALOCEAN_MCP.md) – use the DigitalOcean MCP in Cursor to list apps, get deployment status, and fetch logs.
 
 ### Backend / API
 

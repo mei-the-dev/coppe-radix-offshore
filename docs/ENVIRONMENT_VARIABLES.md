@@ -117,5 +117,6 @@ Use the full output (64 hex characters) as the value for **JWT_SECRET** in App-L
 
 - **Local development:** Use `backend/.env` and `frontend/.env`; see examples above.
 - **DigitalOcean production:** Set **JWT_SECRET** and **DB_PASSWORD** (and optionally **AUTH_DEMO_USER** / **AUTH_DEMO_PASSWORD**) as App-Level Environment Variables. DB_HOST, DB_PORT, DB_NAME, DB_USER normally come from the database component when linked in `app.yaml`.
+- **`backend/.env` is local-only:** Production never reads it. If the frontend can't reach the backend, see [DEPLOYMENT_TROUBLESHOOTING.md](../DEPLOYMENT_TROUBLESHOOTING.md) → "Frontend not reaching backend".
 
 For deployment failures tied to env vars, see [DEPLOYMENT_TROUBLESHOOTING.md](../DEPLOYMENT_TROUBLESHOOTING.md) and the “Missing JWT_SECRET” / “Missing DB_PASSWORD” sections.
