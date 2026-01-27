@@ -99,7 +99,7 @@ When the server is healthy, these tools are available. Tool schemas live under y
 
 4. **Env / spec changes**
    - Use **apps-get-info** to get the current spec.
-   - Use **apps-update** with the same spec plus your changes (e.g. new env vars). Do not rely on “partial” updates unless the tool contract says so; pass a full spec when the schema requires it.
+   - Use **apps-update** with the same spec plus your changes (e.g. new env vars). **Note:** In this project **apps-update** has returned 405 when adding a database; use the [control panel](#7-setting-up-the-database-when-mcp-apps-update-returns-405) for DB setup. Do not rely on “partial” updates unless the tool contract says so; pass a full spec when the schema requires it.
 
 5. **Creating an app**
    - Use **apps-create-app-from-spec** with a spec object derived from your `app.yaml` (and optionally **region-list** to choose a region). The schema is large; the tool descriptor in `apps-create-app-from-spec.json` is the source of truth.
@@ -123,7 +123,35 @@ When the server is healthy, these tools are available. Tool schemas live under y
 
 ---
 
-## 7. Links
+## 7. Setting up the database (when MCP apps-update returns 405)
+
+The MCP **apps-update** tool has returned **405 Method Not Allowed** when adding an App Platform database or changing the app spec in this project. To set up the database, use the **DigitalOcean control panel**:
+
+1. **DigitalOcean** → **Apps** → open your app (e.g. **sea-lion-app**).
+2. **Settings** → **Components** → **Add Component** → **Database**.
+3. Create a **PostgreSQL** database:
+   - **Name:** `prio-logistics-db` (lowercase, unique in the app).
+   - **Engine:** PostgreSQL **15**.
+   - **Production:** Off for a **dev** database (DO provisions a new cluster); or use an existing **Managed Database** cluster name for production.
+   - **Database name:** `prio_logistics`
+   - **Database user:** `prio_user`
+4. **Save** the database component.
+5. **Wire the backend** to the database:
+   - Open the **backend** component (e.g. **coppe-radix-offshore-backend**) → **Settings** → **App-Level Environment Variables** (or the backend’s env vars).
+   - Set (or change) these to **reference the database component** so DO injects the real values at runtime:
+     - `DB_HOST` = `${prio-logistics-db.HOSTNAME}`
+     - `DB_PORT` = `${prio-logistics-db.PORT}`
+     - `DB_NAME` = `${prio-logistics-db.DATABASE}`
+     - `DB_USER` = `${prio-logistics-db.USERNAME}`
+     - `DB_PASSWORD` = `${prio-logistics-db.PASSWORD}` (mark as **Secret**)
+   - In the UI you often pick “Bind to database” / “Link database” and then choose `prio-logistics-db`; the platform fills these for you.
+6. **Redeploy** the app so the backend starts with the new DB connection.
+
+DB credentials and host/port come from the database component; see [docs/ENVIRONMENT_VARIABLES.md](ENVIRONMENT_VARIABLES.md) for where to find `DB_PASSWORD` and other vars.
+
+---
+
+## 8. Links
 
 - [DigitalOcean MCP Server (archived)](https://github.com/digitalocean/digitalocean-mcp) — superseded by `@digitalocean-labs/mcp-digitalocean`.
 - [Use the DigitalOcean MCP Server](https://docs.digitalocean.com/products/app-platform/how-to/use-mcp/).

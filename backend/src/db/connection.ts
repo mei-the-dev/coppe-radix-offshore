@@ -6,7 +6,9 @@ dotenv.config();
 function getDbPassword(): string {
   const p = process.env.DB_PASSWORD;
   if (process.env.NODE_ENV === 'production' && (p === undefined || p === '')) {
-    throw new Error('DB_PASSWORD must be set in production');
+    // Do not throw: keeps server up so /health and /auth/login work. First DB use will fail.
+    console.warn('DB_PASSWORD missing in production; DB features will fail until set (e.g. ${db.PASSWORD})');
+    return '';
   }
   return p ?? 'postgres';
 }
@@ -27,9 +29,10 @@ pool.on('connect', () => {
   console.log('✅ Database connected');
 });
 
+// Log only; do not exit. Keeps /health and /auth/login (and other non-DB routes) working
+// when DB is unreachable (e.g. production with DB_HOST=localhost and no local Postgres).
 pool.on('error', (err) => {
   console.error('❌ Unexpected database error:', err);
-  process.exit(-1);
 });
 
 export const query = async (text: string, params?: any[]) => {

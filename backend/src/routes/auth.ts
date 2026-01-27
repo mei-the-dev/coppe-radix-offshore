@@ -3,8 +3,6 @@
  * Demo credentials come from env (AUTH_DEMO_USER, AUTH_DEMO_PASSWORD) in production.
  */
 import { Router, Request, Response } from 'express';
-import bcrypt from 'bcryptjs';
-import { query } from '../db/connection';
 import { generateToken } from '../middleware/auth';
 
 const router = Router();
