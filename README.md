@@ -37,24 +37,33 @@ This application provides a complete solution for offshore logistics management,
 - **ESLint**: Code linting
 - **TypeScript**: Type safety across the stack
 
+## Architecture (high level)
+
+- **Backend:** Express app built in `backend/src/server.ts`; routes mounted via `backend/src/routes/index.ts`. Entry is `backend/src/index.ts`. Config and secrets use env (see [DEPLOYMENT_TROUBLESHOOTING.md](DEPLOYMENT_TROUBLESHOOTING.md)).
+- **Frontend:** SPA with React Router; API client lives under `frontend/src/api/` (config, request helpers, and domain methods). Layout and nav config in `frontend/src/routes/`. Icons are grouped under `frontend/src/assets/icons/` (vessels, controls, ui).
+- **Module map:** See [ARCHITECTURE.md](ARCHITECTURE.md) “Module boundaries (KIRA cluster map)” for how static-analysis clusters map to backend routes/data, frontend simulation UI, and utils.
+
 ## Project Structure
 
 ```
 ├── backend/          # Node.js + TypeScript API server
 │   ├── src/
-│   │   ├── routes/   # API route handlers
-│   │   ├── services/ # Business logic services
-│   │   ├── db/       # Database connection and migrations
+│   │   ├── index.ts    # Entry: starts server
+│   │   ├── server.ts   # Express app + middleware
+│   │   ├── routes/     # API route handlers (mountRoutes in index.ts)
+│   │   ├── services/   # Business logic services
+│   │   ├── db/         # Database connection and migrations
 │   │   ├── middleware/ # Express middleware (auth, etc.)
-│   │   └── types/    # TypeScript type definitions
+│   │   └── types/      # TypeScript type definitions
 │   └── package.json
 ├── frontend/         # React + TypeScript dashboard
 │   ├── src/
 │   │   ├── components/ # React components (atomic design)
-│   │   ├── routes/     # Route components
+│   │   ├── routes/     # Route components + routeConfig
 │   │   ├── stores/     # Zustand state stores
-│   │   ├── api/        # API client
+│   │   ├── api/        # API client (config, request, client facade)
 │   │   ├── hooks/      # Custom React hooks
+│   │   ├── assets/icons/ # Icons by domain (vessels, controls, ui)
 │   │   ├── design-system/ # Design tokens and system
 │   │   └── utils/      # Utility functions
 │   └── package.json

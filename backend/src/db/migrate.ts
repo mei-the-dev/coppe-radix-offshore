@@ -36,12 +36,16 @@ async function migrate() {
     // Read the SQL schema file path
     const schemaPath = join(__dirname, '../../../references/prio_sql_schema.sql');
 
-    // Use psql to execute the file directly - it handles all SQL parsing correctly
+    // Use psql to execute the file directly - it handles all SQL parsing correctly.
+    // All credentials come from environment variables; never hardcode (see DEPLOYMENT_TROUBLESHOOTING.md).
     const dbHost = process.env.DB_HOST || 'localhost';
     const dbPort = process.env.DB_PORT || '5432';
     const dbName = process.env.DB_NAME || 'prio_logistics';
     const dbUser = process.env.DB_USER || 'postgres';
-    const dbPassword = process.env.DB_PASSWORD || '';
+    const dbPassword = process.env.DB_PASSWORD ?? '';
+    if (process.env.NODE_ENV === 'production' && !dbPassword) {
+      throw new Error('DB_PASSWORD must be set in production');
+    }
 
     console.log('📝 Executing SQL schema file...');
     console.log(`   Database: ${dbName}@${dbHost}:${dbPort}`);

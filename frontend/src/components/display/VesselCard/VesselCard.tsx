@@ -93,6 +93,9 @@ function Capacity() {
   return (
     <Stack direction="row" gap="sm" className="vessel-capacity">
       <span className="capacity-item">Deck: {vessel.deckCargoCapacity}t</span>
+      {vessel.clearDeckArea > 0 && (
+        <span className="capacity-item">Deck area: {vessel.clearDeckArea} m²</span>
+      )}
       <span className="capacity-item">Liquid: {vessel.liquidMudCapacity}m³</span>
     </Stack>
   );

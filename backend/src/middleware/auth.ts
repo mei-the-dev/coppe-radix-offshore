@@ -9,7 +9,18 @@ export interface AuthRequest extends Request {
   };
 }
 
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
+function getJwtSecret(): string {
+  const secret = process.env.JWT_SECRET;
+  if (process.env.NODE_ENV === 'production') {
+    if (!secret || secret.length < 16) {
+      throw new Error('JWT_SECRET must be set and at least 16 characters in production');
+    }
+    return secret;
+  }
+  return secret || 'dev-only-secret-not-for-production';
+}
+
+const JWT_SECRET = getJwtSecret();
 
 export const authenticateToken = (
   req: AuthRequest,

@@ -1,5 +1,22 @@
 # Deployment Troubleshooting Guide
 
+## Secrets and Environment Variables
+
+**Never commit secrets or credentials.** All sensitive values must come from environment variables.
+
+| Variable | Where | Required (production) | Description |
+|----------|-------|------------------------|-------------|
+| `JWT_SECRET` | Backend | Yes, min 16 chars | Secret for signing/verifying JWT tokens. Set in DigitalOcean App Platform → backend → Environment Variables. |
+| `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD` | Backend | `DB_PASSWORD` required in production | PostgreSQL connection. Backend and `migrate` script use these. |
+| `VITE_API_URL` | Frontend (build) | Optional when same-origin | Backend API base URL. For same-origin deploy, can be empty; client uses `/coppe-radix-offshore-backend`. |
+| `AUTH_DEMO_USER`, `AUTH_DEMO_PASSWORD` | Backend | Required in production for auth | Demo login credentials used by `/auth/login`. Set in App Platform for the backend component. |
+
+- **Backend:** Set `JWT_SECRET` and `DB_PASSWORD` in production; the app will not start without them.
+- **Frontend:** API URL is derived from `VITE_API_URL` or same-origin path; no API keys in code.
+- **Login:** No default or demo credentials in the repo; all login data comes from user input.
+
+See `frontend/.env.example` for frontend env template. Backend uses `dotenv` and reads from App Platform env.
+
 ## Backend URL Configuration
 
 **Current deployment:** The backend is at the same origin as the frontend, under the path `/coppe-radix-offshore-backend`:

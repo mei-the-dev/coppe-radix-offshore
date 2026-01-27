@@ -1,281 +1,134 @@
-// API client for PRIO Offshore Logistics API
+/**
+ * API client for PRIO Offshore Logistics API.
+ * Base URL from env only; no hardcoded keys. See .env.example and DEPLOYMENT_TROUBLESHOOTING.md.
+ */
+import {
+  getBaseUrl,
+  getAuthToken,
+  setAuthToken,
+  logApiUrlInDev,
+} from './config';
+import { fetchWithAuth, handleNetworkError } from './request';
 
-// Backend path on DigitalOcean App Platform (same origin, path-based routing).
-const DEPLOYED_BACKEND_PATH = '/coppe-radix-offshore-backend';
+logApiUrlInDev();
 
-// In production, if VITE_API_URL is localhost or not set when we're on the deployed app,
-// use the known backend URL (same origin + path).
-const getApiBaseUrl = () => {
-  const envUrl = (import.meta.env.VITE_API_URL || '').trim().replace(/\/$/, '');
-  const isLocalhost = (url: string) =>
-    !url || url.startsWith('http://localhost') || url.startsWith('http://127.0.0.1');
-
-  // When running on the deployed app (ondigitalocean.app), never use localhost.
-  // Backend is at same origin + /coppe-radix-offshore-backend.
-  if (typeof window !== 'undefined' && window.location.hostname.includes('ondigitalocean.app')) {
-    if (isLocalhost(envUrl) || !envUrl) {
-      const base = `${window.location.origin}${DEPLOYED_BACKEND_PATH}`;
-      console.warn('VITE_API_URL was localhost or empty on deployed app; using:', base);
-      return base;
-    }
-    return envUrl;
-  }
-
-  if (envUrl && !isLocalhost(envUrl)) return envUrl;
-  if (import.meta.env.DEV) return 'http://localhost:3001';
-  return 'http://localhost:3001';
-};
-
-const API_BASE_URL = getApiBaseUrl();
-
-// Allow manual override via localStorage (for debugging/production fixes)
-const getFinalApiBaseUrl = () => {
-  if (typeof window !== 'undefined') {
-    const manualOverride = localStorage.getItem('API_BASE_URL_OVERRIDE');
-    if (manualOverride) {
-      console.warn('Using manual API URL override from localStorage:', manualOverride);
-      return manualOverride;
-    }
-  }
-  return API_BASE_URL;
-};
-
-const FINAL_API_BASE_URL = getFinalApiBaseUrl();
-
-// Log API URL in development and production for debugging
-if (typeof window !== 'undefined') {
-  console.log('API Base URL:', FINAL_API_BASE_URL);
-  console.log('Environment:', import.meta.env.MODE);
-  console.log('VITE_API_URL env:', import.meta.env.VITE_API_URL);
-  console.log('To override API URL, set localStorage.setItem("API_BASE_URL_OVERRIDE", "https://your-backend-url")');
-}
-
-// Token storage in localStorage for persistence
-const TOKEN_KEY = 'prio_auth_token';
-
-export const setAuthToken = (token: string | null) => {
-  if (token) {
-    localStorage.setItem(TOKEN_KEY, token);
-  } else {
-    localStorage.removeItem(TOKEN_KEY);
-  }
-};
-
-export const getAuthToken = () => {
-  return localStorage.getItem(TOKEN_KEY);
-};
+export { setAuthToken, getAuthToken };
 
 async function fetchAPI<T>(endpoint: string, options?: RequestInit): Promise<T> {
-  const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
-    ...(options?.headers as Record<string, string> || {}),
-  };
-
-  // Add authentication token if available
-  const token = getAuthToken();
-  if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
-  }
-
+  const baseUrl = getBaseUrl();
   try {
-    const response = await fetch(`${FINAL_API_BASE_URL}${endpoint}`, {
-      ...options,
-      headers,
-    });
-
-    if (!response.ok) {
-      if (response.status === 401) {
-        // Token expired or invalid
-        setAuthToken(null);
-        throw new Error('Authentication required. Please login again.');
-      }
-      const error = await response.json().catch(() => ({
-        error: 'Unknown error',
-        message: `HTTP ${response.status}`
-      }));
-      throw new Error(error.message || error.error || `HTTP ${response.status}`);
-    }
-
-    const data = await response.json();
-
-    // Debug logging (dynamic import to avoid circular dependencies)
-    if (import.meta.env.DEV) {
-      import('../utils/dataInspector').then(({ logAPIResponse }) => {
-        logAPIResponse(endpoint, data, {
-          method: options?.method || 'GET',
-          status: response.status,
-        });
-      }).catch(() => {
-        // Silently fail if debug utils not available
-      });
-    }
-
-    return data;
-  } catch (error: any) {
-    // Handle network errors (failed to fetch)
-    if (error instanceof TypeError && error.message.includes('fetch')) {
-      console.error('Network error:', error);
-      console.error('API_BASE_URL:', API_BASE_URL);
-      console.error('Endpoint:', endpoint);
-      throw new Error(
-        `Unable to connect to the server at ${API_BASE_URL}${endpoint}. ` +
-        `Please check your internet connection and ensure the server is running.`
-      );
-    }
-    // Re-throw other errors
-    throw error;
+    return await fetchWithAuth<T>(endpoint, options);
+  } catch (err) {
+    handleNetworkError(err, endpoint, baseUrl);
   }
 }
 
-// Authentication API
 export const auth = {
   login: async (username: string, password: string) => {
+    const baseUrl = getBaseUrl();
     try {
-      const response = await fetch(`${FINAL_API_BASE_URL}/auth/login`, {
+      const res = await fetch(`${baseUrl}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),
       });
-
-      if (!response.ok) {
-        const error = await response.json().catch(() => ({ error: 'Login failed' }));
-        throw new Error(error.message || error.error || 'Login failed');
+      if (!res.ok) {
+        const e = await res.json().catch(() => ({ error: 'Login failed' }));
+        throw new Error(e.message || e.error || 'Login failed');
       }
-
-      const data = await response.json();
-      if (data.access_token) {
-        setAuthToken(data.access_token);
-      }
+      const data = await res.json();
+      if (data.access_token) setAuthToken(data.access_token);
       return data;
-    } catch (error: any) {
-      // Handle network errors (failed to fetch)
-      if (error instanceof TypeError && error.message.includes('fetch')) {
-        console.error('Network error:', error);
-        throw new Error(
-          `Unable to connect to the server. Please check:\n` +
-          `1. Your internet connection\n` +
-          `2. The server is running at ${API_BASE_URL}\n` +
-          `3. CORS is properly configured`
-        );
-      }
-      // Re-throw other errors
-      throw error;
+    } catch (err: unknown) {
+      handleNetworkError(
+        err,
+        '/auth/login',
+        baseUrl
+      );
     }
   },
-
-  logout: () => {
-    setAuthToken(null);
-  },
-
+  logout: () => setAuthToken(null),
   isAuthenticated: () => !!getAuthToken(),
 };
 
-// Legacy API endpoints (for backward compatibility with existing components)
+const baseUrl = getBaseUrl();
+
 export const api = {
-  // Vessels - using legacy /api/vessels endpoint (returns array directly)
   getVessels: async () => {
-    const response = await fetch(`${API_BASE_URL}/api/vessels`);
-    if (!response.ok) {
-      throw new Error(`Failed to fetch vessels: ${response.status}`);
-    }
-    const data = await response.json();
-    // Legacy endpoint returns array directly, not wrapped in { data: [...] }
+    const res = await fetch(`${baseUrl}/api/vessels`);
+    if (!res.ok) throw new Error(`Failed to fetch vessels: ${res.status}`);
+    const data = await res.json();
     return Array.isArray(data) ? data : [];
   },
-
-  getVessel: (id: string) =>
-    fetchAPI<any>(`/fleet/vessels/${id}`), // Uses database endpoint
-
+  getVessel: (id: string) => fetchAPI<any>(`/fleet/vessels/${id}`),
   updateVesselStatus: (id: string, status: any) =>
     fetchAPI<any>(`/fleet/vessels/${id}/availability`, {
       method: 'POST',
       body: JSON.stringify({
-        status: status.status || status,
-        reason: status.reason,
-        unavailable_from: status.unavailable_from,
-        unavailable_to: status.unavailable_to,
-        notes: status.notes,
+        status: status?.status ?? status,
+        reason: status?.reason,
+        unavailable_from: status?.unavailable_from,
+        unavailable_to: status?.unavailable_to,
+        notes: status?.notes,
       }),
     }),
-
-  // Berths - using legacy /api/berths endpoint
   getBerths: async () => {
-    const response = await fetch(`${API_BASE_URL}/api/berths`);
-    if (!response.ok) {
-      throw new Error(`Failed to fetch berths: ${response.status}`);
-    }
-    const data = await response.json();
-    // Legacy endpoint returns array directly, not wrapped in { data: [...] }
+    const res = await fetch(`${baseUrl}/api/berths`);
+    if (!res.ok) throw new Error(`Failed to fetch berths: ${res.status}`);
+    const data = await res.json();
     return Array.isArray(data) ? data : [];
   },
-
-  getBerth: (id: string) =>
-    fetchAPI<any>(`/installations/${id}`),
-
-  getAvailableBerths: () =>
-    Promise.resolve([]),
-
+  getBerth: (id: string) => fetchAPI<any>(`/installations/${id}`),
+  getAvailableBerths: () => Promise.resolve([]),
   updateBerthStatus: (id: string, status: any) =>
     Promise.resolve({ id, ...status }),
-
-  // Cargo - using new PRIO API
   getCargoCatalog: async () => {
-    const response = await fetchAPI<{ data: any[] }>('/cargo/types');
-    return response.data || [];
+    const r = await fetchAPI<{ data: any[] }>('/cargo/types');
+    return r?.data ?? [];
   },
-
   getInstallations: async () => {
-    const response = await fetchAPI<{ data: any[] }>('/installations');
-    return response.data || [];
+    const r = await fetchAPI<{ data: any[] }>('/installations');
+    return r?.data ?? [];
   },
-
   validateCargo: (cargoItems: any[]) =>
     fetchAPI<{ valid: boolean; errors: string[] }>('/cargo/validate', {
       method: 'POST',
       body: JSON.stringify({ cargoItems }),
     }),
-
-  // Loading Plans - using orders endpoint
   getLoadingPlans: async () => {
-    const response = await fetchAPI<{ data: any[] }>('/orders');
-    return response.data || [];
+    const r = await fetchAPI<{ data: any[] }>('/orders');
+    return r?.data ?? [];
   },
-
-  getLoadingPlan: (id: string) =>
-    fetchAPI<any>(`/orders/${id}`),
-
+  getLoadingPlan: (id: string) => fetchAPI<any>(`/orders/${id}`),
   createLoadingPlan: (plan: any) =>
     fetchAPI<any>('/orders', {
       method: 'POST',
       body: JSON.stringify(plan),
     }),
-
   updateLoadingPlan: (id: string, updates: any) =>
     fetchAPI<any>(`/orders/${id}/status`, {
       method: 'PATCH',
       body: JSON.stringify(updates),
     }),
-
   deleteLoadingPlan: (id: string) =>
-    fetchAPI<void>(`/orders/${id}`, {
-      method: 'DELETE',
-    }),
+    fetchAPI<void>(`/orders/${id}`, { method: 'DELETE' }),
 };
 
-// New PRIO API endpoints
-export const prioAPI = {
-  // Authentication
-  auth,
+function queryString(params: Record<string, string | undefined | boolean>): string {
+  const q = new URLSearchParams();
+  Object.entries(params).forEach(([k, v]) => {
+    if (v !== undefined && v !== '') q.append(k, String(v));
+  });
+  return q.toString();
+}
 
-  // Network Management
+export const prioAPI = {
+  auth,
   installations: {
-    list: (params?: { type?: string; active?: boolean; include_storage?: boolean }) => {
-      const query = new URLSearchParams();
-      if (params?.type) query.append('type', params.type);
-      if (params?.active !== undefined) query.append('active', String(params.active));
-      if (params?.include_storage) query.append('include_storage', 'true');
-      return fetchAPI<{ data: any[]; meta: any }>(`/installations?${query}`);
-    },
+    list: (p?: { type?: string; active?: boolean; include_storage?: boolean }) =>
+      fetchAPI<{ data: any[]; meta: any }>(
+        `/installations?${queryString(p ?? {})}`
+      ),
     get: (id: string) => fetchAPI<any>(`/installations/${id}`),
     updateInventory: (id: string, data: any) =>
       fetchAPI<any>(`/installations/${id}/inventory`, {
@@ -283,30 +136,19 @@ export const prioAPI = {
         body: JSON.stringify(data),
       }),
   },
-
   distances: {
-    list: (params?: { from?: string; to?: string }) => {
-      const query = new URLSearchParams();
-      if (params?.from) query.append('from', params.from);
-      if (params?.to) query.append('to', params.to);
-      return fetchAPI<{ data: any[] }>(`/network/distances?${query}`);
-    },
+    list: (p?: { from?: string; to?: string }) =>
+      fetchAPI<{ data: any[] }>(`/network/distances?${queryString(p ?? {})}`),
   },
-
   supplyBases: {
     list: () => fetchAPI<{ data: any[] }>('/supply-bases'),
     getBerths: (id: string) => fetchAPI<any[]>(`/supply-bases/${id}/berths`),
   },
-
-  // Fleet Management
   vessels: {
-    list: (params?: { class?: string; status?: string; available_from?: string }) => {
-      const query = new URLSearchParams();
-      if (params?.class) query.append('class', params.class);
-      if (params?.status) query.append('status', params.status);
-      if (params?.available_from) query.append('available_from', params.available_from);
-      return fetchAPI<{ data: any[]; meta: any }>(`/fleet/vessels?${query}`);
-    },
+    list: (p?: { class?: string; status?: string; available_from?: string }) =>
+      fetchAPI<{ data: any[]; meta: any }>(
+        `/fleet/vessels?${queryString(p ?? {})}`
+      ),
     get: (id: string) => fetchAPI<any>(`/fleet/vessels/${id}`),
     getSchedule: (id: string) => fetchAPI<any>(`/fleet/vessels/${id}/schedule`),
     updateAvailability: (id: string, data: any) =>
@@ -315,75 +157,47 @@ export const prioAPI = {
         body: JSON.stringify(data),
       }),
   },
-
-  // Cargo & Inventory
   cargoTypes: {
-    list: (params?: { category?: string }) => {
-      const query = new URLSearchParams();
-      if (params?.category) query.append('category', params.category);
-      return fetchAPI<{ data: any[] }>(`/cargo/types?${query}`);
-    },
+    list: (p?: { category?: string }) =>
+      fetchAPI<{ data: any[] }>(`/cargo/types?${queryString(p ?? {})}`),
   },
-
   demands: {
-    list: (params?: {
+    list: (p?: {
       installation_id?: string;
       status?: string;
       priority?: string;
       from_date?: string;
       to_date?: string;
-    }) => {
-      const query = new URLSearchParams();
-      if (params?.installation_id) query.append('installation_id', params.installation_id);
-      if (params?.status) query.append('status', params.status);
-      if (params?.priority) query.append('priority', params.priority);
-      if (params?.from_date) query.append('from_date', params.from_date);
-      if (params?.to_date) query.append('to_date', params.to_date);
-      return fetchAPI<{ data: any[]; meta: any }>(`/demands?${query}`);
-    },
+    }) =>
+      fetchAPI<{ data: any[]; meta: any }>(`/demands?${queryString(p ?? {})}`),
     create: (data: any) =>
       fetchAPI<any>('/demands', {
         method: 'POST',
         body: JSON.stringify(data),
       }),
   },
-
   orders: {
-    list: (params?: {
+    list: (p?: {
       status?: string;
       vessel_id?: string;
       from_date?: string;
       to_date?: string;
-    }) => {
-      const query = new URLSearchParams();
-      if (params?.status) query.append('status', params.status);
-      if (params?.vessel_id) query.append('vessel_id', params.vessel_id);
-      if (params?.from_date) query.append('from_date', params.from_date);
-      if (params?.to_date) query.append('to_date', params.to_date);
-      return fetchAPI<{ data: any[] }>(`/orders?${query}`);
-    },
+    }) =>
+      fetchAPI<{ data: any[] }>(`/orders?${queryString(p ?? {})}`),
     updateStatus: (id: string, data: any) =>
       fetchAPI<any>(`/orders/${id}/status`, {
         method: 'PATCH',
         body: JSON.stringify(data),
       }),
   },
-
-  // Operations & Trips
   trips: {
-    list: (params?: {
+    list: (p?: {
       vessel_id?: string;
       status?: string;
       from_date?: string;
       to_date?: string;
-    }) => {
-      const query = new URLSearchParams();
-      if (params?.vessel_id) query.append('vessel_id', params.vessel_id);
-      if (params?.status) query.append('status', params.status);
-      if (params?.from_date) query.append('from_date', params.from_date);
-      if (params?.to_date) query.append('to_date', params.to_date);
-      return fetchAPI<{ data: any[] }>(`/trips?${query}`);
-    },
+    }) =>
+      fetchAPI<{ data: any[] }>(`/trips?${queryString(p ?? {})}`),
     getTracking: (id: string) => fetchAPI<any>(`/trips/${id}/tracking`),
     create: (data: any) =>
       fetchAPI<any>('/trips', {
@@ -391,46 +205,37 @@ export const prioAPI = {
         body: JSON.stringify(data),
       }),
   },
-
-  // Weather
   weather: {
-    getForecasts: (params: {
+    getForecasts: (p: {
       location_id: string;
       from_time: string;
       to_time: string;
       horizon?: number;
     }) => {
-      const query = new URLSearchParams();
-      query.append('location_id', params.location_id);
-      query.append('from_time', params.from_time);
-      query.append('to_time', params.to_time);
-      if (params.horizon) query.append('horizon', String(params.horizon));
-      return fetchAPI<any>(`/weather/forecasts?${query}`);
+      const q = new URLSearchParams({
+        location_id: p.location_id,
+        from_time: p.from_time,
+        to_time: p.to_time,
+      });
+      if (p.horizon != null) q.append('horizon', String(p.horizon));
+      return fetchAPI<any>(`/weather/forecasts?${q}`);
     },
-    getWindows: (params: {
+    getWindows: (p: {
       location_id: string;
       operation_type: string;
       from_time: string;
       duration_h: number;
-    }) => {
-      const query = new URLSearchParams();
-      query.append('location_id', params.location_id);
-      query.append('operation_type', params.operation_type);
-      query.append('from_time', params.from_time);
-      query.append('duration_h', String(params.duration_h));
-      return fetchAPI<any>(`/weather/windows?${query}`);
-    },
+    }) =>
+      fetchAPI<any>(
+        `/weather/windows?${new URLSearchParams({
+          ...p,
+          duration_h: String(p.duration_h),
+        } as Record<string, string>)}`
+      ),
   },
-
-  // Analytics
   analytics: {
-    getKPIs: (params?: { period?: string; from_date?: string; to_date?: string }) => {
-      const query = new URLSearchParams();
-      if (params?.period) query.append('period', params.period);
-      if (params?.from_date) query.append('from_date', params.from_date);
-      if (params?.to_date) query.append('to_date', params.to_date);
-      return fetchAPI<any>(`/analytics/kpis?${query}`);
-    },
+    getKPIs: (p?: { period?: string; from_date?: string; to_date?: string }) =>
+      fetchAPI<any>(`/analytics/kpis?${queryString(p ?? {})}`),
     getVesselPerformance: (id: string) =>
       fetchAPI<any>(`/analytics/vessels/${id}/performance`),
   },

@@ -96,10 +96,10 @@
   --glass-bg-fallback: rgba(255, 255, 255, 0.92);
   /* Vibrant canvas for glass (glass needs something to blur) */
   --bg-canvas: linear-gradient(135deg, var(--color-primary-700) 0%, var(--color-secondary-600) 40%, var(--color-primary-800) 100%);
-  /* Text on glass (light text over dark/vibrant canvas) – UX: high contrast, readable */
-  --text-on-glass: rgba(255, 255, 255, 0.95);
-  --text-on-glass-muted: rgba(255, 255, 255, 0.85);
-  --text-on-glass-subtle: rgba(255, 255, 255, 0.7);
+  /* Text on glass (light text over dark/vibrant canvas) – WCAG ≥4.5:1 on --bg-canvas */
+  --text-on-glass: rgba(255, 255, 255, 0.98);
+  --text-on-glass-muted: rgba(255, 255, 255, 0.9);
+  --text-on-glass-subtle: rgba(255, 255, 255, 0.82);
   --text-on-glass-strong: rgba(255, 255, 255, 1);
   /* Glass panel (main content area) – slightly more opaque for content readability */
   --glass-panel-bg: rgba(255, 255, 255, 0.18);

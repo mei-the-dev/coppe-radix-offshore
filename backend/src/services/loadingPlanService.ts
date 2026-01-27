@@ -1,5 +1,8 @@
-// Loading plan service for calculating durations and validating plans
-
+/**
+ * Loading plan service: duration estimation and plan validation.
+ * Used by loading-plans and optimization routes. Delegates compatibility checks to CompatibilityService.
+ * @see references/inventory.md section 1.1 (operational times)
+ */
 import { LoadingPlan, CargoItem, Vessel } from '../types';
 import { CompatibilityService } from './compatibilityService';
 import { mockCargoCatalog } from '../data/mockData';

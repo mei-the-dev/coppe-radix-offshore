@@ -1,9 +1,18 @@
+/**
+ * Auth routes: login, token validation.
+ * Demo credentials come from env (AUTH_DEMO_USER, AUTH_DEMO_PASSWORD) in production.
+ */
 import { Router, Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import { query } from '../db/connection';
 import { generateToken } from '../middleware/auth';
 
 const router = Router();
+
+const getDemoCredentials = () => ({
+  username: process.env.AUTH_DEMO_USER || 'coppetec',
+  password: process.env.AUTH_DEMO_PASSWORD || 'rotaviva',
+});
 
 // POST /auth/login
 router.post('/login', async (req: Request, res: Response) => {
@@ -17,12 +26,13 @@ router.post('/login', async (req: Request, res: Response) => {
       });
     }
 
-    // Simple authentication for team sharing
-    // Login: coppetec, Password: rotaviva
-    const validCredentials = {
-      username: 'coppetec',
-      password: 'rotaviva'
-    };
+    const validCredentials = getDemoCredentials();
+    if (process.env.NODE_ENV === 'production' && (!process.env.AUTH_DEMO_USER || !process.env.AUTH_DEMO_PASSWORD)) {
+      return res.status(503).json({
+        error: 'config_error',
+        message: 'Auth demo user not configured; set AUTH_DEMO_USER and AUTH_DEMO_PASSWORD',
+      });
+    }
 
     if (username !== validCredentials.username || password !== validCredentials.password) {
       return res.status(401).json({

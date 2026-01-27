@@ -41,6 +41,7 @@
 
 .vessel-capacity {
   margin-top: var(--spacing-1);
+  flex-wrap: wrap;
 }
 
 .capacity-item {

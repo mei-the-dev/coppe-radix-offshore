@@ -1,3 +1,7 @@
+/**
+ * Analytics routes: KPIs, vessel performance, reporting.
+ * Uses DB for fleet and trip metrics.
+ */
 import { Router, Request, Response } from 'express';
 import { query } from '../db/connection';
 import { authenticateToken, AuthRequest } from '../middleware/auth';

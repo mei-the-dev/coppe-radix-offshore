@@ -9,7 +9,10 @@ import { Visualization } from '../components/organisms';
  */
 export default function SimulationRoute() {
   return (
-    <div className="dashboard-section dashboard-section-wide" style={{ minHeight: '75vh', display: 'flex', flexDirection: 'column' }}>
+    <div
+      className="dashboard-section dashboard-section-wide"
+      style={{ flex: '1 1 0', minHeight: 0, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}
+    >
       <Visualization />
     </div>
   );

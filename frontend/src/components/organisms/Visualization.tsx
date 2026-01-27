@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import type { Vessel, Berth, Trip } from '../../types';
-import { IconVessel, IconPort, IconFPSO, IconPlatform, IconZoomIn, IconZoomOut, IconReset, IconClose } from '../../assets/icons';
+import { IconZoomIn, IconZoomOut, IconReset, IconClose } from '../../assets/icons';
 import { Card } from '../display';
 import { Badge } from '../display';
 import { Stack } from '../layout';
@@ -199,7 +199,7 @@ export default function Visualization({ vessels: propsVessels, berths: propsBert
           draughtLoaded: vessel.specifications?.draught_m || vessel.draughtLoaded || 0,
           totalDeadweight: vessel.specifications?.total_deadweight_t || vessel.totalDeadweight || 0,
           deckCargoCapacity: vessel.specifications?.deck_cargo_capacity_t || vessel.deckCargoCapacity || 0,
-          clearDeckArea: vessel.clearDeckArea || 0,
+          clearDeckArea: vessel.specifications?.clear_deck_area_m2 ?? vessel.clearDeckArea ?? 0,
           fuelOilCapacity: vessel.fuelOilCapacity || 0,
           freshWaterCapacity: vessel.freshWaterCapacity || 0,
           liquidMudCapacity: vessel.liquidMudCapacity || 0,
@@ -366,6 +366,44 @@ export default function Visualization({ vessels: propsVessels, berths: propsBert
     return [...withPos, ...withFallback];
   }, [vessels, supplyBases, installations]);
 
+  // Place vessel markers at sea (east of port) when at/near Macaé; spread when stacked
+  const STACK_SPREAD_RADIUS_DEG = 0.012;
+  const AT_PORT_THRESHOLD_DEG = 0.025;
+  const SEA_EAST_OF_PORT_DEG = 0.06; // longitude offset so vessels appear in the sea east of Macaé
+  const vesselDisplayList = useMemo(() => {
+    const base = supplyBases[0]?.location
+      ? { lat: supplyBases[0].location.latitude, lon: supplyBases[0].location.longitude }
+      : { lat: -22.37, lon: -41.79 };
+    const atPort = (p: { lat: number; lon: number }) =>
+      Math.hypot(p.lat - base.lat, p.lon - base.lon) < AT_PORT_THRESHOLD_DEG;
+
+    const key = (lat: number, lon: number) => `${lat.toFixed(4)}_${lon.toFixed(4)}`;
+    const byKey = new Map<string, (typeof vesselsToShow)>();
+    for (const v of vesselsToShow) {
+      const p = v.position!;
+      const k = key(p.lat, p.lon);
+      if (!byKey.has(k)) byKey.set(k, []);
+      byKey.get(k)!.push(v);
+    }
+    return vesselsToShow.map((v) => {
+      const p = v.position!;
+      const k = key(p.lat, p.lon);
+      const group = byKey.get(k)!;
+      const idx = group.findIndex((w) => w.id === v.id);
+      const n = group.length;
+      const isAtPort = atPort(p);
+      const centerLat = isAtPort ? base.lat : p.lat;
+      const centerLon = isAtPort ? base.lon + SEA_EAST_OF_PORT_DEG : p.lon;
+      if (n <= 1) return { vessel: v, displayLat: centerLat, displayLon: centerLon };
+      const angle = (2 * Math.PI * idx) / n;
+      return {
+        vessel: v,
+        displayLat: centerLat + STACK_SPREAD_RADIUS_DEG * Math.cos(angle),
+        displayLon: centerLon + STACK_SPREAD_RADIUS_DEG * Math.sin(angle),
+      };
+    });
+  }, [vesselsToShow, supplyBases]);
+
   // Calculate map bounds (include vesselsToShow so fallback positions are in view)
   const mapBounds = useMemo(() => {
     try {
@@ -516,11 +554,14 @@ export default function Visualization({ vessels: propsVessels, berths: propsBert
   }
 
   if (error) {
+    const isConnectionError = /Unable to connect|fetch|network|ECONNREFUSED/i.test(error);
     return (
       <div className="visualization-error">
-        <p>Error loading data from database: {error}</p>
+        <p>Error loading map data: {error}</p>
         <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--text-secondary)', marginTop: 'var(--spacing-2)' }}>
-          Please ensure the database is connected and contains data.
+          {isConnectionError
+            ? 'Start the backend: cd backend && npm run dev. If the DB was created before deck-area support, run scripts/add-vessel-deck-area.sql then re-seed.'
+            : 'Ensure the database is connected and contains data (e.g. run seed in backend).'}
         </p>
         <button onClick={loadAllData}>Retry</button>
       </div>
@@ -546,19 +587,19 @@ export default function Visualization({ vessels: propsVessels, berths: propsBert
         <h2>Offshore Logistics Map</h2>
         <div className="visualization-legend">
           <div className="legend-item">
-            <IconPort size={20} />
+            <span className="legend-pin" style={{ background: '#0ea5e9' }} title="Supply Base">P</span>
             <span>Supply Base (Macaé)</span>
           </div>
           <div className="legend-item">
-            <IconFPSO size={20} />
+            <span className="legend-pin" style={{ background: '#8b5cf6' }} title="FPSO">F</span>
             <span>FPSO</span>
           </div>
           <div className="legend-item">
-            <IconPlatform size={20} />
+            <span className="legend-pin" style={{ background: '#10b981' }} title="Platform">R</span>
             <span>Platform</span>
           </div>
           <div className="legend-item">
-            <IconVessel size={20} />
+            <span className="legend-pin" style={{ background: '#f59e0b' }} title="Vessel">V</span>
             <span>Vessel in Transit</span>
           </div>
           {showTrips && (
@@ -749,7 +790,7 @@ export default function Visualization({ vessels: propsVessels, berths: propsBert
         <div
           ref={mapWrapperRef}
           className="visualization-map leaflet-map-wrapper"
-          style={{ flex: 1, minHeight: 600, position: 'relative' }}
+          style={{ flex: '1 1 0', minHeight: 0, position: 'relative' }}
           role="img"
           aria-label="Interactive map of offshore installations and vessels"
         >
@@ -855,10 +896,10 @@ export default function Visualization({ vessels: propsVessels, berths: propsBert
                   eventHandlers={{ click: () => setSelectedMarker({ type: 'installation', data: inst }) }}
                 />
               ))}
-              {vesselsToShow.map((v) => (
+              {vesselDisplayList.map(({ vessel: v, displayLat, displayLon }) => (
                 <Marker
                   key={v.id}
-                  position={[v.position!.lat, v.position!.lon]}
+                  position={[displayLat, displayLon]}
                   icon={createPinIcon('vessel', v.name)}
                   eventHandlers={{ click: () => setSelectedMarker({ type: 'vessel', data: v }) }}
                 />
@@ -1086,6 +1127,12 @@ export default function Visualization({ vessels: propsVessels, berths: propsBert
                         <div className="map-detail-row">
                           <span>Deck Capacity:</span>
                           <strong>{details.deck_cargo_capacity_t} t</strong>
+                        </div>
+                      )}
+                      {((details as Vessel).clearDeckArea ?? 0) > 0 && (
+                        <div className="map-detail-row">
+                          <span>Deck Area:</span>
+                          <strong>{(details as Vessel).clearDeckArea} m²</strong>
                         </div>
                       )}
                       {details.total_deadweight_t && (

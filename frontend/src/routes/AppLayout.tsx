@@ -4,20 +4,11 @@ import { IconVessel } from '../assets/icons';
 import { Stack } from '../components/layout';
 import { Button } from '../components/action';
 import { useAuth } from '../contexts/AuthContext';
+import { NAV_ITEMS } from './routeConfig';
 import './AppLayout.css';
 
 export default function AppLayout() {
   const { isAuthenticated, loading, logout } = useAuth();
-
-  const navItems = [
-    // Dashboard and Planning are hidden (under development)
-    // { path: '/dashboard', label: 'Dashboard', icon: 'dashboard' },
-    // { path: '/planning', label: 'Planning', icon: 'planning' },
-    { path: '/simulation', label: 'Visualization', icon: 'simulation' },
-    { path: '/model', label: 'Model', icon: 'model' },
-    { path: '/data', label: 'Data Structure', icon: 'data' },
-    { path: '/metrics', label: 'Metrics', icon: 'metrics' },
-  ];
 
   // Show loading state
   if (loading) {
@@ -55,7 +46,7 @@ export default function AppLayout() {
       <nav className="app-nav" role="navigation" aria-label="Main navigation">
         <div className="nav-container">
           <Stack direction="row" gap="sm" className="nav-tabs">
-            {navItems.map((item) => (
+            {NAV_ITEMS.map((item) => (
               <NavLink
                 key={item.path}
                 to={item.path}
@@ -78,7 +69,9 @@ export default function AppLayout() {
             </div>
           }
         >
-          <Outlet />
+          <div className="app-main-outlet">
+            <Outlet />
+          </div>
         </Suspense>
       </main>
     </div>

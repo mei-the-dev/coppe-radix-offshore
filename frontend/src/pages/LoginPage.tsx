@@ -10,6 +10,8 @@ import { Alert } from '../components/feedback';
 import { IconVessel } from '../assets/icons';
 import './LoginPage.css';
 
+// No default/demo credentials — all values come from user input. Never commit test credentials.
+
 export default function LoginPage() {
   const { login, isAuthenticated, loading: authLoading } = useAuth();
   const navigate = useNavigate();

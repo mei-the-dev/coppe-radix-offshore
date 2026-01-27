@@ -74,6 +74,16 @@ npm run migrate
 
 This will execute the SQL schema from `references/prio_sql_schema.sql`.
 
+**Existing databases:** If the DB was created before `vessels.clear_deck_area_m2` existed, run the additive migration from the project root:
+
+```bash
+psql -h $DB_HOST -p $DB_PORT -U $DB_USER -d $DB_NAME -f scripts/add-vessel-deck-area.sql
+```
+
+Or from the backend: `npm run add-deck-area`. Then re-run the seed so vessel rows get clear deck area values (Standard PSV ~950 m², Large PSV ~1120 m², CSV ~1500 m², WSV ~1120 m²).
+
+**Deploy / startup check:** On start, the API runs a deck-area check: it ensures `vessels.clear_deck_area_m2` exists (adds it if missing) and reports if it is empty. This allows deploys to succeed without manual migration. To skip the check (e.g. a worker that does not use vessels), set `SKIP_DECK_AREA_CHECK=1`.
+
 ### 5. Install Dependencies
 
 ```bash

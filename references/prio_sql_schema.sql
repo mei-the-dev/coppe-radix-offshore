@@ -92,6 +92,7 @@ CREATE TABLE vessels (
     beam_m DECIMAL(5,2),
     draught_m DECIMAL(5,2),
     deck_cargo_capacity_t DECIMAL(10,2),
+    clear_deck_area_m2 DECIMAL(10,2),
     total_deadweight_t DECIMAL(10,2),
     service_speed_kts DECIMAL(5,2),
     operational_speed_kts DECIMAL(5,2),

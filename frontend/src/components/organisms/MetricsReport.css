@@ -453,14 +453,15 @@
   margin: var(--spacing-4, 1rem) 0;
 }
 
+/* WCAG: light background + dark text for readability on liquid-glass */
 .highlight-card {
-  background: rgba(59, 130, 246, 0.12);
+  background: var(--color-info-light);
   border: 1px solid var(--color-info);
   border-radius: var(--glass-radius);
   box-shadow: var(--glass-shadow);
   padding: var(--spacing-4);
   font-size: var(--font-size-sm);
-  color: var(--text-primary);
+  color: var(--color-gray-900);
 }
 
 .domain-flow {
@@ -470,6 +471,7 @@
   margin: var(--spacing-4, 1rem) 0;
 }
 
+/* WCAG: explicit dark text on light panel */
 .domain-box {
   background: var(--glass-content-bg);
   border: 1px solid var(--glass-content-border);
@@ -478,7 +480,7 @@
   box-shadow: var(--glass-shadow);
   padding: var(--spacing-4);
   font-weight: var(--font-weight-semibold);
-  color: var(--text-primary);
+  color: var(--color-gray-900);
   text-align: center;
 }
 
@@ -497,12 +499,14 @@
   margin: var(--spacing-4, 1rem) 0;
 }
 
+/* WCAG: dark text on light panel */
 .tech-card {
   background: var(--glass-content-bg);
   border: 1px solid var(--glass-content-border);
   border-radius: var(--glass-radius);
   box-shadow: var(--glass-shadow);
   padding: var(--spacing-4);
+  color: var(--color-gray-900);
 }
 
 .tech-card h4 {
@@ -513,12 +517,12 @@
 
 .tech-card p {
   margin-bottom: var(--spacing-2, 0.5rem);
-  color: var(--text-secondary, var(--color-gray-700));
+  color: var(--color-gray-700);
 }
 
 .tech-card ul {
   margin-bottom: 0;
-  color: var(--text-secondary, var(--color-gray-700));
+  color: var(--color-gray-700);
 }
 
 .table-note {

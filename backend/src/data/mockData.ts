@@ -1,6 +1,8 @@
-// Mock data service based on references/inventory.md
-// Provides realistic PRIO operational data for development and testing
-
+/**
+ * Mock data for development and testing (references/inventory.md).
+ * Grouped by domain: vessels, berths, cargo catalog, compatibility rules.
+ * For production, replace with real DB or split into data/vessels.ts, data/berths.ts, etc.
+ */
 import { Vessel, Berth, CargoItem, CargoCompatibilityRule, VesselType } from '../types';
 
 // Vessel Fleet Data (from inventory.md section 2.1-2.2)

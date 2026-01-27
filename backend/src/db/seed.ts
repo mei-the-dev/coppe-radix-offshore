@@ -371,7 +371,7 @@ async function seed() {
     // ============================================================================
     console.log('🚢 Seeding vessels...');
     const vessels = [
-      // Standard PSV (UT 755 Type)
+      // Standard PSV (UT 755 Type) – clear deck area 900–1,000 m² per inventory.md / prio-logistics-data-model
       {
         id: 'vessel-psv-001',
         name: 'PSV Standard Alpha',
@@ -380,6 +380,7 @@ async function seed() {
         beam: 16.0,
         draught: 5.7,
         deck_capacity: 2450,
+        clear_deck_area_m2: 950,
         deadweight: 4500,
         service_speed: 15.1,
         operational_speed: 13.0,
@@ -404,6 +405,7 @@ async function seed() {
         beam: 16.0,
         draught: 5.7,
         deck_capacity: 2450,
+        clear_deck_area_m2: 950,
         deadweight: 4500,
         service_speed: 15.1,
         operational_speed: 13.0,
@@ -420,7 +422,7 @@ async function seed() {
         lat: -41.7833,
         lon: -22.3833
       },
-      // Large PSV (UT 874 Type)
+      // Large PSV (UT 874 Type) – clear deck area 1,040–1,200 m² per references
       {
         id: 'vessel-psv-003',
         name: 'PSV Large Gamma',
@@ -429,6 +431,7 @@ async function seed() {
         beam: 18.2,
         draught: 6.2,
         deck_capacity: 3000,
+        clear_deck_area_m2: 1120,
         deadweight: 5200,
         service_speed: 14.5,
         operational_speed: 12.5,
@@ -453,6 +456,7 @@ async function seed() {
         beam: 18.2,
         draught: 6.2,
         deck_capacity: 3000,
+        clear_deck_area_m2: 1120,
         deadweight: 5200,
         service_speed: 14.5,
         operational_speed: 12.5,
@@ -469,7 +473,7 @@ async function seed() {
         lat: -41.7833,
         lon: -22.3833
       },
-      // CSV
+      // CSV – clear deck area 1,500+ m² per inventory.md
       {
         id: 'vessel-csv-001',
         name: 'CSV Normand Pioneer',
@@ -478,6 +482,7 @@ async function seed() {
         beam: 22.0,
         draught: 7.0,
         deck_capacity: 4000,
+        clear_deck_area_m2: 1500,
         deadweight: 6000,
         service_speed: 13.0,
         operational_speed: 12.0,
@@ -494,7 +499,7 @@ async function seed() {
         lat: -41.7833,
         lon: -22.3833
       },
-      // Well Stimulation Vessel
+      // Well Stimulation Vessel (Large PSV base – 1,040–1,200 m²)
       {
         id: 'vessel-wsv-001',
         name: 'PSV Normand Carioca',
@@ -503,6 +508,7 @@ async function seed() {
         beam: 18.2,
         draught: 6.2,
         deck_capacity: 3000,
+        clear_deck_area_m2: 1120,
         deadweight: 5200,
         service_speed: 14.5,
         operational_speed: 12.5,
@@ -524,22 +530,23 @@ async function seed() {
     for (const vessel of vessels) {
       await client.query(`
         INSERT INTO vessels (
-          id, name, class, loa_m, beam_m, draught_m, deck_cargo_capacity_t,
+          id, name, class, loa_m, beam_m, draught_m, deck_cargo_capacity_t, clear_deck_area_m2,
           total_deadweight_t, service_speed_kts, operational_speed_kts, max_speed_kts,
           dp_class, fuel_consumption_transit_td, fuel_consumption_dp_td, fuel_consumption_port_td,
           charter_rate_daily_usd, crew_size, accommodation_capacity, availability_status,
           current_location_id, current_location_coords
         ) VALUES (
-          $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20,
-          ST_SetSRID(ST_MakePoint($21, $22), 4326)::GEOGRAPHY
+          $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21,
+          ST_SetSRID(ST_MakePoint($22, $23), 4326)::GEOGRAPHY
         )
         ON CONFLICT (id) DO UPDATE SET
           name = EXCLUDED.name,
+          clear_deck_area_m2 = EXCLUDED.clear_deck_area_m2,
           availability_status = EXCLUDED.availability_status,
           updated_at = CURRENT_TIMESTAMP;
       `, [
         vessel.id, vessel.name, vessel.class, vessel.loa, vessel.beam, vessel.draught,
-        vessel.deck_capacity, vessel.deadweight, vessel.service_speed, vessel.operational_speed,
+        vessel.deck_capacity, vessel.clear_deck_area_m2 ?? null, vessel.deadweight, vessel.service_speed, vessel.operational_speed,
         vessel.max_speed, vessel.dp_class, vessel.fuel_transit, vessel.fuel_dp, vessel.fuel_port,
         vessel.charter_rate, vessel.crew_size, vessel.accommodation, vessel.status,
         vessel.location_id, vessel.lat, vessel.lon

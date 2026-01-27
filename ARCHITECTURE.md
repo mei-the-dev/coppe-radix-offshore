@@ -116,6 +116,17 @@ See `backend/DATABASE_SETUP.md` for detailed schema information.
 - **Modular Structure**: Clear separation of concerns
 - **Reusable Components**: DRY principles in component design
 
+### Module boundaries (KIRA cluster map)
+
+Static analysis (KIRA) clusters files by cohesion. Rough mapping:
+
+- **Cluster 1 (backend routes/data)**: `backend/src/routes/`, `backend/src/data/` — fleet, trips, analytics, mock data.
+- **Cluster 3 (frontend simulation UI)**: `frontend/src/components/organisms/` (Visualization, Simulation, CreateLoadingPlan, etc.) — simulation/visualization feature.
+- **Cluster 4 (frontend utils)**: `frontend/src/utils/` — styleInspector, renderLogger, debug, dataInspector, styleTests (dev/debug).
+- **Cluster -1 (unclustered)**: Mixed config, entry, and cross-cutting files; target structure: `backend/src/config/`, `backend/src/server/`, `frontend/src/core/` (auth, api), `frontend/src/features/` by feature.
+
+Use path aliases or `index` re-exports to keep imports stable when moving files into these boundaries.
+
 ## Deployment Considerations
 
 ### Frontend

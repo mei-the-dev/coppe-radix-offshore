@@ -52,9 +52,13 @@ Tokens are tuned for **offshore logistics** and **state-of-the-art UX**:
 - **Semantic** – `--color-success`, `--color-warning`, `--color-error`, `--color-info`: WCAG-aligned; use for status, alerts, feedback.
 - **Glass** – `--glass-bg`, `--glass-border`, `--text-on-glass`: light-on-dark over the sea canvas for headers/nav; dark text on `--glass-panel-bg` in the main content area for readability.
 
-## No external dependency
+## Atomic design balance
 
-The design system is part of this repo. Do not add an npm dependency for tokens or themes; keep everything under `frontend/src/design-system/`.
+Prefer **atoms** for shared primitives (buttons, inputs, labels, icons). Add or extract atoms where molecules repeat the same base; the codebase tends to have more molecules than atoms — invert that where it improves reuse. Use design-system tokens and components for all new UI.
+
+## Deduplication
+
+Static analysis (KIRA) reports duplicate functions across the codebase. Prefer a single canonical implementation in `utils/`, hooks, or shared components; replace call sites, add tests, then remove duplicates.
 
 ## Worktrees
 

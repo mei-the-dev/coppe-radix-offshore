@@ -3,12 +3,20 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+function getDbPassword(): string {
+  const p = process.env.DB_PASSWORD;
+  if (process.env.NODE_ENV === 'production' && (p === undefined || p === '')) {
+    throw new Error('DB_PASSWORD must be set in production');
+  }
+  return p ?? 'postgres';
+}
+
 const pool = new Pool({
   host: process.env.DB_HOST || 'localhost',
   port: parseInt(process.env.DB_PORT || '5432'),
   database: process.env.DB_NAME || 'prio_logistics',
   user: process.env.DB_USER || 'postgres',
-  password: process.env.DB_PASSWORD || 'postgres',
+  password: getDbPassword(),
   max: 20,
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 2000,

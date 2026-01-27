@@ -21,6 +21,7 @@ router.get('/', async (req: AuthRequest, res: Response) => {
         v.beam_m,
         v.draught_m,
         v.deck_cargo_capacity_t,
+        v.clear_deck_area_m2,
         v.total_deadweight_t,
         v.operational_speed_kts,
         v.dp_class,
@@ -111,6 +112,7 @@ router.get('/', async (req: AuthRequest, res: Response) => {
         beam_m: parseFloat(v.beam_m || 0),
         draught_m: parseFloat(v.draught_m || 0),
         deck_cargo_capacity_t: parseFloat(v.deck_cargo_capacity_t || 0),
+        clear_deck_area_m2: v.clear_deck_area_m2 != null ? parseFloat(v.clear_deck_area_m2) : null,
         total_deadweight_t: parseFloat(v.total_deadweight_t || 0),
         operational_speed_kts: parseFloat(v.operational_speed_kts || 0)
       },
@@ -151,9 +153,13 @@ router.get('/', async (req: AuthRequest, res: Response) => {
     });
   } catch (error: any) {
     console.error('Error fetching vessels:', error);
-    res.status(500).json({
+    const msg = String(error?.message || '');
+    const isSchemaError = /column.*does not exist|relation "vessels" does not exist/i.test(msg) || error?.code === '42703';
+    res.status(isSchemaError ? 503 : 500).json({
       error: 'internal_error',
-      message: 'An unexpected error occurred',
+      message: isSchemaError
+        ? 'Vessels table schema is missing columns. Run scripts/add-vessel-deck-area.sql then backend seed (npm run seed).'
+        : 'An unexpected error occurred',
       request_id: `req_${Date.now()}`
     });
   }

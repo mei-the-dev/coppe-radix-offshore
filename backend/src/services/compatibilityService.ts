@@ -1,6 +1,7 @@
-// Cargo compatibility validation service
-// Based on inventory.md section 3.3
-
+/**
+ * Cargo compatibility validation (inventory.md section 3.3).
+ * Checks cargo-type pairs and tank-cleaning requirements; used by LoadingPlanService and cargo routes.
+ */
 import { CargoCompatibilityRule, CargoItem } from '../types';
 import { mockCompatibilityRules } from '../data/mockData';
 

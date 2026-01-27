@@ -25,6 +25,12 @@
   }
 }
 
+/* Focus visible on glass header (per references/glass accessibility) */
+.app-header button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.9);
+}
+
 .header-content {
   max-width: var(--container-xl);
   margin: 0 auto;
@@ -112,26 +118,67 @@
   background: var(--glass-bg-hover);
 }
 
+/* Focus visible on glass nav (per references/glass accessibility) */
+.nav-tab:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.9);
+}
+
+/* Main content: liquid-glass for WCAG contrast (dark text on near-opaque light) */
+/* Scope text tokens so content is always readable on light panel, including in dark mode */
 .app-main {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
   max-width: var(--container-xl);
   width: 100%;
   margin: var(--spacing-6) auto;
   padding: var(--spacing-6) var(--spacing-8);
-  background: var(--glass-panel-bg);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid var(--glass-border);
+  background: var(--glass-content-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-content-border);
   border-radius: var(--glass-radius-lg);
   box-shadow: var(--glass-shadow);
-  /* Dark text on light glass panel for contrast */
+  --text-primary: var(--color-gray-900);
+  --text-secondary: var(--color-gray-700);
+  --text-tertiary: var(--color-gray-600);
+  color: var(--text-primary);
+}
+
+.app-main-outlet {
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+@supports not (backdrop-filter: blur(12px)) {
+  .app-main {
+    background: var(--glass-content-bg);
+  }
+}
+
+/* WCAG: light background for sections and cards inside main (Simulation, Data, Metrics) */
+.app-main .dashboard-section {
+  background: var(--glass-content-bg);
+  border: 1px solid var(--glass-content-border);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-6);
   color: var(--color-gray-900);
 }
 
-@supports not (backdrop-filter: blur(10px)) {
-  .app-main {
-    background: var(--glass-bg-fallback);
-  }
+.app-main .dashboard-section h3 {
+  color: var(--color-gray-900);
+}
+
+.app-main .molecule-card--outlined {
+  background: var(--glass-content-bg);
+  border-color: var(--glass-content-border);
+  color: var(--color-gray-900);
 }
 
 .loading-fallback {
