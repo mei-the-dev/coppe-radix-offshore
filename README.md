@@ -210,6 +210,9 @@ All data is currently mocked based on PRIO operational estimates from `reference
 
 ## Documentation
 
+**Start here:** **[DOCUMENTATION.md](./DOCUMENTATION.md)** — master index of all docs (getting started, env vars, deployment, architecture).
+
+- **[Environment Variables](./docs/ENVIRONMENT_VARIABLES.md)**: Local `.env` and DigitalOcean App-Level vars (JWT_SECRET, DB_PASSWORD)
 - **[Frontend Specification](./frontend/FRONTEND_SPECIFICATION.md)**: Complete frontend architecture and component documentation
 - **[Backend API Implementation](./backend/API_IMPLEMENTATION.md)**: Backend API and database schema documentation
 - **[Database Setup](./backend/DATABASE_SETUP.md)**: PostgreSQL and PostGIS setup instructions
