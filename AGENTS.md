@@ -3,6 +3,8 @@
 
 These instructions are for AI assistants working in this project.
 
+**Worktrees & agents:** Never use "Apply worktree to current branch". Sync only via git (commit → push → pull). See **WORKTREE_AND_AGENTS.md**.
+
 **Production & DevOps:** The app is deployed at https://sea-lion-app-8l7y7.ondigitalocean.app/. Pushes to `main` trigger deployment. For test-before-commit, production vs development, and deployment rules, use the **devops-production-workflow** subagent or see `DEVOPS_README.md`.
 
 Always open `@/openspec/AGENTS.md` when the request:

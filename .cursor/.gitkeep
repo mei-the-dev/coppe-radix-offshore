@@ -1,0 +1,2 @@
+# This directory is tracked in git so all worktrees get agents and commands via git pull.
+# Do not rely on "Apply worktree". See WORKTREE_AND_AGENTS.md in the repo root.

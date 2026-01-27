@@ -1,5 +1,9 @@
 # Development Rules
 
+## Worktrees & Agents (mandatory)
+- **Never use "Apply worktree to current branch".** It causes data loss when the target worktree is missing files. Use git only: commit in this workspace → push → pull/merge in the other worktree. See **WORKTREE_AND_AGENTS.md**.
+- `.cursor/` and `frontend/src/design-system/` are tracked in git; do not add them to .gitignore. Commit changes to them so all worktrees get them via git pull.
+
 ## Rendering Verification
 - **ALWAYS verify frontend rendering before completing tasks**
 - After making frontend changes:
