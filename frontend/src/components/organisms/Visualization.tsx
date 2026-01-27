@@ -8,24 +8,37 @@ import { IconButton } from '../action';
 import { prioAPI } from '../../api/client';
 import { useTrips } from '../../hooks/useTrips';
 import { useLoadingPlans } from '../../hooks/useLoadingPlans';
+import { MapContainer, TileLayer, Marker, Polyline, Popup } from 'react-leaflet';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 import './Visualization.css';
 
-// Constants
-const ZOOM_MIN = 0.5;
-const ZOOM_MAX = 5;
-const ZOOM_STEP = 1.3;
-const MAP_PADDING = 0.1;
+// Constants (used for map bounds; Leaflet handles zoom/pan)
 const BOUNDS_PADDING = 0.2;
 const MIN_PADDING_DEGREES = 0.3;
-const DEFAULT_MAP_SIZE = { width: 1000, height: 600 };
 
 // Helper functions
 const isValidCoordinate = (value: number | undefined | null): value is number => {
   return typeof value === 'number' && !isNaN(value) && isFinite(value);
 };
 
-const clamp = (value: number, min: number, max: number): number => {
-  return Math.max(min, Math.min(max, value));
+/** Custom bubble pin icon by type (Port, FPSO, Platform, Vessel) */
+const createPinIcon = (type: 'port' | 'fpso' | 'platform' | 'vessel', label: string): L.DivIcon => {
+  const colors: Record<string, string> = {
+    port: '#0ea5e9',
+    fpso: '#8b5cf6',
+    platform: '#10b981',
+    vessel: '#f59e0b',
+  };
+  const short = type === 'port' ? 'P' : type === 'fpso' ? 'F' : type === 'platform' ? 'R' : 'V';
+  const color = colors[type] ?? '#6b7280';
+  const title = label ? `${short}: ${label}` : type;
+  return L.divIcon({
+    html: `<div class="map-pin-bubble map-pin-bubble--${type}" style="background:${color}" title="${title.replace(/"/g, '&quot;')}"><span class="map-pin-bubble__letter">${short}</span><span class="map-pin-bubble__label">${(label || type).slice(0, 12)}</span></div>`,
+    className: 'map-pin-bubble-container',
+    iconSize: [36, 36],
+    iconAnchor: [18, 36],
+  });
 };
 
 interface Installation {
@@ -123,52 +136,35 @@ export default function Visualization({ vessels: propsVessels, berths: propsBert
   // Map navigation state
   const [selectedMarker, setSelectedMarker] = useState<MarkerData | null>(null);
   const [selectedTrip, setSelectedTrip] = useState<Trip | null>(null);
-  const [hoveredMarker, setHoveredMarker] = useState<MarkerData | null>(null);
   const [hoveredTrip, setHoveredTrip] = useState<Trip | null>(null);
   const [showTrips, setShowTrips] = useState(true); // Toggle trip routes
   const [showCargoFlows, setShowCargoFlows] = useState(true); // Toggle cargo flows
   const [showLoadingOps, setShowLoadingOps] = useState(true); // Toggle loading operations
   const [filterStatus, setFilterStatus] = useState<string>('all'); // Filter by status
   const [filterVessel, setFilterVessel] = useState<string>('all'); // Filter by vessel
-  const [pan, setPan] = useState({ x: 0, y: 0 });
-  const [zoom, setZoom] = useState(1);
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const mapRef = useRef<HTMLDivElement>(null);
-  const [mapSize, setMapSize] = useState(DEFAULT_MAP_SIZE);
+  const leafletMapRef = useRef<L.Map | null>(null);
+  // Unique key per mount so Leaflet never reuses a container (fixes Strict Mode “Map container is already initialized”)
+  const [mapInstanceKey, setMapInstanceKey] = useState<number | null>(null);
+  useEffect(() => {
+    setMapInstanceKey(() => Date.now());
+  }, []);
+
+  // Fix Leaflet default icon when bundling with Vite (icons load from CDN)
+  useEffect(() => {
+    if (typeof L !== 'undefined' && L.Icon?.Default) {
+      delete (L.Icon.Default.prototype as unknown as { _getIconUrl?: unknown })._getIconUrl;
+      L.Icon.Default.mergeOptions({
+        iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+        iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+        shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+      });
+    }
+  }, []);
 
   // Fetch all data on component mount
   useEffect(() => {
     loadAllData();
-  }, []);
-
-  // Update map size on mount and resize using ResizeObserver
-  useEffect(() => {
-    const updateMapSize = () => {
-      if (mapRef.current) {
-        const { offsetWidth, offsetHeight } = mapRef.current;
-        if (offsetWidth > 0 && offsetHeight > 0) {
-          setMapSize({ width: offsetWidth, height: offsetHeight });
-        }
-      }
-    };
-
-    const timeoutId = setTimeout(updateMapSize, 0);
-
-    let observer: ResizeObserver | null = null;
-    if (mapRef.current && typeof ResizeObserver !== 'undefined') {
-      observer = new ResizeObserver(updateMapSize);
-      observer.observe(mapRef.current);
-    }
-
-    const handleResize = () => updateMapSize();
-    window.addEventListener('resize', handleResize);
-
-    return () => {
-      clearTimeout(timeoutId);
-      if (observer) observer.disconnect();
-      window.removeEventListener('resize', handleResize);
-    };
   }, []);
 
   const loadAllData = async () => {
@@ -400,158 +396,51 @@ export default function Visualization({ vessels: propsVessels, berths: propsBert
     }
   }, [supplyBases, installations, vessels]);
 
-  // Calculate map scales
-  const mapScales = useMemo(() => {
-    const width = mapSize.width;
-    const height = mapSize.height;
-    const latRange = mapBounds.maxLat - mapBounds.minLat;
-    const lonRange = mapBounds.maxLon - mapBounds.minLon;
-
-    if (latRange === 0 || lonRange === 0) {
-      return { scaleX: 1, scaleY: 1, padding: MAP_PADDING };
-    }
-
-    const boundsAspect = lonRange / latRange;
-    const mapAspect = width / height;
-    const availableWidth = width * (1 - MAP_PADDING * 2);
-    const availableHeight = height * (1 - MAP_PADDING * 2);
-
-    let scaleX: number, scaleY: number;
-    if (boundsAspect > mapAspect) {
-      scaleX = availableWidth / lonRange;
-      scaleY = scaleX;
-    } else {
-      scaleY = availableHeight / latRange;
-      scaleX = scaleY;
-    }
-
-    return { scaleX, scaleY, padding: MAP_PADDING };
-  }, [mapBounds, mapSize]);
-
-  // Calculate center offset
-  const centerOffset = useMemo(() => {
-    const width = mapSize.width;
-    const height = mapSize.height;
-    const centerLat = (mapBounds.minLat + mapBounds.maxLat) / 2;
-    const centerLon = (mapBounds.minLon + mapBounds.maxLon) / 2;
-
-    const centerX = (centerLon - mapBounds.minLon) * mapScales.scaleX;
-    const centerY = (mapBounds.maxLat - centerLat) * mapScales.scaleY;
-    const paddingX = width * mapScales.padding;
-    const paddingY = height * mapScales.padding;
-
-    return {
-      x: paddingX + (width - paddingX * 2) / 2 - centerX,
-      y: paddingY + (height - paddingY * 2) / 2 - centerY,
-    };
-  }, [mapBounds, mapSize, mapScales]);
-
-  // Coordinate conversion functions
-  const latToY = useCallback((lat: number): number => {
-    if (!isValidCoordinate(lat)) return mapSize.height / 2;
-    const baseY = (mapBounds.maxLat - lat) * mapScales.scaleY;
-    return (baseY * zoom) + pan.y + centerOffset.y;
-  }, [mapBounds, zoom, pan.y, centerOffset.y, mapScales, mapSize]);
-
-  const lonToX = useCallback((lon: number): number => {
-    if (!isValidCoordinate(lon)) return mapSize.width / 2;
-    const baseX = (lon - mapBounds.minLon) * mapScales.scaleX;
-    return (baseX * zoom) + pan.x + centerOffset.x;
-  }, [mapBounds, zoom, pan.x, centerOffset.x, mapScales, mapSize]);
-
-  // Mouse drag handlers
-  const handleMouseDown = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    if (e.button !== 0) return;
-    setIsDragging(true);
-    setDragStart({ x: e.clientX - pan.x, y: e.clientY - pan.y });
-    e.preventDefault();
-  }, [pan]);
-
-  const handleMouseMove = useCallback((e: MouseEvent) => {
-    if (!isDragging) return;
-    setPan({ x: e.clientX - dragStart.x, y: e.clientY - dragStart.y });
-  }, [isDragging, dragStart]);
-
-  const handleMouseUp = useCallback(() => {
-    setIsDragging(false);
-  }, []);
-
-  // Touch handlers
-  const handleTouchStart = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
-    if (e.touches.length !== 1) return;
-    const touch = e.touches[0];
-    setIsDragging(true);
-    setDragStart({ x: touch.clientX - pan.x, y: touch.clientY - pan.y });
-    e.preventDefault();
-  }, [pan]);
-
-  const handleTouchMove = useCallback((e: TouchEvent) => {
-    if (!isDragging || e.touches.length !== 1) return;
-    const touch = e.touches[0];
-    setPan({ x: touch.clientX - dragStart.x, y: touch.clientY - dragStart.y });
-    e.preventDefault();
-  }, [isDragging, dragStart]);
-
-  const handleTouchEnd = useCallback(() => {
-    setIsDragging(false);
-  }, []);
-
-  // Zoom handlers
+  // Zoom handlers (drive Leaflet map)
   const handleZoomIn = useCallback(() => {
-    setZoom(prev => clamp(prev * ZOOM_STEP, ZOOM_MIN, ZOOM_MAX));
+    leafletMapRef.current?.zoomIn();
   }, []);
 
   const handleZoomOut = useCallback(() => {
-    setZoom(prev => clamp(prev / ZOOM_STEP, ZOOM_MIN, ZOOM_MAX));
+    leafletMapRef.current?.zoomOut();
   }, []);
 
   const handleResetView = useCallback(() => {
-    setPan({ x: 0, y: 0 });
-    setZoom(1);
     setSelectedMarker(null);
-    if (mapRef.current) {
-      setMapSize({
-        width: mapRef.current.offsetWidth,
-        height: mapRef.current.offsetHeight,
-      });
-    }
-  }, []);
-
-  const handleWheel = useCallback((e: React.WheelEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    const delta = e.deltaY > 0 ? 0.9 : 1.1;
-    setZoom(prev => clamp(prev * delta, ZOOM_MIN, ZOOM_MAX));
-  }, []);
-
-  // Attach/detach event listeners
-  useEffect(() => {
-    if (!isDragging) return;
-
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', handleMouseUp);
-    document.addEventListener('touchmove', handleTouchMove, { passive: false });
-    document.addEventListener('touchend', handleTouchEnd);
-
-    return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
-      document.removeEventListener('touchmove', handleTouchMove);
-      document.removeEventListener('touchend', handleTouchEnd);
-    };
-  }, [isDragging, handleMouseMove, handleMouseUp, handleTouchMove, handleTouchEnd]);
-
-  // Filter vessels with positions (all vessels that have location data)
-  const vesselsWithPositions = useMemo(() => {
-    const valid = vessels.filter(v => {
-      const hasPosition = v.position && isValidCoordinate(v.position.lat) && isValidCoordinate(v.position.lon);
-      if (!hasPosition) {
-        console.log('Vessel filtered out:', v.id, v.name, 'position:', v.position);
+    setSelectedTrip(null);
+    const map = leafletMapRef.current;
+    if (map) {
+      const { minLat, maxLat, minLon, maxLon } = mapBounds;
+      if (maxLat > minLat && maxLon > minLon) {
+        map.fitBounds([[minLat, minLon], [maxLat, maxLon]], { padding: [50, 50] });
       }
-      return hasPosition;
+    }
+  }, [mapBounds]);
+
+  // Vessels with positions; ensure at least one vessel per type/model is shown (use supply base as fallback position)
+  const vesselsToShow = useMemo(() => {
+    const fallback = supplyBases[0]?.location
+      ? { lat: supplyBases[0].location.latitude, lon: supplyBases[0].location.longitude }
+      : { lat: -22.37, lon: -41.79 };
+    const withPos = vessels.filter(
+      v => v.position && isValidCoordinate(v.position.lat) && isValidCoordinate(v.position.lon)
+    );
+    const typesSeen = new Set(withPos.map(v => v.type ?? 'Standard PSV'));
+    const withoutPos = vessels.filter(
+      v => !v.position || !isValidCoordinate(v.position.lat) || !isValidCoordinate(v.position.lon)
+    );
+    const onePerType = withoutPos.filter(v => {
+      const t = v.type ?? 'Standard PSV';
+      if (typesSeen.has(t)) return false;
+      typesSeen.add(t);
+      return true;
     });
-    console.log('Vessels with positions:', valid.length, 'out of', vessels.length);
-    return valid;
-  }, [vessels]);
+    const withFallback = onePerType.map(v => ({
+      ...v,
+      position: { lat: fallback.lat, lon: fallback.lon },
+    }));
+    return [...withPos, ...withFallback];
+  }, [vessels, supplyBases]);
 
   // Filter vessels in transit for statistics
   const vesselsInTransit = useMemo(() =>
@@ -572,9 +461,6 @@ export default function Visualization({ vessels: propsVessels, berths: propsBert
     console.log('Valid installations:', valid.length, 'out of', installations.length);
     return valid;
   }, [installations]);
-
-  // Render marker scale based on zoom
-  const markerScale = Math.min(zoom, 1.5);
 
   // Combined loading state
   const isLoading = loading || tripsLoading;
@@ -706,55 +592,6 @@ export default function Visualization({ vessels: propsVessels, berths: propsBert
         </div>
       </div>
 
-      {/* Analytics Panel */}
-      <Card variant="outlined" padding="md" className="map-analytics-panel">
-        <Stack direction="column" gap="sm">
-          <h3>Operational KPIs</h3>
-          <div className="analytics-kpi">
-            <div className="analytics-kpi-label">Active Trips</div>
-            <div className="analytics-kpi-value">
-              {trips.filter(t => t.status === 'InProgress').length}
-            </div>
-            <div className="analytics-kpi-change">
-              {trips.filter(t => t.status === 'Planned').length} planned
-            </div>
-          </div>
-          <div className="analytics-kpi">
-            <div className="analytics-kpi-label">Cargo in Transit</div>
-            <div className="analytics-kpi-value">
-              {orders
-                .filter((o: any) => o.status === 'InTransit' || o.status === 'Loading')
-                .reduce((sum: number, o: any) => sum + (o.cargoItems?.length || 0), 0)}
-            </div>
-            <div className="analytics-kpi-change">items</div>
-          </div>
-          <div className="analytics-kpi">
-            <div className="analytics-kpi-label">Fleet Utilization</div>
-            <div className="analytics-kpi-value">
-              {vessels.length > 0 
-                ? `${Math.round((vessels.filter(v => v.status === 'in_transit' || v.status === 'at_platform').length / vessels.length) * 100)}%`
-                : '0%'}
-            </div>
-            <div className="analytics-kpi-change">
-              {vessels.filter(v => v.status === 'in_transit' || v.status === 'at_platform').length} / {vessels.length} vessels
-            </div>
-          </div>
-          <div className="analytics-kpi">
-            <div className="analytics-kpi-label">Total Distance Today</div>
-            <div className="analytics-kpi-value">
-              {trips
-                .filter(t => {
-                  const today = new Date().toISOString().split('T')[0];
-                  return t.route.some(wp => wp.planned_arrival?.startsWith(today));
-                })
-                .reduce((sum, t) => sum + (t.metrics?.total_distance_nm || 0), 0)
-                .toFixed(0)}
-            </div>
-            <div className="analytics-kpi-change">NM</div>
-          </div>
-        </Stack>
-      </Card>
-
       {/* Loading Operations Panel */}
       {showLoadingOps && orders.filter(o => o.status === 'Loading' || o.status === 'in_progress').length > 0 && (
         <div className="map-loading-operation">
@@ -841,7 +678,7 @@ export default function Visualization({ vessels: propsVessels, berths: propsBert
             </div>
             <div className="stat-row">
               <span>Vessels on Map:</span>
-              <strong>{vesselsWithPositions.length}</strong>
+              <strong>{vesselsToShow.length}</strong>
             </div>
             <div className="stat-row">
               <span>Vessels in Transit:</span>
@@ -856,8 +693,8 @@ export default function Visualization({ vessels: propsVessels, berths: propsBert
               <strong>{berths.length}</strong>
             </div>
             <div className="stat-row stat-row--zoom">
-              <span>Zoom:</span>
-              <strong>{zoom.toFixed(1)}x</strong>
+              <span>Map:</span>
+              <strong>OSM</strong>
             </div>
             {showTrips && (
               <>
@@ -896,378 +733,149 @@ export default function Visualization({ vessels: propsVessels, berths: propsBert
           />
         </div>
 
-        <div
-          ref={mapRef}
-          className={`visualization-map ${isDragging ? 'map-dragging' : ''}`}
-          onMouseDown={handleMouseDown}
-          onTouchStart={handleTouchStart}
-          onWheel={handleWheel}
-          style={{
-            cursor: isDragging ? 'grabbing' : 'grab',
-          }}
-          role="img"
-          aria-label="Interactive map of offshore installations and vessels"
-        >
-          {/* Ocean Background */}
-          <div className="map-ocean-background" />
+        <div ref={mapRef} className="visualization-map" role="img" aria-label="Interactive map of offshore installations and vessels">
+          {mapInstanceKey === null ? (
+            <div style={{ height: '100%', minHeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-secondary)' }}>
+              Loading map…
+            </div>
+          ) : (
+          <MapContainer
+            key={mapInstanceKey}
+            ref={leafletMapRef}
+            bounds={[[mapBounds.minLat, mapBounds.minLon], [mapBounds.maxLat, mapBounds.maxLon]]}
+            boundsOptions={{ padding: [50, 50] }}
+            style={{ height: '100%', width: '100%', minHeight: 600 }}
+            scrollWheelZoom
+            className="visualization-map-leaflet"
+          >
+            <TileLayer
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
 
-          {/* Grid Lines */}
-          <svg className="map-grid-overlay" aria-hidden="true">
-            <defs>
-              <pattern id="map-grid" width="40" height="40" patternUnits="userSpaceOnUse">
-                <path d="M 40 0 L 0 0 0 40" fill="none" stroke="currentColor" strokeWidth="0.5" />
-              </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#map-grid)" />
-          </svg>
-
-          {/* Cargo Flow Lines - Show cargo movements from supply base to installations */}
-          {showCargoFlows && (
-            <svg className="map-cargo-flows" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 2 }}>
-              {orders
-                .filter(order => {
-                  // Filter by status if needed
-                  if (filterStatus !== 'all' && order.status !== filterStatus) return false;
-                  if (filterVessel !== 'all' && order.vesselId !== filterVessel) return false;
-                  return order.status === 'Loading' || order.status === 'InTransit' || order.status === 'Confirmed';
-                })
-                .map((order) => {
-                  // Get supply base (Macaé port) coordinates
-                  const supplyBase = supplyBases.find(b => b.id === 'macae-port');
-                  if (!supplyBase) return null;
-
-                  // Get destination installation
-                  const destination = installations.find(inst => {
-                    // Try to match by installation name or ID from order
-                    // Orders have destination.installation_id or cargoItems have destination
-                    return order.cargoItems?.some((item: any) => item.destination === inst.id) ||
-                           (order as any).destination?.installation_id === inst.id;
-                  });
-
-                  if (!destination || !destination.location) return null;
-
-                  const fromX = lonToX(supplyBase.location.longitude);
-                  const fromY = latToY(supplyBase.location.latitude);
-                  const toX = lonToX(destination.location.longitude);
-                  const toY = latToY(destination.location.latitude);
-
-                  // Calculate cargo flow properties
-                  const totalQuantity = order.cargoItems?.reduce((sum: number, item: any) => sum + (item.weight || item.volume || 0), 0) || 0;
-                  const strokeWidth = Math.max(2, Math.min(8, totalQuantity / 100)); // Scale line thickness
-                  
-                  // Determine cargo category color
-                  const cargoCategory = order.cargoItems?.[0]?.category || 'deck_cargo';
-                  const flowColor = 
-                    cargoCategory === 'liquid_bulk' ? 'var(--color-primary-500, #3b82f6)' :
-                    cargoCategory === 'dry_bulk' ? 'var(--color-warning, #f59e0b)' :
-                    'var(--color-text-secondary, #6b7280)';
-
-                  return (
-                    <g
-                      key={`cargo-flow-${order.id}`}
-                      style={{ pointerEvents: 'stroke', cursor: 'pointer' }}
-                      onClick={() => {
-                        setSelectedMarker({ type: 'vessel', data: vessels.find(v => v.id === order.vesselId) || {} as Vessel });
-                      }}
-                    >
-                      {/* Animated cargo flow line */}
-                      <path
-                        d={`M ${fromX} ${fromY} L ${toX} ${toY}`}
-                        fill="none"
-                        stroke={flowColor}
-                        strokeWidth={strokeWidth}
-                        strokeDasharray="10,5"
-                        opacity={0.6}
-                        style={{ 
-                          pointerEvents: 'stroke',
-                          animation: 'cargoFlow 3s linear infinite'
-                        }}
-                      />
-                      {/* Cargo label at midpoint */}
-                      <text
-                        x={(fromX + toX) / 2}
-                        y={(fromY + toY) / 2 - 10}
-                        fill={flowColor}
-                        fontSize="10px"
-                        fontWeight="bold"
-                        textAnchor="middle"
-                        style={{ pointerEvents: 'none' }}
-                      >
-                        {order.cargoItems?.length || 0} items
-                      </text>
-                    </g>
-                  );
-                })
-                .filter(Boolean)
-              }
-            </svg>
-          )}
-
-          {/* Trip Routes */}
-          {showTrips && (
-            <svg className="map-trip-routes" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 1 }}>
-              {trips
-                .filter(trip => trip.route && trip.route.length > 1)
-                .map((trip) => {
-                  // Get coordinates for all waypoints
-                  const waypointCoords = trip.route
-                    .map((waypoint) => {
-                      let lat: number | null = null;
-                      let lon: number | null = null;
-
-                      if (waypoint.type === 'SupplyBase') {
-                        const base = supplyBases.find(b => b.id === waypoint.location_id);
-                        if (base) {
-                          lat = base.location.latitude;
-                          lon = base.location.longitude;
-                        }
-                      } else if (waypoint.type === 'Installation') {
-                        const inst = installations.find(i => i.id === waypoint.location_id);
-                        if (inst && inst.location) {
-                          lat = inst.location.latitude;
-                          lon = inst.location.longitude;
-                        }
-                      }
-
-                      if (lat !== null && lon !== null && isValidCoordinate(lat) && isValidCoordinate(lon)) {
-                        return { x: lonToX(lon), y: latToY(lat), waypoint };
-                      }
-                      return null;
-                    })
-                    .filter((coord): coord is { x: number; y: number; waypoint: any } => coord !== null);
-
-                  if (waypointCoords.length < 2) return null;
-
-                  // Determine route color based on trip status
-                  const routeColor = 
-                    trip.status === 'Completed' ? 'var(--color-success, #10b981)' :
-                    trip.status === 'InProgress' ? 'var(--color-primary-500, #3b82f6)' :
-                    trip.status === 'Planned' ? 'var(--color-text-secondary, #6b7280)' :
-                    trip.status === 'Delayed' ? 'var(--color-error, #ef4444)' :
-                    'var(--color-text-secondary, #6b7280)';
-
-                  const isSelected = selectedTrip?.id === trip.id;
-                  const isHovered = hoveredTrip?.id === trip.id;
-                  const strokeWidth = isSelected || isHovered ? 3 : 2;
-                  const opacity = isSelected ? 1 : isHovered ? 0.8 : 0.5;
-
-                  // Create path string
-                  const pathData = waypointCoords
-                    .map((coord, idx) => `${idx === 0 ? 'M' : 'L'} ${coord.x} ${coord.y}`)
-                    .join(' ');
-
-                  return (
-                    <g
-                      key={trip.id}
-                      style={{ pointerEvents: 'stroke', cursor: 'pointer' }}
-                      onMouseEnter={() => setHoveredTrip(trip)}
-                      onMouseLeave={() => setHoveredTrip(null)}
-                      onClick={() => {
-                        setSelectedTrip(trip);
-                        setSelectedMarker({ type: 'trip', data: trip });
-                      }}
-                    >
-                      {/* Route line */}
-                      <path
-                        d={pathData}
-                        fill="none"
-                        stroke={routeColor}
-                        strokeWidth={strokeWidth}
-                        strokeDasharray={trip.status === 'Planned' ? '5,5' : 'none'}
-                        opacity={opacity}
-                        style={{ pointerEvents: 'stroke' }}
-                      />
-                      {/* Direction arrows */}
-                      {waypointCoords.length > 1 && waypointCoords.slice(0, -1).map((coord, idx) => {
-                        const next = waypointCoords[idx + 1];
-                        const dx = next.x - coord.x;
-                        const dy = next.y - coord.y;
-                        const angle = Math.atan2(dy, dx) * (180 / Math.PI);
-                        const midX = (coord.x + next.x) / 2;
-                        const midY = (coord.y + next.y) / 2;
-                        return (
-                          <g key={`arrow-${idx}`} transform={`translate(${midX}, ${midY}) rotate(${angle})`}>
-                            <path
-                              d="M 0 0 L -8 -4 L -8 4 Z"
-                              fill={routeColor}
-                              opacity={opacity}
-                            />
-                          </g>
-                        );
-                      })}
-                    </g>
-                  );
-                })}
-            </svg>
-          )}
-
-          {/* Trip Waypoint Markers */}
-          {showTrips && trips
-            .filter(trip => trip.route && trip.route.length > 0)
-            .flatMap(trip => 
-              trip.route.map((waypoint, idx) => {
-                let lat: number | null = null;
-                let lon: number | null = null;
-
-                if (waypoint.type === 'SupplyBase') {
-                  const base = supplyBases.find(b => b.id === waypoint.location_id);
-                  if (base) {
-                    lat = base.location.latitude;
-                    lon = base.location.longitude;
-                  }
-                } else if (waypoint.type === 'Installation') {
-                  const inst = installations.find(i => i.id === waypoint.location_id);
-                  if (inst && inst.location) {
-                    lat = inst.location.latitude;
-                    lon = inst.location.longitude;
-                  }
-                }
-
-                if (lat === null || lon === null || !isValidCoordinate(lat) || !isValidCoordinate(lon)) {
-                  return null;
-                }
-
-                const waypointY = latToY(lat);
-                const waypointX = lonToX(lon);
-                const isSelected = selectedTrip?.id === trip.id;
-
-                return (
-                  <div
-                    key={`${trip.id}-wp-${idx}`}
-                    className={`map-waypoint-marker ${isSelected ? 'map-waypoint-marker--selected' : ''}`}
-                    style={{
-                      top: `${waypointY}px`,
-                      left: `${waypointX}px`,
-                      transform: `translate(-50%, -50%) scale(${markerScale * 0.6})`,
-                    }}
-                    onMouseEnter={() => {
-                      setHoveredTrip(trip);
-                    }}
-                    onMouseLeave={() => {
-                      setHoveredTrip(null);
-                    }}
-                    onClick={() => {
-                      setSelectedTrip(trip);
-                      setSelectedMarker({ type: 'trip', data: trip });
-                    }}
-                    title={`${trip.vessel_name || 'Vessel'} - Waypoint ${idx + 1}: ${waypoint.location_name}`}
-                  >
-                    <div className="map-waypoint-content">
-                      <div className="map-waypoint-sequence">{idx + 1}</div>
-                    </div>
-                  </div>
-                );
-              })
-            )
+          {/* Cargo Flow Lines - Leaflet Polylines */}
+          {showCargoFlows && orders
+            .filter(order => {
+              if (filterStatus !== 'all' && order.status !== filterStatus) return false;
+              if (filterVessel !== 'all' && order.vesselId !== filterVessel) return false;
+              return order.status === 'Loading' || order.status === 'InTransit' || order.status === 'Confirmed';
+            })
+            .map((order) => {
+              const supplyBase = supplyBases.find(b => b.id === 'macae-port');
+              if (!supplyBase) return null;
+              const destination = installations.find(inst =>
+                order.cargoItems?.some((item: any) => item.destination === inst.id) ||
+                (order as any).destination?.installation_id === inst.id
+              );
+              if (!destination?.location) return null;
+              const from: [number, number] = [supplyBase.location.latitude, supplyBase.location.longitude];
+              const to: [number, number] = [destination.location.latitude, destination.location.longitude];
+              const cargoCategory = order.cargoItems?.[0]?.category || 'deck_cargo';
+              const color = cargoCategory === 'liquid_bulk' ? '#3b82f6' : cargoCategory === 'dry_bulk' ? '#f59e0b' : '#6b7280';
+              return (
+                <Polyline
+                  key={`cargo-flow-${order.id}`}
+                  positions={[from, to]}
+                  pathOptions={{ color, weight: 3, opacity: 0.6, dashArray: '10, 5' }}
+                  eventHandlers={{
+                    click: () => {
+                      const v = vessels.find(ve => ve.id === order.vesselId);
+                      if (v) setSelectedMarker({ type: 'vessel', data: v });
+                    },
+                  }}
+                />
+              );
+            })
             .filter(Boolean)
           }
 
-          {/* Supply Bases (Macaé Port) */}
-          {supplyBases.map((base) => {
-            const baseY = latToY(base.location.latitude);
-            const baseX = lonToX(base.location.longitude);
-            return (
-              <div
-                key={base.id}
-                className="map-marker map-marker--base"
-                style={{
-                  top: `${baseY}px`,
-                  left: `${baseX}px`,
-                  transform: `translate(-50%, -50%) scale(${markerScale})`,
-                }}
-                onMouseEnter={() => setHoveredMarker({ type: 'port', data: base })}
-                onMouseLeave={() => setHoveredMarker(null)}
-                onClick={() => setSelectedMarker({ type: 'port', data: base })}
-              >
-                <div className="map-marker-content">
-                  <div className="map-marker-halo map-marker-halo--base" />
-                  <IconPort size={32} />
-                  <div className="map-marker-label">{base.name}</div>
-                </div>
-              </div>
-            );
-          })}
+          {/* Trip Routes - Leaflet Polylines */}
+          {showTrips && trips
+            .filter(trip => trip.route && trip.route.length >= 1)
+            .map((trip) => {
+              const positions: [number, number][] = [];
+              for (const waypoint of trip.route) {
+                let lat: number | null = null;
+                let lon: number | null = null;
+                if (waypoint.type === 'SupplyBase') {
+                  const base = supplyBases.find(b => b.id === waypoint.location_id) ?? supplyBases[0];
+                  if (base?.location) { lat = base.location.latitude; lon = base.location.longitude; }
+                } else if (waypoint.type === 'Installation') {
+                  const inst = installations.find(i => i.id === waypoint.location_id || i.name === waypoint.location_name) ?? installations[0];
+                  if (inst?.location) { lat = inst.location.latitude; lon = inst.location.longitude; }
+                }
+                if (lat != null && lon != null && isValidCoordinate(lat) && isValidCoordinate(lon)) {
+                  positions.push([lat, lon]);
+                }
+              }
+              if (positions.length === 1 && validInstallations[0]) {
+                positions.push([validInstallations[0].location.latitude, validInstallations[0].location.longitude]);
+              }
+              if (positions.length < 2) return null;
+              const color = trip.status === 'Completed' ? '#10b981' : trip.status === 'InProgress' ? '#3b82f6' : trip.status === 'Delayed' ? '#ef4444' : '#6b7280';
+              const isSelected = selectedTrip?.id === trip.id;
+              return (
+                <Polyline
+                  key={trip.id}
+                  positions={positions}
+                  pathOptions={{
+                    color,
+                    weight: isSelected ? 3 : 2,
+                    opacity: isSelected ? 1 : 0.5,
+                    dashArray: trip.status === 'Planned' ? '5, 5' : undefined,
+                  }}
+                  eventHandlers={{
+                    click: () => { setSelectedTrip(trip); setSelectedMarker({ type: 'trip', data: trip }); },
+                    mouseover: () => setHoveredTrip(trip),
+                    mouseout: () => setHoveredTrip(null),
+                  }}
+                />
+              );
+            })
+            .filter(Boolean)
+          }
 
-          {/* Installations */}
-          {validInstallations.map((installation) => {
-            const instY = latToY(installation.location.latitude);
-            const instX = lonToX(installation.location.longitude);
-            return (
-              <div
-                key={installation.id}
-                className={`map-marker map-marker--installation map-marker--${installation.type.toLowerCase()}`}
-                style={{
-                  top: `${instY}px`,
-                  left: `${instX}px`,
-                  transform: `translate(-50%, -50%) scale(${markerScale})`,
-                }}
-                onMouseEnter={() => setHoveredMarker({ type: 'installation', data: installation })}
-                onMouseLeave={() => setHoveredMarker(null)}
-                onClick={() => setSelectedMarker({ type: 'installation', data: installation })}
-              >
-                <div className="map-marker-content">
-                  <div className={`map-marker-halo ${installation.type === 'FPSO' ? 'map-marker-halo--fpso' : 'map-marker-halo--platform'}`} />
-                  {installation.type === 'FPSO' ? (
-                    <IconFPSO size={28} />
-                  ) : (
-                    <IconPlatform size={28} />
-                  )}
-                  <div className="map-marker-label">{installation.name}</div>
-                </div>
-              </div>
-            );
-          })}
+          {/* Supply Bases - informative bubble pins */}
+          {supplyBases.map((base) => (
+            <Marker
+              key={base.id}
+              position={[base.location.latitude, base.location.longitude]}
+              icon={createPinIcon('port', base.name)}
+              eventHandlers={{ click: () => setSelectedMarker({ type: 'port', data: base }) }}
+            >
+              <Popup>{base.name} <small>(Supply Base)</small></Popup>
+            </Marker>
+          ))}
 
-          {/* All Vessels with Positions */}
-          {vesselsWithPositions.map((vessel) => {
-            const vesselY = latToY(vessel.position!.lat);
-            const vesselX = lonToX(vessel.position!.lon);
-            return (
-              <div
-                key={vessel.id}
-                className={`map-marker map-marker--vessel map-marker--vessel-${vessel.status?.replace('_', '-') || 'default'}`}
-                style={{
-                  top: `${vesselY}px`,
-                  left: `${vesselX}px`,
-                  transform: `translate(-50%, -50%) scale(${markerScale})`,
-                }}
-                onMouseEnter={() => setHoveredMarker({ type: 'vessel', data: vessel })}
-                onMouseLeave={() => setHoveredMarker(null)}
-                onClick={() => setSelectedMarker({ type: 'vessel', data: vessel })}
-              >
-                <div className="map-marker-content">
-                  <div className="map-marker-halo map-marker-halo--vessel" />
-                  <IconVessel size={24} />
-                </div>
-              </div>
-            );
-          })}
+          {/* Installations - bubble by type (FPSO / Platform) */}
+          {validInstallations.map((installation) => (
+            <Marker
+              key={installation.id}
+              position={[installation.location.latitude, installation.location.longitude]}
+              icon={createPinIcon(
+                installation.type === 'FPSO' ? 'fpso' : 'platform',
+                installation.name
+              )}
+              eventHandlers={{ click: () => setSelectedMarker({ type: 'installation', data: installation }) }}
+            >
+              <Popup>{installation.name} <small>({installation.type})</small></Popup>
+            </Marker>
+          ))}
+
+          {/* Vessels - at least one per model */}
+          {vesselsToShow.map((vessel) => (
+            <Marker
+              key={vessel.id}
+              position={[vessel.position!.lat, vessel.position!.lon]}
+              icon={createPinIcon('vessel', vessel.name)}
+              eventHandlers={{ click: () => setSelectedMarker({ type: 'vessel', data: vessel }) }}
+            >
+              <Popup>{vessel.name} <small>({vessel.type ?? 'Vessel'})</small></Popup>
+            </Marker>
+          ))}
+          </MapContainer>
+          )}
         </div>
-
-        {/* Hover Tooltip */}
-        {hoveredMarker && !selectedMarker && hoveredMarker.type !== 'trip' && (
-          <div
-            className="map-hover-tooltip"
-            style={{
-              top: hoveredMarker.type === 'port'
-                ? `${latToY((hoveredMarker.data as SupplyBase).location.latitude) + 50}px`
-                : hoveredMarker.type === 'installation'
-                ? `${latToY((hoveredMarker.data as Installation).location.latitude) + 50}px`
-                : `${latToY((hoveredMarker.data as Vessel).position!.lat) + 40}px`,
-              left: hoveredMarker.type === 'port'
-                ? `${lonToX((hoveredMarker.data as SupplyBase).location.longitude)}px`
-                : hoveredMarker.type === 'installation'
-                ? `${lonToX((hoveredMarker.data as Installation).location.longitude)}px`
-                : `${lonToX((hoveredMarker.data as Vessel).position!.lon)}px`,
-              transform: 'translateX(-50%)',
-            }}
-          >
-            <div className="map-hover-tooltip-name">
-              {(hoveredMarker.data as SupplyBase | Installation | Vessel).name}
-            </div>
-            <div className="map-hover-tooltip-hint">Click for details</div>
-          </div>
-        )}
 
         {/* Trip Hover Tooltip */}
         {hoveredTrip && !selectedTrip && (
@@ -1289,24 +897,24 @@ export default function Visualization({ vessels: propsVessels, berths: propsBert
         )}
 
         {/* Detail Panel */}
-        {selectedMarker && (
+        {selectedMarker && selectedMarker.data && (
           <Card variant="outlined" padding="md" className="map-detail-panel">
             <Stack direction="column" gap="md">
               <div className="map-detail-header">
                 <div>
                   <h3>
                     {selectedMarker.type === 'trip'
-                      ? `Trip: ${(selectedMarker.data as Trip).vessel_name || (selectedMarker.data as Trip).vessel_id}`
-                      : (selectedMarker.data as SupplyBase | Installation | Vessel).name}
+                      ? `Trip: ${(selectedMarker.data as Trip)?.vessel_name ?? (selectedMarker.data as Trip)?.vessel_id ?? '—'}`
+                      : String((selectedMarker.data as SupplyBase | Installation | Vessel)?.name ?? '—')}
                   </h3>
                   <div className="map-detail-type">
                     {selectedMarker.type === 'port'
                       ? 'Supply Base'
                       : selectedMarker.type === 'installation'
-                      ? (selectedMarker.data as Installation).type
+                      ? (selectedMarker.data as Installation)?.type ?? '—'
                       : selectedMarker.type === 'trip'
                       ? 'Trip Route'
-                      : (selectedMarker.data as Vessel).type}
+                      : (selectedMarker.data as Vessel)?.type ?? '—'}
                   </div>
                 </div>
                 <IconButton
@@ -1318,19 +926,24 @@ export default function Visualization({ vessels: propsVessels, berths: propsBert
               </div>
 
               <div className="map-detail-content">
-                {selectedMarker.type === 'port' && (
+                {selectedMarker.type === 'port' && (() => {
+                  const base = selectedMarker.data as SupplyBase;
+                  const lat = base?.location?.latitude;
+                  const lon = base?.location?.longitude;
+                  return (
                   <>
                     <div className="map-detail-row">
                       <span>Port Code:</span>
-                      <strong>{(selectedMarker.data as SupplyBase).port_code}</strong>
+                      <strong>{base?.port_code ?? '—'}</strong>
                     </div>
+                    {lat != null && lon != null && (
                     <div className="map-detail-row">
                       <span>Location:</span>
                       <strong>
-                        {Math.abs((selectedMarker.data as SupplyBase).location.latitude).toFixed(4)}°S,{' '}
-                        {Math.abs((selectedMarker.data as SupplyBase).location.longitude).toFixed(4)}°W
+                        {Math.abs(lat).toFixed(4)}°S, {Math.abs(lon).toFixed(4)}°W
                       </strong>
                     </div>
+                    )}
                     <div className="map-detail-row">
                       <span>Berths:</span>
                       <strong>{berths.length}</strong>
@@ -1354,33 +967,39 @@ export default function Visualization({ vessels: propsVessels, berths: propsBert
                       </div>
                     )}
                   </>
-                )}
+                  );
+                })()}
 
                 {selectedMarker.type === 'installation' && (() => {
                   const inst = selectedMarker.data as Installation;
+                  if (!inst) return null;
                   const details = detailedInstallations[inst.id] || inst;
+                  const lat = inst.location?.latitude;
+                  const lon = inst.location?.longitude;
                   return (
                     <>
                       <div className="map-detail-row">
                         <span>Type:</span>
-                        <strong>{inst.type}</strong>
+                        <strong>{inst.type ?? '—'}</strong>
                       </div>
+                      {lat != null && lon != null && (
                       <div className="map-detail-row">
                         <span>Location:</span>
                         <strong>
-                          {Math.abs(inst.location.latitude).toFixed(4)}°S, {Math.abs(inst.location.longitude).toFixed(4)}°W
+                          {Math.abs(lat).toFixed(4)}°S, {Math.abs(lon).toFixed(4)}°W
                         </strong>
                       </div>
+                      )}
                       {inst.distance_from_base_nm && (
                         <div className="map-detail-row">
                           <span>Distance from Base:</span>
                           <strong>{inst.distance_from_base_nm.toFixed(1)} NM</strong>
                         </div>
                       )}
-                      {inst.location.water_depth_m && (
+                      {inst.location?.water_depth_m != null && (
                         <div className="map-detail-row">
                           <span>Water Depth:</span>
-                          <strong>{inst.location.water_depth_m.toFixed(0)} m</strong>
+                          <strong>{Number(inst.location.water_depth_m).toFixed(0)} m</strong>
                         </div>
                       )}
                       {inst.production_capacity_bpd && (
@@ -1418,12 +1037,17 @@ export default function Visualization({ vessels: propsVessels, berths: propsBert
                         <div className="map-detail-section">
                           <div className="map-detail-section-title">Storage Levels:</div>
                           <Stack direction="column" gap="xs">
-                            {details.storage_levels.slice(0, 5).map((storage: any, idx: number) => (
+                            {details.storage_levels.slice(0, 5).map((storage: any, idx: number) => {
+                              const current = Number(storage?.current_level);
+                              const max = Number(storage?.max_capacity);
+                              const currentStr = Number.isFinite(current) ? current.toFixed(1) : '—';
+                              const maxStr = Number.isFinite(max) ? max.toFixed(1) : '—';
+                              return (
                               <div key={idx} className="map-detail-row">
                                 <span>
-                                  {storage.cargo_type_id}: {storage.current_level.toFixed(1)} / {storage.max_capacity.toFixed(1)} {storage.unit}
+                                  {storage?.cargo_type_id ?? '—'}: {currentStr} / {maxStr} {storage?.unit ?? ''}
                                 </span>
-                                {storage.status && (
+                                {storage?.status && (
                                   <Badge
                                     variant={storage.status === 'Critical' ? 'error' : storage.status === 'Low' ? 'warning' : 'success'}
                                     size="sm"
@@ -1432,7 +1056,8 @@ export default function Visualization({ vessels: propsVessels, berths: propsBert
                                   </Badge>
                                 )}
                               </div>
-                            ))}
+                              );
+                            })}
                           </Stack>
                         </div>
                       )}
@@ -1440,13 +1065,17 @@ export default function Visualization({ vessels: propsVessels, berths: propsBert
                         <div className="map-detail-section">
                           <div className="map-detail-section-title">Consumption:</div>
                           <Stack direction="column" gap="xs">
-                            {details.consumption_profile.slice(0, 3).map((profile: any, idx: number) => (
+                            {details.consumption_profile.slice(0, 3).map((profile: any, idx: number) => {
+                              const val = Number(profile?.daily_consumption);
+                              const valStr = Number.isFinite(val) ? val.toFixed(1) : '—';
+                              return (
                               <div key={idx} className="map-detail-row">
                                 <span>
-                                  {profile.cargo_type_id}: {profile.daily_consumption.toFixed(1)} {profile.unit}/day
+                                  {profile?.cargo_type_id ?? '—'}: {valStr} {profile?.unit ?? ''}/day
                                 </span>
                               </div>
-                            ))}
+                              );
+                            })}
                           </Stack>
                         </div>
                       )}
@@ -1456,16 +1085,17 @@ export default function Visualization({ vessels: propsVessels, berths: propsBert
 
                 {selectedMarker.type === 'vessel' && (() => {
                   const vessel = selectedMarker.data as Vessel;
+                  if (!vessel || typeof vessel !== 'object') return null;
                   const details = detailedVessels[vessel.id] || vessel;
                   return (
                     <>
                       <div className="map-detail-row">
                         <span>Type:</span>
-                        <strong>{vessel.type}</strong>
+                        <strong>{vessel.type ?? '—'}</strong>
                       </div>
                       <div className="map-detail-row">
                         <span>Status:</span>
-                        <strong>{vessel.status.replace('_', ' ')}</strong>
+                        <strong>{vessel.status != null ? String(vessel.status).replace('_', ' ') : '—'}</strong>
                       </div>
                       {vessel.position && (
                         <div className="map-detail-row">
@@ -1529,6 +1159,7 @@ export default function Visualization({ vessels: propsVessels, berths: propsBert
 
                 {selectedMarker.type === 'trip' && (() => {
                   const trip = selectedMarker.data as Trip;
+                  if (!trip || typeof trip !== 'object') return null;
                   return (
                     <>
                       <div className="map-detail-row">

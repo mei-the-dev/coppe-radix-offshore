@@ -10,10 +10,10 @@ export default function AppLayout() {
   const { isAuthenticated, loading, logout } = useAuth();
 
   const navItems = [
-    // Dashboard, Planning, and Visualization are hidden (under development)
+    // Dashboard, Planning are hidden (under development)
     // { path: '/dashboard', label: 'Dashboard', icon: 'dashboard' },
     // { path: '/planning', label: 'Planning', icon: 'planning' },
-    // { path: '/simulation', label: 'Visualization', icon: 'simulation' },
+    { path: '/simulation', label: 'Simulation', icon: 'simulation' },
     { path: '/model', label: 'Model', icon: 'model' },
     { path: '/data', label: 'Data Structure', icon: 'data' },
     { path: '/metrics', label: 'Metrics', icon: 'metrics' },

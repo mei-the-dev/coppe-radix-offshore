@@ -2,16 +2,27 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: var(--bg-secondary);
+  background: var(--bg-canvas);
+  color: rgba(255, 255, 255, 0.95);
 }
 
 .app-header {
-  background: var(--color-primary-gradient);
-  color: var(--text-inverse);
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  border-bottom: 1px solid var(--glass-border);
+  color: rgba(255, 255, 255, 0.95);
   padding: var(--spacing-6) var(--spacing-8);
-  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.15);
+  box-shadow: var(--glass-shadow);
   position: relative;
   z-index: var(--z-banner);
+}
+
+@supports not (backdrop-filter: blur(12px)) {
+  .app-header {
+    background: var(--glass-bg-fallback);
+    color: var(--text-primary);
+  }
 }
 
 .header-content {
@@ -34,24 +45,32 @@
   font-weight: var(--font-weight-bold);
   letter-spacing: var(--letter-spacing-tight);
   margin: 0 0 var(--spacing-1) 0;
-  color: var(--text-inverse);
+  color: rgba(255, 255, 255, 0.95);
 }
 
 .logo p {
-  opacity: 0.95;
+  opacity: 0.9;
   font-size: var(--font-size-base);
-  color: var(--text-inverse);
+  color: rgba(255, 255, 255, 0.85);
   font-weight: var(--font-weight-normal);
   margin: 0;
 }
 
 .app-nav {
-  background: var(--surface-default);
-  border-bottom: 1px solid var(--border-default);
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  border-bottom: 1px solid var(--glass-border);
   position: sticky;
   top: 0;
   z-index: var(--z-sticky);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+@supports not (backdrop-filter: blur(12px)) {
+  .app-nav {
+    background: var(--glass-bg-fallback);
+  }
 }
 
 .nav-container {
@@ -69,7 +88,7 @@
   padding: var(--spacing-4) var(--spacing-6);
   background: none;
   border: none;
-  color: var(--text-secondary);
+  color: rgba(255, 255, 255, 0.85);
   font-weight: var(--font-weight-medium);
   cursor: pointer;
   border-bottom: 3px solid transparent;
@@ -81,24 +100,38 @@
 }
 
 .nav-tab:hover {
-  color: var(--text-primary);
-  background-color: var(--surface-sunken);
+  color: rgba(255, 255, 255, 1);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .nav-tab--active,
 .nav-tab.active {
-  color: var(--interactive-default);
-  border-bottom-color: var(--interactive-default);
+  color: rgba(255, 255, 255, 1);
+  border-bottom-color: rgba(255, 255, 255, 0.5);
   font-weight: var(--font-weight-semibold);
-  background-color: var(--surface-sunken);
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .app-main {
   flex: 1;
   max-width: var(--container-xl);
   width: 100%;
-  margin: 0 auto;
+  margin: var(--spacing-6) auto;
   padding: var(--spacing-6) var(--spacing-8);
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--glass-radius-lg);
+  box-shadow: var(--glass-shadow);
+  /* Dark text on light glass panel for contrast */
+  color: var(--color-gray-900);
+}
+
+@supports not (backdrop-filter: blur(10px)) {
+  .app-main {
+    background: var(--glass-bg-fallback);
+  }
 }
 
 .loading-fallback {

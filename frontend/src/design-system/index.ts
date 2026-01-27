@@ -1,17 +1,18 @@
 /**
- * Design System Entry Point
+ * Design System Entry Point (in-repo, no external package)
  *
- * Central export point for all design system tokens, utilities, and helpers.
- * Provides access to design tokens, theme management, and utility functions.
+ * Central export for design tokens, theme utilities, and CSS.
+ * All assets live in frontend/src/design-system/ – see DESIGN_SYSTEM.md.
  *
- * @module @kira/design-system
+ * @module design-system
  */
 
 export { tokens, voiceStates, alertSeverity } from './tokens/index';
 
-// Import CSS (for bundlers that support it)
+// In-repo CSS (tokens, themes, glass utilities)
 import './tokens.css';
 import './themes.css';
+import './glass.css';
 
 /**
  * Get CSS variable value

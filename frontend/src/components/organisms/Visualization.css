@@ -58,11 +58,13 @@
   height: 100%;
   min-height: 600px;
   position: relative;
+  z-index: 0;
   user-select: none;
   touch-action: none;
   overflow: hidden;
 }
 
+/* Map background: ocean chart style so the offshore logistics map reads as a real map */
 .map-ocean-background {
   position: absolute;
   top: 0;
@@ -71,9 +73,23 @@
   bottom: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 50%, #7dd3fc 100%);
+  /* Nautical chart–style ocean: deeper blues with subtle depth gradient */
+  background:
+    linear-gradient(180deg, #0c4a6e 0%, #0e7490 15%, #0891b2 35%, #06b6d4 55%, #22d3ee 75%, #67e8f9 100%);
   pointer-events: none;
   z-index: 1;
+}
+
+/* Optional: subtle wave texture so it reads as water, not flat fill */
+.map-ocean-background::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 20% 80%, rgba(255,255,255,0.03) 0%, transparent 40%),
+    radial-gradient(circle at 80% 20%, rgba(255,255,255,0.04) 0%, transparent 35%),
+    radial-gradient(circle at 50% 50%, rgba(255,255,255,0.02) 0%, transparent 60%);
+  pointer-events: none;
 }
 
 .map-grid-overlay {
@@ -83,14 +99,57 @@
   width: 100%;
   height: 100%;
   pointer-events: none;
-  opacity: 0.2;
+  opacity: 0.35;
   z-index: 2;
-  color: rgba(147, 197, 253, 0.5); /* blue-300 equivalent */
+  color: rgba(255, 255, 255, 0.4);
 }
 
 .visualization-map.map-dragging {
   cursor: grabbing !important;
 }
+
+/* Informative bubble pins by type (Port, FPSO, Platform, Vessel) */
+.map-pin-bubble-container {
+  border: none !important;
+  background: transparent !important;
+}
+
+.map-pin-bubble {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.map-pin-bubble:hover {
+  transform: rotate(-45deg) scale(1.1);
+}
+
+.map-pin-bubble__letter {
+  transform: rotate(45deg);
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 0 1px rgba(0,0,0,0.5);
+  line-height: 1;
+}
+
+.map-pin-bubble__label {
+  display: none;
+}
+
+.map-pin-bubble--port { /* P - Supply base */ }
+.map-pin-bubble--fpso { /* F - FPSO */ }
+.map-pin-bubble--platform { /* R - Platform / rig */ }
+.map-pin-bubble--vessel { /* V - Vessel */ }
 
 .map-marker {
   position: absolute;
@@ -255,12 +314,13 @@
   bottom: var(--spacing-4);
   left: 50%;
   transform: translateX(-50%);
-  z-index: 200;
+  z-index: 1000;
   max-width: 400px;
   max-height: 400px;
   overflow-y: auto;
   background: var(--surface-elevated);
   box-shadow: var(--shadow-xl);
+  pointer-events: auto;
 }
 
 .map-detail-header {
@@ -384,10 +444,11 @@
   position: absolute;
   top: var(--spacing-4);
   left: var(--spacing-4);
-  z-index: 100;
+  z-index: 1000;
   min-width: 200px;
   background: var(--surface-elevated);
   box-shadow: var(--shadow-lg);
+  pointer-events: auto;
 }
 
 .map-stats-panel h3 {
