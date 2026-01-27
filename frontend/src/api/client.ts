@@ -4,25 +4,46 @@
 // This handles cases where the backend might be on a different subdomain
 const getApiBaseUrl = () => {
   const envUrl = import.meta.env.VITE_API_URL;
-  if (envUrl) return envUrl;
+  if (envUrl && envUrl.trim() !== '') {
+    // Remove trailing slash if present
+    return envUrl.replace(/\/$/, '');
+  }
   
   // Development fallback
   if (import.meta.env.DEV) {
     return 'http://localhost:3001';
   }
   
-  // Production: try to construct backend URL from frontend URL
-  // DigitalOcean App Platform services get URLs like: service-name-xxxxx.ondigitalocean.app
-  // If frontend is at sea-lion-app-8l7y7.ondigitalocean.app,
-  // backend might be at backend-xxxxx.ondigitalocean.app or similar
+  // Production: In DigitalOcean App Platform, each service gets its own URL
+  // The backend URL should be set via ${backend.PUBLIC_URL} in app.yaml
+  // If it's not set, we can't reliably determine it, so throw an error
   if (typeof window !== 'undefined') {
     const hostname = window.location.hostname;
-    // If we're on ondigitalocean.app, try to find backend URL
     if (hostname.includes('ondigitalocean.app')) {
-      // For now, return the same origin - backend should be accessible via PUBLIC_URL
-      // This will be set by DigitalOcean at build time
-      console.warn('VITE_API_URL not set in production. Using same origin as fallback.');
-      return window.location.origin;
+      // Try to construct backend URL from app name pattern
+      // DigitalOcean services typically follow: <app-name>-<service-name>-<hash>.ondigitalocean.app
+      // Or: <service-name>-<hash>.ondigitalocean.app
+      // For now, we'll try a few patterns
+      const parts = hostname.split('.');
+      const domainPart = parts[0]; // e.g., "sea-lion-app-8l7y7" or "frontend-xxxxx"
+      
+      // Try to replace frontend/service name with "backend"
+      let backendHostname = domainPart;
+      if (domainPart.includes('frontend')) {
+        backendHostname = domainPart.replace(/frontend/i, 'backend');
+      } else if (domainPart.includes('sea-lion-app')) {
+        // If it's the app-level URL, try to construct backend service URL
+        // This is a guess - the actual URL depends on DigitalOcean's naming
+        backendHostname = domainPart.replace('sea-lion-app', 'backend');
+      } else {
+        // Last resort: try appending -backend
+        backendHostname = `${domainPart}-backend`;
+      }
+      
+      const backendUrl = `https://${backendHostname}.ondigitalocean.app`;
+      console.warn('VITE_API_URL not set. Attempting to use:', backendUrl);
+      console.warn('If this fails, please set VITE_API_URL environment variable in DigitalOcean App Platform');
+      return backendUrl;
     }
   }
   
@@ -31,11 +52,26 @@ const getApiBaseUrl = () => {
 
 const API_BASE_URL = getApiBaseUrl();
 
+// Allow manual override via localStorage (for debugging/production fixes)
+const getFinalApiBaseUrl = () => {
+  if (typeof window !== 'undefined') {
+    const manualOverride = localStorage.getItem('API_BASE_URL_OVERRIDE');
+    if (manualOverride) {
+      console.warn('Using manual API URL override from localStorage:', manualOverride);
+      return manualOverride;
+    }
+  }
+  return API_BASE_URL;
+};
+
+const FINAL_API_BASE_URL = getFinalApiBaseUrl();
+
 // Log API URL in development and production for debugging
 if (typeof window !== 'undefined') {
-  console.log('API Base URL:', API_BASE_URL);
+  console.log('API Base URL:', FINAL_API_BASE_URL);
   console.log('Environment:', import.meta.env.MODE);
   console.log('VITE_API_URL env:', import.meta.env.VITE_API_URL);
+  console.log('To override API URL, set localStorage.setItem("API_BASE_URL_OVERRIDE", "https://your-backend-url")');
 }
 
 // Token storage in localStorage for persistence
@@ -66,7 +102,7 @@ async function fetchAPI<T>(endpoint: string, options?: RequestInit): Promise<T> 
   }
 
   try {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    const response = await fetch(`${FINAL_API_BASE_URL}${endpoint}`, {
       ...options,
       headers,
     });
@@ -119,7 +155,7 @@ async function fetchAPI<T>(endpoint: string, options?: RequestInit): Promise<T> 
 export const auth = {
   login: async (username: string, password: string) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/auth/login`, {
+      const response = await fetch(`${FINAL_API_BASE_URL}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),
