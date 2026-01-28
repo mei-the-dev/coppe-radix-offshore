@@ -133,6 +133,27 @@
 }
 
 /* Main content: glass panel (frosted, readable). Per references/glass – semi-transparent + blur + border + radius */
+
+@keyframes app-main-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes app-main-bg-pulse {
+  0%, 100% {
+    background-color: rgba(255, 255, 255, 0.5);
+  }
+  50% {
+    background-color: rgba(255, 255, 255, 0.62);
+  }
+}
+
 .app-main {
   flex: 1;
   display: flex;
@@ -142,16 +163,24 @@
   width: 100%;
   margin: var(--spacing-6) auto;
   padding: var(--spacing-6) var(--spacing-8);
-  background: rgba(255, 255, 255, 0.88);
+  background-color: rgba(255, 255, 255, 0.55);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.4);
   border-radius: var(--glass-radius-lg);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   --text-primary: var(--color-gray-900);
   --text-secondary: var(--color-gray-700);
   --text-tertiary: var(--color-gray-600);
   color: var(--text-primary);
+  animation: app-main-fade-in var(--duration-slow) var(--timing-ease-out) forwards,
+    app-main-bg-pulse 10s var(--timing-ease-in-out) var(--duration-slow) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-main {
+    animation: app-main-fade-in var(--duration-normal) var(--timing-ease-out) forwards;
+  }
 }
 
 .app-main-outlet {
@@ -166,7 +195,8 @@
 
 @supports not (backdrop-filter: blur(12px)) {
   .app-main {
-    background: rgba(255, 255, 255, 0.96);
+    background-color: rgba(255, 255, 255, 0.88);
+    animation: app-main-fade-in var(--duration-normal) var(--timing-ease-out) forwards;
   }
 }
 
