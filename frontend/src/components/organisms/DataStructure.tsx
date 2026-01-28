@@ -96,7 +96,7 @@ export default function DataStructure({}: DataStructureProps) {
       tables: [
         {
           name: 'supply_bases',
-          description: 'Port facilities and supply bases (e.g., Macaé)',
+          description: 'Port facilities and supply bases (e.g., Porto do Açu)',
           primaryKey: 'id',
           columns: [
             { name: 'id', type: 'VARCHAR(50)', nullable: false, description: 'Primary key' },

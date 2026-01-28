@@ -256,8 +256,8 @@ export default function Simulation({ vessels, berths }: SimulationProps) {
         return {
           vesselId: vessel.id,
           vesselName: vessel.name,
-          lat: port?.lat || -22.3833,
-          lon: port?.lon || -41.7833,
+          lat: port?.lat || -21.8333,
+          lon: port?.lon || -41.0,
           status: 'loading' as const,
           destination: targetPlatform.id,
           progress: 0,
@@ -362,7 +362,7 @@ export default function Simulation({ vessels, berths }: SimulationProps) {
               <Tooltip
                 content={
                   <div>
-                    <h4>Port of Macaé</h4>
+                    <h4>Porto do Açu</h4>
                     <div className="tooltip-divider" />
                     <div className="tooltip-section">
                       <div className="tooltip-row">

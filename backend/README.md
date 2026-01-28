@@ -1,6 +1,6 @@
-# Macaé Loading Dashboard - Backend API
+# Porto do Açu Loading Dashboard - Backend API
 
-Backend API server for the PRIO Macaé Loading Dashboard.
+Backend API server for the PRIO Loading Dashboard (Porto do Açu).
 
 ## Setup
 
@@ -45,7 +45,7 @@ Server runs on `http://localhost:3001`
 
 All data is currently mocked based on `references/inventory.md`:
 - 5 vessels (Standard PSV, Large PSV, CSV)
-- 3 berths at Macaé port
+- 3 berths at Porto do Açu
 - Complete cargo catalog (liquid bulk, dry bulk, deck cargo)
 - Cargo compatibility matrix
 - 8 installation destinations

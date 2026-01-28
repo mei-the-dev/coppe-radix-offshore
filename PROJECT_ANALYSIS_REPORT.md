@@ -8,7 +8,7 @@
 
 ## Executive Summary
 
-This is a **full-stack TypeScript application** for managing offshore logistics operations, specifically designed for PRIO S.A. operations at Macaé port. The system manages vessel fleets, cargo operations, loading plans, and supply chain coordination for maritime/offshore environments.
+This is a **full-stack TypeScript application** for managing offshore logistics operations, specifically designed for PRIO S.A. operations at Porto do Açu. The system manages vessel fleets, cargo operations, loading plans, and supply chain coordination for maritime/offshore environments.
 
 **Key Strengths:**
 - ✅ Modern tech stack (React 19, TypeScript, PostgreSQL with PostGIS)

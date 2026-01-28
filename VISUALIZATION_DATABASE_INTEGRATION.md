@@ -124,7 +124,7 @@ The visualization includes fallback mechanisms:
 
 1. **Primary**: Database queries via PRIO API endpoints
 2. **Secondary**: Legacy endpoints (if database unavailable)
-3. **Tertiary**: Hardcoded Macaé port coordinates (if all else fails)
+3. **Tertiary**: Hardcoded Porto do Açu coordinates (if all else fails)
 
 This ensures the visualization always displays something, even if database is unavailable.
 

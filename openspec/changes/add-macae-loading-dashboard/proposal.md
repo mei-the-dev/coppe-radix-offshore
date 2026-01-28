@@ -1,7 +1,9 @@
 # Change: Add Beautiful Dashboard UX for Planning PSV Loading at Macaé Port
 
+**Note:** The supply base was later corrected to **Porto do Açu** (São João da Barra, RJ); the app uses Porto do Açu as the hub.
+
 ## Why
-PRIO logistics planners need an intuitive, visual dashboard to efficiently plan and schedule Platform Supply Vessel (PSV) loading operations at the Port of Macaé. Currently, planning loading operations requires manual coordination across multiple systems and spreadsheets, leading to:
+PRIO logistics planners need an intuitive, visual dashboard to efficiently plan and schedule Platform Supply Vessel (PSV) loading operations at the supply base (Porto do Açu). Currently, planning loading operations requires manual coordination across multiple systems and spreadsheets, leading to:
 - Inefficient berth utilization and vessel turnaround times
 - Difficulty visualizing cargo compatibility and loading sequences
 - Limited visibility into real-time port operations and vessel status

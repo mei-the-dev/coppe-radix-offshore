@@ -81,7 +81,9 @@ Options:
 ## 4. What gets populated
 
 - **Migrate** applies `references/prio_sql_schema.sql`: PostGIS, tables (supply_bases, installations, vessels, cargo types, distance_matrix, etc.). “Already exists” and other ignorable messages are skipped.
-- **Seed** (see [backend/DATABASE_SEED.md](../backend/DATABASE_SEED.md)) inserts the same operational data you use locally: Macaé supply base, FPSO/installations, vessels, compartments, cargo types, distances, costs, and related lookup data.
+- **Seed** (see [backend/DATABASE_SEED.md](../backend/DATABASE_SEED.md)) inserts the same operational data you use locally: Porto do Açu supply base, FPSO/installations, vessels, compartments, cargo types, distances, costs, and related lookup data.
+
+**Existing databases:** If the production DB already has supply base `macaé`, run the one-off migration once before or after seed: `scripts/migrate-supply-base-to-porto-acu.sql` (e.g. `psql ... -f scripts/migrate-supply-base-to-porto-acu.sql`). This updates the supply base to Porto do Açu and all related FKs.
 
 After a successful migrate + seed, the production API (e.g. `/fleet/vessels`, `/cargo/orders`, `/installations`, `/supply-bases`) will return the same kind of data as locally, and the simulation map should show installations and data instead of “No valid data points”.
 

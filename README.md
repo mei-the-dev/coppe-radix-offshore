@@ -7,7 +7,7 @@ A comprehensive system for managing logistics operations in offshore environment
 This application provides a complete solution for offshore logistics management, with a focus on:
 - **Vessel Fleet Management**: Track and manage Platform Supply Vessels (PSV), Construction Support Vessels (CSV), and other maritime assets
 - **Cargo Management**: Handle liquid bulk, dry bulk, and deck cargo with compatibility validation
-- **Port Operations**: Manage berth scheduling and loading operations at Macaé port
+- **Port Operations**: Manage berth scheduling and loading operations at Porto do Açu
 - **Loading Plan Creation**: Create and validate loading plans with real-time cargo compatibility checks
 - **Supply Chain Coordination**: Coordinate materials, equipment, and personnel to offshore installations
 
@@ -193,7 +193,7 @@ For detailed API documentation, see `backend/README.md` and `backend/API_IMPLEME
 
 All data is currently mocked based on PRIO operational estimates from `references/inventory.md`:
 - 5 vessels (Standard PSV, Large PSV, CSV)
-- 3 berths at Macaé port
+- 3 berths at Porto do Açu
 - Complete cargo catalog (liquid bulk, dry bulk, deck cargo)
 - Cargo compatibility matrix with tank cleaning times
 - 8 installation destinations
@@ -303,5 +303,5 @@ This project uses OpenSpec for spec-driven development. See `openspec/AGENTS.md`
 ## Acknowledgments
 
 - Built for PRIO Offshore Logistics Operations
-- Designed for Macaé port loading operations
+- Designed for Porto do Açu loading operations
 - Based on PRIO operational data from `references/inventory.md`

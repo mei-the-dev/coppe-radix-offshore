@@ -27,13 +27,13 @@ async function seed() {
         loading_capacity_liquid_m3h, loading_capacity_bulk_m3h, loading_capacity_deck_th,
         cost_port_dues_usd, cost_pilotage_usd, cost_agency_usd, cost_documentation_usd
       ) VALUES (
-        'macaé',
-        'Porto Engenheiro Zephyrino Lavanère Machado Filho (Macaé)',
-        ST_SetSRID(ST_MakePoint(-41.7833, -22.3833), 4326)::GEOGRAPHY,
-        'BRMEA',
-        7.9,
-        97.0,
-        5513.0,
+        'porto-acu',
+        'Porto do Açu',
+        ST_SetSRID(ST_MakePoint(-41.0, -21.8333), 4326)::GEOGRAPHY,
+        'BRACU',
+        21.7,
+        350.0,
+        200000.0,
         '24/7',
         3,
         150.0,
@@ -237,16 +237,17 @@ async function seed() {
     // ============================================================================
     // 3. DISTANCE MATRIX
     // ============================================================================
+    // Distance matrix: from Porto do Açu. NM/km/times are placeholders; verify for Açu.
     console.log('📏 Seeding distance matrix...');
     const distances = [
-      { from: 'macaé', to: 'fpso-peregrino', nm: 46.0, km: 85.2, time_12: 3.8, time_14: 3.3 },
-      { from: 'macaé', to: 'fpso-bravo', nm: 70.0, km: 129.6, time_12: 5.8, time_14: 5.0 },
-      { from: 'macaé', to: 'platform-polvo', nm: 70.0, km: 129.6, time_12: 5.8, time_14: 5.0 },
-      { from: 'macaé', to: 'fpso-valente', nm: 67.0, km: 124.1, time_12: 5.6, time_14: 4.8 },
-      { from: 'macaé', to: 'fpso-forte', nm: 75.0, km: 138.9, time_12: 6.3, time_14: 5.4 },
-      { from: 'macaé', to: 'platform-peregrino-a', nm: 46.0, km: 85.2, time_12: 3.8, time_14: 3.3 },
-      { from: 'macaé', to: 'platform-peregrino-b', nm: 46.0, km: 85.2, time_12: 3.8, time_14: 3.3 },
-      { from: 'macaé', to: 'platform-peregrino-c', nm: 46.0, km: 85.2, time_12: 3.8, time_14: 3.3 },
+      { from: 'porto-acu', to: 'fpso-peregrino', nm: 46.0, km: 85.2, time_12: 3.8, time_14: 3.3 },
+      { from: 'porto-acu', to: 'fpso-bravo', nm: 70.0, km: 129.6, time_12: 5.8, time_14: 5.0 },
+      { from: 'porto-acu', to: 'platform-polvo', nm: 70.0, km: 129.6, time_12: 5.8, time_14: 5.0 },
+      { from: 'porto-acu', to: 'fpso-valente', nm: 67.0, km: 124.1, time_12: 5.6, time_14: 4.8 },
+      { from: 'porto-acu', to: 'fpso-forte', nm: 75.0, km: 138.9, time_12: 6.3, time_14: 5.4 },
+      { from: 'porto-acu', to: 'platform-peregrino-a', nm: 46.0, km: 85.2, time_12: 3.8, time_14: 3.3 },
+      { from: 'porto-acu', to: 'platform-peregrino-b', nm: 46.0, km: 85.2, time_12: 3.8, time_14: 3.3 },
+      { from: 'porto-acu', to: 'platform-peregrino-c', nm: 46.0, km: 85.2, time_12: 3.8, time_14: 3.3 },
       { from: 'fpso-peregrino', to: 'platform-polvo', nm: 15.0, km: 27.8, time_12: 1.3, time_14: 1.1 },
       { from: 'platform-polvo', to: 'fpso-bravo', nm: 5.9, km: 10.9, time_12: 0.5, time_14: 0.4 },
       { from: 'fpso-peregrino', to: 'platform-peregrino-a', nm: 2.0, km: 3.7, time_12: 0.2, time_14: 0.1 },
@@ -393,9 +394,9 @@ async function seed() {
         crew_size: 13,
         accommodation: 28,
         status: 'Available',
-        location_id: 'macaé',
-        lat: -41.7833,
-        lon: -22.3833
+        location_id: 'porto-acu',
+        lat: -21.8333,
+        lon: -41.0
       },
       {
         id: 'vessel-psv-002',
@@ -418,9 +419,9 @@ async function seed() {
         crew_size: 13,
         accommodation: 28,
         status: 'Available',
-        location_id: 'macaé',
-        lat: -41.7833,
-        lon: -22.3833
+        location_id: 'porto-acu',
+        lat: -21.8333,
+        lon: -41.0
       },
       // Large PSV (UT 874 Type) – clear deck area 1,040–1,200 m² per references
       {
@@ -444,9 +445,9 @@ async function seed() {
         crew_size: 14,
         accommodation: 45,
         status: 'Available',
-        location_id: 'macaé',
-        lat: -41.7833,
-        lon: -22.3833
+        location_id: 'porto-acu',
+        lat: -21.8333,
+        lon: -41.0
       },
       {
         id: 'vessel-psv-004',
@@ -469,9 +470,9 @@ async function seed() {
         crew_size: 14,
         accommodation: 45,
         status: 'Available',
-        location_id: 'macaé',
-        lat: -41.7833,
-        lon: -22.3833
+        location_id: 'porto-acu',
+        lat: -21.8333,
+        lon: -41.0
       },
       // CSV – clear deck area 1,500+ m² per inventory.md
       {
@@ -495,9 +496,9 @@ async function seed() {
         crew_size: 20,
         accommodation: 60,
         status: 'Available',
-        location_id: 'macaé',
-        lat: -41.7833,
-        lon: -22.3833
+        location_id: 'porto-acu',
+        lat: -21.8333,
+        lon: -41.0
       },
       // Well Stimulation Vessel (Large PSV base – 1,040–1,200 m²)
       {
@@ -521,9 +522,9 @@ async function seed() {
         crew_size: 15,
         accommodation: 50,
         status: 'Available',
-        location_id: 'macaé',
-        lat: -41.7833,
-        lon: -22.3833
+        location_id: 'porto-acu',
+        lat: -21.8333,
+        lon: -41.0
       }
     ];
 
@@ -549,7 +550,7 @@ async function seed() {
         vessel.deck_capacity, vessel.clear_deck_area_m2 ?? null, vessel.deadweight, vessel.service_speed, vessel.operational_speed,
         vessel.max_speed, vessel.dp_class, vessel.fuel_transit, vessel.fuel_dp, vessel.fuel_port,
         vessel.charter_rate, vessel.crew_size, vessel.accommodation, vessel.status,
-        vessel.location_id, vessel.lat, vessel.lon
+        vessel.location_id, vessel.lon, vessel.lat
       ]);
 
       // Create vessel schedule

@@ -1,21 +1,21 @@
 // Platform coordinates for simulation
-// Based on distances from Macaé and Campos Basin locations
-// Macaé: 22°23'S, 41°47'W
+// Based on distances from Porto do Açu and Campos Basin locations
+// Porto do Açu: 21°50'S, 41°00'W (São João da Barra, RJ)
 
 export interface Platform {
   id: string;
   name: string;
   lat: number; // Decimal degrees
   lon: number; // Decimal degrees
-  distance: number; // NM from Macaé
+  distance: number; // NM from Porto do Açu
   type: 'FPSO' | 'Platform';
 }
 
-export const macaePort = {
-  id: 'macaé',
-  name: 'Port of Macaé',
-  lat: -22.3833, // 22°23'S
-  lon: -41.7833, // 41°47'W
+export const portoAcu = {
+  id: 'porto-acu',
+  name: 'Porto do Açu',
+  lat: -21.8333, // 21°50'S
+  lon: -41.0, // 41°00'W
 };
 
 // Approximate coordinates based on distances and Campos Basin location

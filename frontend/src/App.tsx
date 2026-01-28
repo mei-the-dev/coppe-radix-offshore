@@ -14,7 +14,7 @@ function App() {
         <header className="app-header" role="banner">
           <h1>
             <IconVessel size={32} className="header-icon" aria-hidden="true" />
-            Macaé Loading Dashboard
+            Porto do Açu Loading Dashboard
           </h1>
           <p>PRIO Offshore Logistics - Platform Supply Vessel Loading Planning</p>
         </header>

@@ -14,7 +14,7 @@ The visualization page has been updated to use the **database as the Single Sour
    - ✅ Vessel details: Uses `prioAPI.vessels.get()` (database)
 
 2. **Supply Bases**
-   - ❌ Removed: Hardcoded Macaé port fallback
+   - ❌ Removed: Hardcoded port fallback (supply base is Porto do Açu from DB)
    - ✅ Now: Only uses `prioAPI.supplyBases.list()` (database)
    - ✅ If database is empty, shows empty state (no fallback)
 

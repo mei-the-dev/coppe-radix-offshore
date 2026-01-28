@@ -6,7 +6,7 @@ This document describes the database seed script that populates the PRIO Offshor
 
 The seed script (`src/db/seed.ts`) populates the database with:
 
-1. **Supply Bases** - Port of Macaé specifications
+1. **Supply Bases** - Porto do Açu specifications
 2. **Installations** - All FPSOs and platforms (8 installations)
 3. **Distance Matrix** - Distances between all locations
 4. **Cargo Types** - 20+ cargo types (liquids, dry bulk, deck cargo)
@@ -56,24 +56,28 @@ tsx src/db/seed.ts
 
 ### Supply Bases
 
-- **Macaé Port** (BRMEA)
-  - Coordinates: 22°23'S, 41°47'W
-  - Max draught: 7.9m
-  - Max vessel length: 97m
-  - Max deadweight: 5,513t
+- **Porto do Açu** (BRACU) – São João da Barra, RJ
+  - Coordinates: 21°50'S, 41°00'W (-21.8333, -41.0)
+  - Max draught: 21.7m (VLCC-ready)
+  - Max vessel length: 350m
+  - Max deadweight: 200,000t
   - Operating hours: 24/7
   - 3 berths
 
+**Migration:** For existing databases that have supply base `macaé`, run once: `scripts/migrate-supply-base-to-porto-acu.sql`. See [docs/POPULATE_PRODUCTION_DB.md](../docs/POPULATE_PRODUCTION_DB.md).
+
 ### Installations (8 total)
 
-1. **FPSO Bravo** (Tubarão Martelo) - 70 NM from Macaé
-2. **Platform Polvo A** - 70 NM from Macaé
-3. **FPSO Valente** (Frade) - 67 NM from Macaé
-4. **FPSO Forte** (Albacora Leste) - 75 NM from Macaé
-5. **FPSO Peregrino** - 46 NM from Macaé
-6. **Platform Peregrino A** - 46 NM from Macaé
-7. **Platform Peregrino B** - 46 NM from Macaé
-8. **Platform Peregrino C** - 46 NM from Macaé
+Distances from Porto do Açu (NM values in seed are placeholders; verify for Açu):
+
+1. **FPSO Bravo** (Tubarão Martelo) - 70 NM from Porto do Açu
+2. **Platform Polvo A** - 70 NM from Porto do Açu
+3. **FPSO Valente** (Frade) - 67 NM from Porto do Açu
+4. **FPSO Forte** (Albacora Leste) - 75 NM from Porto do Açu
+5. **FPSO Peregrino** - 46 NM from Porto do Açu
+6. **Platform Peregrino A** - 46 NM from Porto do Açu
+7. **Platform Peregrino B** - 46 NM from Porto do Açu
+8. **Platform Peregrino C** - 46 NM from Porto do Açu
 
 ### Vessels (6 total)
 
@@ -114,7 +118,7 @@ tsx src/db/seed.ts
 
 ### Distance Matrix
 
-- All routes from Macaé to installations
+- All routes from Porto do Açu to installations
 - Inter-installation distances (e.g., Polvo to Bravo: 5.9 NM)
 - Travel times at 12 and 14 knots
 - Weather factors (good, moderate, rough)

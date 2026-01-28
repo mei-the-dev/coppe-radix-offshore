@@ -50,6 +50,31 @@ const isValidCoordinate = (value: number | undefined | null): value is number =>
   return typeof value === 'number' && !isNaN(value) && isFinite(value);
 };
 
+/** Normalize supply base display name: show Porto do Açu when API still returns old Macaé name. */
+function getSupplyBaseDisplayName(name: string | undefined): string {
+  if (!name) return 'Porto do Açu';
+  const lower = name.toLowerCase();
+  if (lower.includes('macaé') || lower.includes('macae')) return 'Porto do Açu';
+  return name;
+}
+
+/** Porto do Açu coords (São João da Barra, RJ). Used when no supply base from API. */
+const PORTO_ACU_FALLBACK = { lat: -21.8333, lon: -41.0 };
+
+/** Legacy Macaé coords; vessels with these positions from API are drawn east of Porto do Açu. */
+const MACAE_LEGACY = { lat: -22.3833, lon: -41.7833 };
+
+/** Get the primary supply base (Porto do Açu) for vessel positioning. */
+function getPortBase(supplyBases: SupplyBase[]): { lat: number; lon: number } {
+  const primary = supplyBases.find(
+    b => b.id === 'porto-acu' || b.name?.toLowerCase().includes('acu')
+  ) ?? supplyBases[0];
+  if (primary?.location && isValidCoordinate(primary.location.latitude) && isValidCoordinate(primary.location.longitude)) {
+    return { lat: primary.location.latitude, lon: primary.location.longitude };
+  }
+  return PORTO_ACU_FALLBACK;
+}
+
 interface Installation {
   id: string;
   name: string;
@@ -292,11 +317,11 @@ export default function Visualization({ vessels: propsVessels, berths: propsBert
 
       // Fetch berths from supply bases (database SSO)
       if (!propsBerths || propsBerths.length === 0) {
-        // Get berths from the first supply base (typically Macaé)
+        // Get berths from the first supply base (typically Porto do Açu)
         // In production, you might want to filter for a specific port
         const primaryBase = fetchedSupplyBases.find(b => 
-          b.port_code === 'BRMEA' || 
-          b.name.toLowerCase().includes('macae')
+          b.port_code === 'BRACU' || 
+          b.name.toLowerCase().includes('acu') || b.id === 'porto-acu'
         ) || fetchedSupplyBases[0];
         
         if (primaryBase) {
@@ -336,9 +361,7 @@ export default function Visualization({ vessels: propsVessels, berths: propsBert
 
   // Vessels to show on map: all with position + at least one per type; fallback positions spread along routes (base → installation) so they don't stack on port
   const vesselsToShow = useMemo(() => {
-    const base = supplyBases[0]?.location
-      ? { lat: supplyBases[0].location.latitude, lon: supplyBases[0].location.longitude }
-      : { lat: -22.37, lon: -41.79 };
+    const base = getPortBase(supplyBases);
     const insts = installations.filter(
       inst => inst?.location && isValidCoordinate(inst.location.latitude) && isValidCoordinate(inst.location.longitude)
     );
@@ -366,16 +389,18 @@ export default function Visualization({ vessels: propsVessels, berths: propsBert
     return [...withPos, ...withFallback];
   }, [vessels, supplyBases, installations]);
 
-  // Place vessel markers at sea (east of port) when at/near Macaé; spread when stacked
+  // Place vessel markers at sea (east of port) when at/near Porto do Açu; spread when stacked
   const STACK_SPREAD_RADIUS_DEG = 0.012;
   const AT_PORT_THRESHOLD_DEG = 0.025;
-  const SEA_EAST_OF_PORT_DEG = 0.06; // longitude offset so vessels appear in the sea east of Macaé
+  const SEA_EAST_OF_PORT_DEG = 0.06; // longitude offset so vessels appear in the sea east of Porto do Açu
   const vesselDisplayList = useMemo(() => {
-    const base = supplyBases[0]?.location
-      ? { lat: supplyBases[0].location.latitude, lon: supplyBases[0].location.longitude }
-      : { lat: -22.37, lon: -41.79 };
-    const atPort = (p: { lat: number; lon: number }) =>
-      Math.hypot(p.lat - base.lat, p.lon - base.lon) < AT_PORT_THRESHOLD_DEG;
+    const base = getPortBase(supplyBases);
+    // Treat as "at port" if near Porto do Açu OR near legacy Macaé (stale DB coords) — then draw east of Porto do Açu
+    const atPort = (p: { lat: number; lon: number }) => {
+      const nearPortoAcu = Math.hypot(p.lat - base.lat, p.lon - base.lon) < AT_PORT_THRESHOLD_DEG;
+      const nearLegacyMacae = Math.hypot(p.lat - MACAE_LEGACY.lat, p.lon - MACAE_LEGACY.lon) < AT_PORT_THRESHOLD_DEG;
+      return nearPortoAcu || nearLegacyMacae;
+    };
 
     const key = (lat: number, lon: number) => `${lat.toFixed(4)}_${lon.toFixed(4)}`;
     const byKey = new Map<string, (typeof vesselsToShow)>();
@@ -523,12 +548,12 @@ export default function Visualization({ vessels: propsVessels, berths: propsBert
       }
     }
     if (hasAnyRealRoute) return [];
-    const base = supplyBases[0]?.location;
-    if (!base || !validInstallations.length) return [];
+    const base = getPortBase(supplyBases);
+    if (!validInstallations.length) return [];
     return vesselsToShow.map((vessel, idx) => {
       const inst = validInstallations[idx % validInstallations.length];
       return {
-        positions: [[base.latitude, base.longitude], [inst.location.latitude, inst.location.longitude]] as [number, number][],
+        positions: [[base.lat, base.lon], [inst.location.latitude, inst.location.longitude]] as [number, number][],
         vesselId: vessel.id,
         vesselName: vessel.name,
       };
@@ -539,7 +564,7 @@ export default function Visualization({ vessels: propsVessels, berths: propsBert
     if (mapBounds.minLat !== mapBounds.maxLat && mapBounds.minLon !== mapBounds.maxLon) {
       return [(mapBounds.minLat + mapBounds.maxLat) / 2, (mapBounds.minLon + mapBounds.maxLon) / 2];
     }
-    return [-22.37, -41.79];
+    return [-21.8333, -41.0];
   }, [mapBounds]);
 
   // Combined loading state
@@ -588,7 +613,7 @@ export default function Visualization({ vessels: propsVessels, berths: propsBert
         <div className="visualization-legend">
           <div className="legend-item">
             <span className="legend-pin" style={{ background: '#0ea5e9' }} title="Supply Base">P</span>
-            <span>Supply Base (Macaé)</span>
+            <span>Supply Base (Porto do Açu)</span>
           </div>
           <div className="legend-item">
             <span className="legend-pin" style={{ background: '#8b5cf6' }} title="FPSO">F</span>
@@ -813,7 +838,7 @@ export default function Visualization({ vessels: propsVessels, berths: propsBert
                 orders
                   .filter(o => o.status === 'Loading' || o.status === 'InTransit' || o.status === 'Confirmed')
                   .map((order) => {
-                    const supplyBase = supplyBases.find(b => b.id === 'macae-port' || b.name?.toLowerCase().includes('macae')) ?? supplyBases[0];
+                    const supplyBase = supplyBases.find(b => b.id === 'porto-acu' || b.name?.toLowerCase().includes('acu')) ?? supplyBases[0];
                     if (!supplyBase?.location) return null;
                     const destination = installations.find(inst =>
                       order.cargoItems?.some((item: any) => item.destination === inst.id) || (order as any).destination?.installation_id === inst.id
@@ -884,7 +909,7 @@ export default function Visualization({ vessels: propsVessels, berths: propsBert
                   <Marker
                     key={base.id}
                     position={[base.location.latitude, base.location.longitude]}
-                    icon={createPinIcon('port', base.name)}
+                    icon={createPinIcon('port', getSupplyBaseDisplayName(base.name))}
                     eventHandlers={{ click: () => setSelectedMarker({ type: 'port', data: base }) }}
                   />
                 ))}
@@ -917,7 +942,9 @@ export default function Visualization({ vessels: propsVessels, berths: propsBert
                   <h3>
                     {selectedMarker.type === 'trip'
                       ? `Trip: ${(selectedMarker.data as Trip).vessel_name || (selectedMarker.data as Trip).vessel_id}`
-                      : (selectedMarker.data as SupplyBase | Installation | Vessel).name}
+                      : selectedMarker.type === 'port'
+                      ? getSupplyBaseDisplayName((selectedMarker.data as SupplyBase).name)
+                      : (selectedMarker.data as Installation | Vessel).name}
                   </h3>
                   <div className="map-detail-type">
                     {selectedMarker.type === 'port'

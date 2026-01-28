@@ -1,5 +1,5 @@
 # Frontend Specification
-## Macaé Loading Dashboard - Offshore Logistics Platform
+## Porto do Açu Loading Dashboard - Offshore Logistics Platform
 
 **Version:** 1.0.0
 **Last Updated:** 2025-01-XX

@@ -1,12 +1,12 @@
 import { Router, Request, Response } from 'express';
-import { platforms, macaePort } from '../data/platformCoordinates';
+import { platforms, portoAcu } from '../data/platformCoordinates';
 import { mockVessels } from '../data/mockData';
 
 const router = Router();
 
 // GET /api/simulation/platforms - Get all platforms with coordinates
 router.get('/platforms', (req: Request, res: Response) => {
-  res.json({ port: macaePort, platforms });
+  res.json({ port: portoAcu, platforms });
 });
 
 // GET /api/simulation/vessels - Get vessels for simulation

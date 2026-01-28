@@ -1,6 +1,6 @@
-# Macaé Loading Dashboard - Frontend
+# Porto do Açu Loading Dashboard - Frontend
 
-React + TypeScript frontend for the PRIO Macaé Loading Dashboard.
+React + TypeScript frontend for the PRIO Loading Dashboard (Porto do Açu).
 
 ## Setup
 

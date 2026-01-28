@@ -3,7 +3,7 @@ export interface Platform {
   name: string;
   lat: number;
   lon: number;
-  distance: number; // NM from Macaé
+  distance: number; // NM from Porto do Açu
   type: 'FPSO' | 'Platform';
 }
 

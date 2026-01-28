@@ -37,7 +37,7 @@ export const mockAPI = {
       status: 'available',
       deckCargoCapacity: 2450,
       liquidMudCapacity: 2500,
-      currentLocation: 'Macaé',
+      currentLocation: 'Porto do Açu',
     },
   ],
   getBerths: async () => [
@@ -74,14 +74,14 @@ export const createMockVessel = (overrides = {}) => ({
   operationalSpeed: 13,
   dpClass: 'DP-2' as const,
   status: 'available' as const,
-  currentLocation: 'Macaé',
+  currentLocation: 'Porto do Açu',
   ...overrides,
 })
 
 export const createMockBerth = (overrides = {}) => ({
   id: 'berth-001',
   name: 'Berth 1',
-  port: 'Macaé' as const,
+  port: 'Porto do Açu' as const,
   status: 'available' as const,
   maxDraught: 6.5,
   maxLength: 100,

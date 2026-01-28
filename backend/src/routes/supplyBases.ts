@@ -105,11 +105,11 @@ router.get('/:id/berths', async (req: AuthRequest, res: Response) => {
     const berths = Array.from({ length: numBerths }, (_, i) => ({
       id: `${id}-berth-${i + 1}`,
       name: `Berth ${i + 1} - ${base.name}`,
-      port: 'Macaé',
+      port: 'Porto do Açu',
       supply_base_id: id,
-      maxDraught: parseFloat(base.max_draught_m || 7.9),
-      maxLength: parseFloat(base.max_vessel_length_m || 97),
-      maxDeadweight: parseFloat(base.max_deadweight_t || 5513),
+      maxDraught: parseFloat(base.max_draught_m || 21.7),
+      maxLength: parseFloat(base.max_vessel_length_m || 350),
+      maxDeadweight: parseFloat(base.max_deadweight_t || 200000),
       status: 'available' as const, // Would need to check orders/trips to determine actual status
       currentVesselId: undefined,
       reservedUntil: undefined,

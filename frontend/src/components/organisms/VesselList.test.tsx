@@ -38,7 +38,7 @@ describe('VesselList', () => {
         id: 'vessel-1',
         name: 'Test Vessel',
         type: 'Standard PSV',
-        currentLocation: 'Macaé',
+        currentLocation: 'Porto do Açu',
         deckCargoCapacity: 2450,
         liquidMudCapacity: 2500,
       }),
@@ -48,7 +48,7 @@ describe('VesselList', () => {
 
     expect(screen.getByText('Test Vessel')).toBeInTheDocument()
     expect(screen.getByText('Standard PSV')).toBeInTheDocument()
-    expect(screen.getByText('Macaé')).toBeInTheDocument()
+    expect(screen.getByText('Porto do Açu')).toBeInTheDocument()
     expect(screen.getByText('Deck: 2450t')).toBeInTheDocument()
     expect(screen.getByText('Liquid: 2500m³')).toBeInTheDocument()
   })

@@ -181,7 +181,7 @@ export default function MetricsReport({}: MetricsReportProps) {
           <div className="metrics-section-content">
             <div className="metrics-subsection">
               <h3>2.1 Infraestrutura de Rede</h3>
-              <h4>Porto de Macaé - Hub Logístico Central</h4>
+              <h4>Porto do Açu - Hub Logístico Central</h4>
 
               <div className="table-container">
                 <table className="metrics-table">
@@ -245,28 +245,28 @@ export default function MetricsReport({}: MetricsReportProps) {
                   </thead>
                   <tbody>
                     <tr>
-                      <td>Macaé → Peregrino</td>
+                      <td>Porto do Açu → Peregrino</td>
                       <td>46</td>
                       <td>3,8h</td>
                       <td>3,3h</td>
                       <td>$4.680-6.240</td>
                     </tr>
                     <tr>
-                      <td>Macaé → Polvo/Bravo</td>
+                      <td>Porto do Açu → Polvo/Bravo</td>
                       <td>70</td>
                       <td>5,8h</td>
                       <td>5,0h</td>
                       <td>$6.300-8.400</td>
                     </tr>
                     <tr>
-                      <td>Macaé → Valente (Frade)</td>
+                      <td>Porto do Açu → Valente (Frade)</td>
                       <td>67</td>
                       <td>5,6h</td>
                       <td>4,8h</td>
                       <td>$5.820-7.760</td>
                     </tr>
                     <tr>
-                      <td>Macaé → Forte (Albacora)</td>
+                      <td>Porto do Açu → Forte (Albacora)</td>
                       <td>75</td>
                       <td>6,3h</td>
                       <td>5,4h</td>
@@ -300,7 +300,7 @@ export default function MetricsReport({}: MetricsReportProps) {
                   <ul>
                     <li>Produção: 15.000-16.000 boe/d</li>
                     <li>Armazenamento: ~600.000 barris</li>
-                    <li>Distância: 70 NM de Macaé</li>
+                    <li>Distância: 70 NM de Porto do Açu</li>
                     <li>Viagens: 2-3/semana (normal), 3-4/semana (perfuração)</li>
                   </ul>
                 </div>
@@ -328,7 +328,7 @@ export default function MetricsReport({}: MetricsReportProps) {
                     <li>Produção total: ~100.000 bpd</li>
                     <li>Share PRIO: 38.200 bpd (40%, aumentando para 100%)</li>
                     <li>Infraestrutura: 4 instalações</li>
-                    <li>Distância: 46 NM de Macaé</li>
+                    <li>Distância: 46 NM de Porto do Açu</li>
                   </ul>
                 </div>
               </div>
@@ -610,7 +610,7 @@ export default function MetricsReport({}: MetricsReportProps) {
                   <div className="cost-detail">Trânsito: 15-22 t/dia</div>
                 </div>
                 <div className="cost-branch">
-                  <div className="cost-item">CUSTOS PORTUÁRIOS (Macaé)</div>
+                  <div className="cost-item">CUSTOS PORTUÁRIOS (Porto do Açu)</div>
                   <div className="cost-detail">TOTAL: $4.000-12.000/chamada</div>
                 </div>
                 <div className="cost-branch">

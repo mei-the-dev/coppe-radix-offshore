@@ -6,20 +6,16 @@
 const DEPLOYED_BACKEND_PATH = '/coppe-radix-offshore-backend';
 const TOKEN_KEY = 'prio_auth_token';
 
-function isLocalhost(url: string): boolean {
-  return !url || url.startsWith('http://localhost') || url.startsWith('http://127.0.0.1');
-}
-
 export function getApiBaseUrl(): string {
   const envUrl = (import.meta.env.VITE_API_URL || '').trim().replace(/\/$/, '');
-  // In browser: when no explicit external backend URL, use same-origin backend path (works for path-based routing on any domain).
+  // When VITE_API_URL is set (including localhost), use it so local dev hits the backend on 3001.
+  if (envUrl) return envUrl;
+  // In browser with no env URL: use same-origin backend path (production path-based routing).
   if (typeof window !== 'undefined') {
-    if (envUrl && !isLocalhost(envUrl)) return envUrl;
     return `${window.location.origin}${DEPLOYED_BACKEND_PATH}`;
   }
-  // Build time / SSR: use env or default.
-  if (envUrl && !isLocalhost(envUrl)) return envUrl;
-  return import.meta.env.DEV ? 'http://localhost:3001' : 'http://localhost:3001';
+  // Build time / SSR fallback
+  return import.meta.env.DEV ? 'http://localhost:3001' : '';
 }
 
 export function getBaseUrl(): string {

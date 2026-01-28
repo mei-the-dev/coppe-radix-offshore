@@ -26,7 +26,7 @@ export const mockVessels: Vessel[] = [
     operationalSpeed: 13.0,
     dpClass: 'DP-2',
     status: 'available',
-    currentLocation: 'Macaé',
+    currentLocation: 'Porto do Açu',
   },
   {
     id: 'vessel-002',
@@ -88,7 +88,7 @@ export const mockVessels: Vessel[] = [
     operationalSpeed: 12.5,
     dpClass: 'DP-3',
     status: 'available',
-    currentLocation: 'Macaé',
+    currentLocation: 'Porto do Açu',
   },
   // CSV
   {
@@ -109,39 +109,39 @@ export const mockVessels: Vessel[] = [
     operationalSpeed: 12.0,
     dpClass: 'DP-3',
     status: 'maintenance',
-    currentLocation: 'Macaé',
+    currentLocation: 'Porto do Açu',
   },
 ];
 
-// Berth Data (from inventory.md section 1.1)
+// Berth Data (Porto do Açu)
 export const mockBerths: Berth[] = [
   {
     id: 'berth-001',
-    name: 'Berth 1 - Macaé',
-    port: 'Macaé',
-    maxDraught: 7.9,
-    maxLength: 97,
-    maxDeadweight: 5513,
+    name: 'Berth 1 - Porto do Açu',
+    port: 'Porto do Açu',
+    maxDraught: 21.7,
+    maxLength: 350,
+    maxDeadweight: 200000,
     status: 'available',
   },
   {
     id: 'berth-002',
-    name: 'Berth 2 - Macaé',
-    port: 'Macaé',
-    maxDraught: 7.9,
-    maxLength: 97,
-    maxDeadweight: 5513,
+    name: 'Berth 2 - Porto do Açu',
+    port: 'Porto do Açu',
+    maxDraught: 21.7,
+    maxLength: 350,
+    maxDeadweight: 200000,
     status: 'occupied',
     currentVesselId: 'vessel-001',
     reservedUntil: new Date(Date.now() + 8 * 60 * 60 * 1000), // 8 hours from now
   },
   {
     id: 'berth-003',
-    name: 'Berth 3 - Macaé',
-    port: 'Macaé',
-    maxDraught: 7.9,
-    maxLength: 97,
-    maxDeadweight: 5513,
+    name: 'Berth 3 - Porto do Açu',
+    port: 'Porto do Açu',
+    maxDraught: 21.7,
+    maxLength: 350,
+    maxDeadweight: 200000,
     status: 'available',
   },
 ];

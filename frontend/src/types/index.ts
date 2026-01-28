@@ -71,7 +71,7 @@ export interface CargoItem {
 export interface Berth {
   id: string;
   name: string;
-  port: 'Macaé';
+  port: 'Porto do Açu';
   maxDraught: number;
   maxLength: number;
   maxDeadweight: number;

@@ -12,4 +12,4 @@ SELECT PostGIS_version();
 SELECT * FROM pg_extension WHERE extname = 'postgis';
 
 -- Test PostGIS functionality
-SELECT ST_MakePoint(-43.3946, -22.3708) AS macae_port_location;
+SELECT ST_MakePoint(-41.0, -21.8333) AS porto_acu_location;

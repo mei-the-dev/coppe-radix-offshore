@@ -10,7 +10,7 @@ A comprehensive database seed script has been created to populate the PRIO Offsh
 
 A complete TypeScript seed script that populates the database with:
 
-- **Supply Bases**: Port of Macaé with full specifications
+- **Supply Bases**: Porto do Açu with full specifications
 - **8 Installations**: All FPSOs and platforms with coordinates, capacities, and operational limits
 - **Distance Matrix**: All routes between locations with travel times
 - **20+ Cargo Types**: Complete catalog of liquids, dry bulk, and deck cargo

@@ -9,21 +9,21 @@ describe('Distance Matrix Tests', () => {
     await pool.end();
   });
 
-  test('should have distance from Macaé to Peregrino', async () => {
+  test('should have distance from Porto do Açu to Peregrino', async () => {
     const result = await pool.query(`
       SELECT * FROM distance_matrix
-      WHERE from_location_id = 'macaé' AND to_location_id = 'fpso-peregrino'
+      WHERE from_location_id = 'porto-acu' AND to_location_id = 'fpso-peregrino'
     `);
     expect(result.rows.length).toBe(1);
     expect(parseFloat(result.rows[0].distance_nm)).toBe(46);
     expect(parseFloat(result.rows[0].time_12kts_h)).toBeCloseTo(3.8, 1);
   });
 
-  test('should have distance from Macaé to all major installations', async () => {
+  test('should have distance from Porto do Açu to all major installations', async () => {
     const result = await pool.query(`
       SELECT to_location_id, distance_nm
       FROM distance_matrix
-      WHERE from_location_id = 'macaé'
+      WHERE from_location_id = 'porto-acu'
       ORDER BY distance_nm
     `);
     expect(result.rows.length).toBeGreaterThanOrEqual(5);

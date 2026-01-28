@@ -2,7 +2,7 @@
 
 ## System Overview
 
-The COPPE-RADIX Offshore Logistics Application is a full-stack web application designed to manage maritime logistics operations, particularly focused on Platform Supply Vessel (PSV) loading operations at Macaé port.
+The COPPE-RADIX Offshore Logistics Application is a full-stack web application designed to manage maritime logistics operations, particularly focused on Platform Supply Vessel (PSV) loading operations at Porto do Açu.
 
 ## Architecture Pattern
 

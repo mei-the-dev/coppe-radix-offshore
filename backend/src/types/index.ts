@@ -1,4 +1,4 @@
-// Data models for Macaé Loading Dashboard
+// Data models for PRIO Loading Dashboard (Porto do Açu)
 // Based on PRIO logistics operations from references/inventory.md
 
 export type VesselType = 'Standard PSV' | 'Large PSV' | 'CSV' | 'Well Stimulation';
@@ -78,11 +78,11 @@ export interface CargoItem {
 export interface Berth {
   id: string;
   name: string;
-  port: 'Macaé';
+  port: 'Porto do Açu';
   // Specifications
-  maxDraught: number; // meters (7.9m for Macaé)
-  maxLength: number; // meters (97m for Macaé)
-  maxDeadweight: number; // tonnes (5,513t for Macaé)
+  maxDraught: number; // meters (21.7m for Porto do Açu)
+  maxLength: number; // meters (VLCC-ready for Porto do Açu)
+  maxDeadweight: number; // tonnes (Porto do Açu)
   // Status
   status: 'available' | 'occupied' | 'maintenance' | 'reserved';
   currentVesselId?: string;

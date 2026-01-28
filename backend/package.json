@@ -1,7 +1,7 @@
 {
   "name": "offshore-logistics-backend",
   "version": "1.0.0",
-  "description": "Backend API for PRIO Macaé Loading Dashboard",
+  "description": "Backend API for PRIO Loading Dashboard (Porto do Açu)",
   "main": "dist/index.js",
   "scripts": {
     "dev": "tsx watch src/index.ts",

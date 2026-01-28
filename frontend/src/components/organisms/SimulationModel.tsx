@@ -16,7 +16,7 @@ export default function SimulationModel() {
           <p>
             This simulation models a weekly cycle of Platform Supply Vessel (PSV) operations
             for PRIO's offshore logistics network. It demonstrates vessel movements between
-            the Port of Macaé and offshore platforms in the Campos Basin, including loading
+            Porto do Açu and offshore platforms in the Campos Basin, including loading
             operations, transit, and delivery activities.
           </p>
         </section>
@@ -44,7 +44,7 @@ export default function SimulationModel() {
           <div className="state-grid">
             <div className="state-card state-loading">
               <h4>Loading</h4>
-              <p>Vessel is at Port of Macaé being loaded with cargo</p>
+              <p>Vessel is at Porto do Açu being loaded with cargo</p>
               <ul>
                 <li>Duration: 6-12 hours (avg 8 hours)</li>
                 <li>Fuel consumption: 3-7 tonnes/day</li>
@@ -57,7 +57,7 @@ export default function SimulationModel() {
               <p>Vessel is traveling from port to destination platform</p>
               <ul>
                 <li>Speed: 12-15 knots (operational average)</li>
-                <li>Distance: 46-81 NM depending on platform</li>
+                <li>Distance: 46–75 NM from Porto do Açu depending on platform</li>
                 <li>Fuel consumption: 16-22 tonnes/day</li>
                 <li>ETA calculated based on distance and speed</li>
               </ul>
@@ -129,38 +129,42 @@ export default function SimulationModel() {
 
         <section className="model-section">
           <h3>Platform Network</h3>
-          <p>The simulation includes 8 offshore installations in the Campos Basin:</p>
+          <p>
+            The simulation includes 8 offshore installations in the Campos Basin. Distances and
+            transit times are from <strong>Porto do Açu</strong> (São João da Barra, RJ), PRIO’s
+            supply base. Values match the <code>distance_matrix</code> in the database.
+          </p>
 
           <div className="platform-list">
             <div className="platform-item">
-              <strong>FPSO Bravo</strong> - 70 NM from Macaé
+              <strong>FPSO Bravo</strong> - 70 NM from Porto do Açu
             </div>
             <div className="platform-item">
-              <strong>Platform Polvo A</strong> - 70 NM from Macaé
+              <strong>Platform Polvo A</strong> - 70 NM from Porto do Açu
             </div>
             <div className="platform-item">
-              <strong>FPSO Valente</strong> - 67 NM from Macaé
+              <strong>FPSO Valente</strong> - 67 NM from Porto do Açu
             </div>
             <div className="platform-item">
-              <strong>FPSO Forte</strong> - 75 NM from Macaé
+              <strong>FPSO Forte</strong> - 75 NM from Porto do Açu
             </div>
             <div className="platform-item">
-              <strong>FPSO Peregrino</strong> - 46 NM from Macaé (closest)
+              <strong>FPSO Peregrino</strong> - 46 NM from Porto do Açu (closest)
             </div>
             <div className="platform-item">
-              <strong>Platform Peregrino A, B, C</strong> - 46 NM from Macaé
+              <strong>Platform Peregrino A, B, C</strong> - 46 NM from Porto do Açu
             </div>
           </div>
 
           <div className="info-box">
-            <strong>Distance Range:</strong> 46-81 NM<br />
-            <strong>Average Transit Time:</strong> 4-6 hours at 12.5 knots
+            <strong>Distance Range (from Porto do Açu):</strong> 46–75 NM<br />
+            <strong>Transit Times:</strong> 3.3–6.3 h at 14 knots, 3.8–6.3 h at 12 knots (per distance matrix)
           </div>
         </section>
 
         <section className="model-section">
           <h3>Loading Operations</h3>
-          <p>Loading at Port of Macaé includes:</p>
+          <p>Loading at Porto do Açu includes:</p>
           <ul>
             <li><strong>Liquid Cargo:</strong> 2-4 hours (diesel, water, drilling mud, chemicals)</li>
             <li><strong>Dry Bulk:</strong> 1-3 hours (cement, barite, bentonite)</li>
@@ -259,11 +263,11 @@ export default function SimulationModel() {
           </p>
           <ul>
             <li>Vessel specifications (Standard PSV, Large PSV, CSV)</li>
-            <li>Platform locations and distances from Macaé</li>
+            <li>Platform locations and distances from Porto do Açu</li>
             <li>Operational time windows and turnaround times</li>
             <li>Fuel consumption rates by vessel type and operation</li>
             <li>Platform consumption requirements</li>
-            <li>Port of Macaé specifications</li>
+            <li>Porto do Açu specifications</li>
           </ul>
           <p>
             All data is derived from <code>references/inventory.md</code> and

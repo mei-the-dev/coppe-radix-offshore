@@ -59,7 +59,7 @@ export default function LoginPage() {
           <Stack direction="column" gap="lg" align="center">
             <div className="login-header">
               <IconVessel size={48} className="login-icon" aria-hidden="true" />
-              <h1 className="login-title">Macaé Loading Dashboard</h1>
+              <h1 className="login-title">Porto do Açu Loading Dashboard</h1>
               <p className="login-subtitle">PRIO Offshore Logistics</p>
             </div>
 
