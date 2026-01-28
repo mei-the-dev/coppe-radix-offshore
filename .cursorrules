@@ -1,5 +1,8 @@
 # Development Rules
 
+## Production = main (mandatory)
+- **Main is production.** Pushes to `main` deploy to sea-lion-app (https://sea-lion-app-8l7y7.ondigitalocean.app/). Production spec: **app.production.yaml**. Use DigitalOcean MCP (user-digitalocean-apps) for deploy readiness: App ID `a639b515-01d7-489e-bccb-074a9cf6f62a`. See **docs/PRODUCTION_MAIN.md** and **DEVOPS_README.md**.
+
 ## Worktrees & Agents (mandatory)
 - **Never use "Apply worktree to current branch".** It causes data loss when the target worktree is missing files. Use git only: commit in this workspace → push → pull/merge in the other worktree. See **WORKTREE_AND_AGENTS.md**.
 - `.cursor/` and `frontend/src/design-system/` are tracked in git; do not add them to .gitignore. Commit changes to them so all worktrees get them via git pull.

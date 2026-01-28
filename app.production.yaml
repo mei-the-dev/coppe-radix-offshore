@@ -1,0 +1,97 @@
+# Production app spec (sea-lion-app) – main branch deploys here
+# Source: DigitalOcean MCP apps-get-info (AppID a639b515-01d7-489e-bccb-074a9cf6f62a)
+# Use DO MCP to inspect/update: apps-list, apps-get-info, apps-get-deployment-status, apps-get-logs
+# See docs/PRODUCTION_MAIN.md
+
+name: sea-lion-app
+region: atl
+
+databases:
+  - name: db
+    engine: PG
+    version: "17"
+
+services:
+  - name: coppe-radix-offshore-frontend
+    github:
+      repo: mei-the-dev/coppe-radix-offshore
+      branch: main
+      deploy_on_push: true
+    dockerfile_path: frontend/Dockerfile
+    source_dir: frontend
+    instance_size_slug: apps-s-1vcpu-1gb
+    instance_count: 2
+    http_port: 80
+    envs:
+      - key: DATABASE_URL
+        value: ${db.DATABASE_URL}
+        scope: RUN_TIME
+
+  - name: coppe-radix-offshore-backend
+    github:
+      repo: mei-the-dev/coppe-radix-offshore
+      branch: main
+      deploy_on_push: true
+    dockerfile_path: backend/Dockerfile
+    source_dir: backend
+    instance_size_slug: apps-s-1vcpu-1gb
+    instance_count: 2
+    http_port: 3001
+    envs:
+      - key: DATABASE_URL
+        value: ${db.DATABASE_URL}
+        scope: RUN_TIME
+
+# App-level envs (set in DO; DB_* and JWT_SECRET are required)
+envs:
+  - key: DB_HOST
+    value: ${db.HOSTNAME}
+    scope: RUN_AND_BUILD_TIME
+  - key: DB_PORT
+    value: ${db.PORT}
+    scope: RUN_AND_BUILD_TIME
+  - key: DB_NAME
+    value: ${db.DATABASE}
+    scope: RUN_AND_BUILD_TIME
+  - key: DB_USER
+    value: ${db.USERNAME}
+    scope: RUN_AND_BUILD_TIME
+  - key: DB_PASSWORD
+    value: ${db.PASSWORD}
+    scope: RUN_AND_BUILD_TIME
+  - key: JWT_SECRET
+    value: ${JWT_SECRET}
+    scope: RUN_AND_BUILD_TIME
+  - key: PORT
+    value: "3001"
+    scope: RUN_AND_BUILD_TIME
+  - key: VITE_API_URL
+    value: https://sea-lion-app-8l7y7.ondigitalocean.app/coppe-radix-offshore-backend
+    scope: RUN_AND_BUILD_TIME
+  - key: AUTH_DEMO_USER
+    value: ${AUTH_DEMO_USER}
+    scope: RUN_AND_BUILD_TIME
+  - key: AUTH_DEMO_PASSWORD
+    value: ${AUTH_DEMO_PASSWORD}
+    scope: RUN_AND_BUILD_TIME
+    type: SECRET
+
+alerts:
+  - rule: DEPLOYMENT_FAILED
+  - rule: DOMAIN_FAILED
+
+ingress:
+  rules:
+    - match:
+        path: { prefix: / }
+        authority: {}
+      component:
+        name: coppe-radix-offshore-frontend
+    - match:
+        path: { prefix: /coppe-radix-offshore-backend }
+        authority: {}
+      component:
+        name: coppe-radix-offshore-backend
+
+features:
+  - buildpack-stack=ubuntu-22

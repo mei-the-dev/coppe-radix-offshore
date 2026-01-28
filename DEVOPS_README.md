@@ -4,6 +4,8 @@ This app is **deployed to production**. Every push to `main` triggers a new buil
 
 **Production URL:** https://sea-lion-app-8l7y7.ondigitalocean.app/
 
+**Production spec:** [app.production.yaml](app.production.yaml) (matches live sea-lion-app). **DO MCP App ID:** `a639b515-01d7-489e-bccb-074a9cf6f62a`. See [docs/PRODUCTION_MAIN.md](docs/PRODUCTION_MAIN.md) for main=production and MCP deploy readiness.
+
 ---
 
 ## For You (Human): First Deployed App
@@ -75,6 +77,8 @@ For full rules, triggers, and checklist, see **`.cursor/agents/devops-production
 | What | Where / Command |
 |------|------------------|
 | Production app | https://sea-lion-app-8l7y7.ondigitalocean.app/ |
+| Production spec | [app.production.yaml](app.production.yaml); main=production: [docs/PRODUCTION_MAIN.md](docs/PRODUCTION_MAIN.md) |
+| DO MCP App ID | `a639b515-01d7-489e-bccb-074a9cf6f62a` (for apps-get-info, apps-get-deployment-status, apps-get-logs) |
 | Backend tests | `cd backend && npm test` |
 | Frontend tests | `cd frontend && npm test` |
 | Frontend e2e/visual | `cd frontend && npm run test:visual` |

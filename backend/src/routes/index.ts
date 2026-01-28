@@ -1,5 +1,6 @@
 import type { Express } from 'express';
 
+import { getApiIndex, getOpenApiSpec } from './api';
 import vesselsRouter from './vessels';
 import berthsRouter from './berths';
 import cargoRouter from './cargo';
@@ -27,6 +28,8 @@ export function mountRoutes(app: Express): void {
   app.get('/', (_req, res) => {
     res.json({ status: 'ok', message: 'PRIO Offshore Logistics API' });
   });
+  app.get('/api', (req, res) => res.json(getApiIndex(req)));
+  app.get('/api/openapi.json', (req, res) => res.json(getOpenApiSpec(req)));
 
   app.use('/api/vessels', vesselsRouter);
   app.use('/api/berths', berthsRouter);

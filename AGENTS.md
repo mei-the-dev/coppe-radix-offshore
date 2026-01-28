@@ -5,7 +5,7 @@ These instructions are for AI assistants working in this project.
 
 **Worktrees & agents:** Never use "Apply worktree to current branch". Sync only via git (commit → push → pull). See **WORKTREE_AND_AGENTS.md**.
 
-**Production & DevOps:** The app is deployed at https://sea-lion-app-8l7y7.ondigitalocean.app/. Pushes to `main` trigger deployment. For test-before-commit, production vs development, and deployment rules, use the **devops-production-workflow** subagent or see `DEVOPS_README.md`.
+**Production & DevOps:** Main is production. The app is deployed at https://sea-lion-app-8l7y7.ondigitalocean.app/. Pushes to `main` trigger deployment. Use the **DigitalOcean MCP** (user-digitalocean-apps) for deploy readiness: apps-list, apps-get-info (AppID `a639b515-01d7-489e-bccb-074a9cf6f62a`), apps-get-deployment-status, apps-get-logs. Production spec: `app.production.yaml`. See `DEVOPS_README.md` and `docs/PRODUCTION_MAIN.md`.
 
 Always open `@/openspec/AGENTS.md` when the request:
 - Mentions planning or proposals (words like proposal, spec, change, plan)

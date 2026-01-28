@@ -19,6 +19,7 @@ This document is the **master index** for all documentation in the offshore logi
 | **Architecture** | [ARCHITECTURE.md](ARCHITECTURE.md) | Module boundaries, backend/frontend structure |
 | **Development rules** | [DEVELOPMENT_RULES.md](DEVELOPMENT_RULES.md) | Worktrees, design system, rendering checks, server usage |
 | **DevOps & production** | [DEVOPS_README.md](DEVOPS_README.md) | Production vs dev, deploy flow, test-before-commit |
+| **Main = production** | [docs/PRODUCTION_MAIN.md](docs/PRODUCTION_MAIN.md) | main deploys to sea-lion-app; [app.production.yaml](app.production.yaml); use DO MCP for deploy readiness |
 
 ---
 

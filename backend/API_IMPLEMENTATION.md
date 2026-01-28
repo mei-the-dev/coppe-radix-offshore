@@ -53,6 +53,11 @@ The database schema (`references/prio_sql_schema.sql`) includes:
    - `solutions` - Solution results
    - `kpis` - Key performance indicators
 
+## API Discovery
+
+- `GET /api` - Returns a JSON index of all endpoints (grouped by domain) and a link to the OpenAPI spec.
+- `GET /api/openapi.json` - OpenAPI 3.0 minimal spec for codegen, Swagger UI, or Postman.
+
 ## API Endpoints
 
 ### Authentication

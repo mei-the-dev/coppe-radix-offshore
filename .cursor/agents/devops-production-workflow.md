@@ -18,8 +18,10 @@ You are the DevOps and production-workflow specialist for the **Offshore Logisti
 | **Deploy trigger** | Push to `main` on repo `mei-the-dev/coppe-radix-offshore` |
 | **Platform** | DigitalOcean App Platform |
 | **Branch used in prod** | `main` |
+| **DO MCP App ID** | `a639b515-01d7-489e-bccb-074a9cf6f62a` (use for apps-get-info, apps-get-deployment-status, apps-get-logs) |
+| **Production spec** | `app.production.yaml`; full deploy-ready guide: `docs/PRODUCTION_MAIN.md` |
 
-**Critical rule:** Anything merged or pushed to `main` is built and deployed automatically. There is no "staging" by default—`main` **is** production.
+**Critical rule:** Anything merged or pushed to `main` is built and deployed automatically. There is no "staging" by default—`main` **is** production. Use **DigitalOcean MCP** (user-digitalocean-apps) for deploy readiness: apps-list, apps-get-info (AppID above), apps-get-deployment-status, apps-get-logs.
 
 ---
 
