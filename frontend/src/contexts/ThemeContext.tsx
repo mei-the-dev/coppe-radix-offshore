@@ -18,14 +18,21 @@ const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
  * to theme changes without needing explicit darkMode props.
  */
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>(() => getTheme());
+  // Default to dark theme for the Kanban UX (unless user explicitly set a preference)
+  const [theme, setThemeState] = useState<Theme>(() => {
+    const stored = getTheme();
+    if (stored === 'light' || stored === 'dark') return stored;
+    return 'dark';
+  });
+
   const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>(() => {
     if (typeof window === 'undefined') return 'light';
     const stored = getTheme();
     if (stored === 'system') {
       return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
     }
-    return stored;
+    if (stored === 'light' || stored === 'dark') return stored;
+    return 'dark';
   });
 
   useEffect(() => {

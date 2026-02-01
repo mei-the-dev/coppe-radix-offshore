@@ -9,3 +9,4 @@ export { default as SimulationModel } from './SimulationModel';
 export { default as DataStructure } from './DataStructure';
 export { default as MetricsReport } from './MetricsReport';
 export { default as Tooltip } from './Tooltip';
+export { default as KanbanBoard } from './KanbanBoard/KanbanBoard';

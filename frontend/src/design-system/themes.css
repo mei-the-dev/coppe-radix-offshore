@@ -1,6 +1,6 @@
 /**
  * Unified Theme Definitions (Light/Dark Mode)
- * Single source of truth for kira-tasks and kira-ai
+ * Enhanced dark theme with glassmorphism for Kanban board
  */
 
 /* ===== Light Mode (Default) ===== */
@@ -91,9 +91,9 @@
     --status-warning-bg: rgb(234 179 8 / 0.2);
     --status-error-bg: rgb(239 68 68 / 0.2);
     --status-info-bg: rgb(59 130 246 / 0.2);
-    --glass-bg: var(--glass-bg-dark);
-    --glass-border: var(--glass-border-dark);
-    --glass-blur: blur(12px);
+    --glass-bg: rgba(31, 41, 55, 0.7); /* Enhanced glass effect */
+    --glass-border: 1px solid rgba(255, 255, 255, 0.2);
+    --glass-blur: blur(16px);
     --surface-elevated: rgba(31, 41, 55, 0.8);
   }
 }
@@ -129,9 +129,9 @@
   --status-warning-bg: rgb(234 179 8 / 0.2);
   --status-error-bg: rgb(239 68 68 / 0.2);
   --status-info-bg: rgb(59 130 246 / 0.2);
-  --glass-bg: var(--glass-bg-dark);
-  --glass-border: var(--glass-border-dark);
-  --glass-blur: blur(12px);
+  --glass-bg: rgba(31, 41, 55, 0.7); /* Enhanced glass effect */
+  --glass-border: 1px solid rgba(255, 255, 255, 0.2);
+  --glass-blur: blur(16px);
   --surface-elevated: rgba(31, 41, 55, 0.8);
 }
 
@@ -186,7 +186,3 @@
   --color-primary-500: #334e68; /* Keep navy */
   --color-info: #ef4444; /* Red instead of blue */
 }
-
-
-
-

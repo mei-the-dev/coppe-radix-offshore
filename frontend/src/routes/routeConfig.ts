@@ -1,5 +1,7 @@
 /** Nav items for the main app layout. Split from AppLayout to reduce complexity. */
 export const NAV_ITEMS = [
+  { path: '/kanban', label: 'Kanban', icon: 'kanban' },
+  { path: '/planning', label: 'Planning', icon: 'planning' },
   { path: '/simulation', label: 'Visualization', icon: 'simulation' },
   { path: '/model', label: 'Model', icon: 'model' },
   { path: '/data', label: 'Data Structure', icon: 'data' },

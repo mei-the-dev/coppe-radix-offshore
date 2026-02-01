@@ -6,13 +6,14 @@ import AppLayout from './AppLayout';
 const LoginPage = lazy(() => import('../pages/LoginPage'));
 
 // Lazy load routes for code splitting
-// Dashboard and Planning routes are hidden (under development)
-// const DashboardRoute = lazy(() => import('./DashboardRoute'));
-// const PlanningRoute = lazy(() => import('./PlanningRoute'));
+// Dashboard and Planning routes are now enabled for the Kanban UX
+const DashboardRoute = lazy(() => import('./DashboardRoute'));
+const PlanningRoute = lazy(() => import('./PlanningRoute'));
 const SimulationRoute = lazy(() => import('./SimulationRoute'));
 const ModelRoute = lazy(() => import('./ModelRoute'));
 const DataStructureRoute = lazy(() => import('./DataStructureRoute'));
 const MetricsRoute = lazy(() => import('./MetricsRoute'));
+const KanbanRoute = lazy(() => import('../pages/KanbanPage'));
 
 export const router = createBrowserRouter([
   {
@@ -28,10 +29,10 @@ export const router = createBrowserRouter([
     element: <AppLayout />,
     children: [
       { index: true, element: <Navigate to="/data" replace /> },
-      // Dashboard and Planning routes are hidden (under development)
-      // { path: 'dashboard', element: <DashboardRoute /> },
-      // { path: 'planning', element: <PlanningRoute /> },
+      { path: 'dashboard', element: <DashboardRoute /> },
+      { path: 'planning', element: <PlanningRoute /> },
       { path: 'simulation', element: <SimulationRoute /> },
+      { path: 'kanban', element: <KanbanRoute /> },
       { path: 'model', element: <ModelRoute /> },
       { path: 'data', element: <DataStructureRoute /> },
       { path: 'metrics', element: <MetricsRoute /> },

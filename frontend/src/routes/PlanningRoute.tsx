@@ -1,9 +1,9 @@
 import { useVessels, useBerths, useLoadingPlans } from '../hooks';
 import { useLoadingPlanStore } from '../stores';
-import { Dashboard } from '../components/templates';
 import { Alert } from '../components/feedback';
 import { Stack } from '../components/layout';
 import { Button } from '../components/action';
+import KanbanBoard from '../components/organisms/KanbanBoard/KanbanBoard';
 
 export default function PlanningRoute() {
   const { data: vessels = [], isLoading: vesselsLoading, error: vesselsError } = useVessels();
@@ -18,7 +18,7 @@ export default function PlanningRoute() {
     return (
       <Stack direction="column" align="center" justify="center" gap="md" className="app-loading">
         <div className="loading-spinner" role="status" aria-live="polite">
-          Loading dashboard...
+          Loading planning board...
         </div>
       </Stack>
     );
@@ -29,7 +29,7 @@ export default function PlanningRoute() {
       <Stack direction="column" align="center" justify="center" gap="md" className="app-error">
         <Alert
           severity="error"
-          title="Error loading dashboard"
+          title="Error loading planning board"
           onClose={() => {}}
         >
           {error instanceof Error ? error.message : 'Failed to load data'}
@@ -42,11 +42,9 @@ export default function PlanningRoute() {
   }
 
   return (
-    <Dashboard
-      vessels={vessels}
-      berths={berths}
-      loadingPlans={loadingPlans}
-      onPlansChange={setLoadingPlans}
-    />
+    <div>
+      <h2>Planning Board</h2>
+      <KanbanBoard plans={loadingPlans} />
+    </div>
   );
 }

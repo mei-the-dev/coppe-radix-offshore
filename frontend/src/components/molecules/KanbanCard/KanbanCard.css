@@ -1,0 +1,49 @@
+.kanban-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border-radius: var(--radius-md);
+  background: var(--surface-default);
+  color: var(--text-primary);
+  border: 1px solid rgba(255,255,255,0.03);
+  box-shadow: var(--shadow-sm);
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+/* glass variant: when used on glass surfaces, make card slightly translucent */
+.molecule-card--elevated.kanban-card, .kanban-card {
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  backdrop-filter: var(--glass-blur, blur(12px));
+}
+
+.kanban-card:focus {
+  outline: 2px solid var(--border-focus);
+}
+
+.kanban-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-md);
+}
+
+.kanban-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.kanban-card__title {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  margin: 0;
+}
+
+.kanban-card__description {
+  color: var(--text-secondary);
+  margin: 0;
+  font-size: var(--font-size-xs);
+}
+
+.kanban-card__actions > * {
+  margin-left: 0.5rem;
+}

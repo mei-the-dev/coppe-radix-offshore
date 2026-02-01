@@ -1,0 +1,40 @@
+# Optional: after push to main, wait for App Platform deploy then verify latest deployment is ACTIVE.
+# Requires GitHub secret DIGITALOCEAN_ACCESS_TOKEN (same token used for MCP).
+# Mirrors what you do with MCP apps-get-deployment-status.
+name: Deploy verify
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    # Allow workflow to be skipped when token is not set
+    if: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN != '' }}
+    steps:
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: Wait for deployment
+        run: sleep 180
+
+      - name: Check deployment status
+        env:
+          APP_ID: a639b515-01d7-489e-bccb-074a9cf6f62a
+        run: |
+          set -e
+          echo "Fetching deployment status for sea-lion-app ($APP_ID)..."
+          DEPLOYS=$(doctl apps list-deployments "$APP_ID" --output json 2>/dev/null || echo "[]")
+          if [ "$DEPLOYS" = "[]" ] || [ -z "$DEPLOYS" ]; then
+            echo "No deployments found."
+            exit 1
+          fi
+          PHASE=$(echo "$DEPLOYS" | jq -r '.[0].phase // empty')
+          if [ "$PHASE" != "ACTIVE" ]; then
+            echo "Latest deployment phase is '$PHASE', expected ACTIVE."
+            exit 1
+          fi
+          echo "Deployment is ACTIVE."

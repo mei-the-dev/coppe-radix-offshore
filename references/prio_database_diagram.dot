@@ -1,0 +1,483 @@
+digraph prio_schema {
+  graph [splines=ortho, rankdir=LR, nodesep=0.65, ranksep=1];
+  node [shape=plaintext, fontname="Source Sans 3"];
+  "backhaul_cargo" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#E8F5E9" align="center"><b>backhaul_cargo</b></td></tr>
+<tr><td align="left">id</td></tr>
+<tr><td align="left">order_id</td></tr>
+<tr><td align="left">installation_id</td></tr>
+<tr><td align="left">cargo_type</td></tr>
+<tr><td align="left">quantity</td></tr>
+<tr><td align="left">unit</td></tr>
+<tr><td align="left">&#8230;</td></tr>
+
+    <tr><td bgcolor="#FFFFFF"><FONT POINT-SIZE="10">CARGO</FONT></td></tr>
+</TABLE>>
+];
+  "cargo_incompatibility" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#E8F5E9" align="center"><b>cargo_incompatibility</b></td></tr>
+<tr><td align="left">cargo_type_id_1</td></tr>
+<tr><td align="left">cargo_type_id_2</td></tr>
+<tr><td align="left">cleaning_time_h</td></tr>
+
+    <tr><td bgcolor="#FFFFFF"><FONT POINT-SIZE="10">CARGO</FONT></td></tr>
+</TABLE>>
+];
+  "cargo_types" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#E8F5E9" align="center"><b>cargo_types</b></td></tr>
+<tr><td align="left">id</td></tr>
+<tr><td align="left">name</td></tr>
+<tr><td align="left">category</td></tr>
+<tr><td align="left">density_kg_m3</td></tr>
+<tr><td align="left">unit</td></tr>
+<tr><td align="left">segregation_required</td></tr>
+<tr><td align="left">&#8230;</td></tr>
+
+    <tr><td bgcolor="#FFFFFF"><FONT POINT-SIZE="10">CARGO</FONT></td></tr>
+</TABLE>>
+];
+  "compartment_compatibility" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#FFF8E1" align="center"><b>compartment_compatibility</b></td></tr>
+<tr><td align="left">compartment_id</td></tr>
+<tr><td align="left">cargo_type_id</td></tr>
+<tr><td align="left">compatible</td></tr>
+<tr><td align="left">cleaning_time_h</td></tr>
+
+    <tr><td bgcolor="#FFFFFF"><FONT POINT-SIZE="10">FLEET</FONT></td></tr>
+</TABLE>>
+];
+  "consumption_monthly_pattern" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#E8F5E9" align="center"><b>consumption_monthly_pattern</b></td></tr>
+<tr><td align="left">profile_id</td></tr>
+<tr><td align="left">month</td></tr>
+<tr><td align="left">factor</td></tr>
+
+    <tr><td bgcolor="#FFFFFF"><FONT POINT-SIZE="10">CARGO</FONT></td></tr>
+</TABLE>>
+];
+  "consumption_profiles" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#E8F5E9" align="center"><b>consumption_profiles</b></td></tr>
+<tr><td align="left">id</td></tr>
+<tr><td align="left">installation_id</td></tr>
+<tr><td align="left">cargo_type_id</td></tr>
+<tr><td align="left">daily_consumption</td></tr>
+<tr><td align="left">unit</td></tr>
+<tr><td align="left">variability_std_dev</td></tr>
+<tr><td align="left">&#8230;</td></tr>
+
+    <tr><td bgcolor="#FFFFFF"><FONT POINT-SIZE="10">CARGO</FONT></td></tr>
+</TABLE>>
+];
+  "consumption_weekly_pattern" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#E8F5E9" align="center"><b>consumption_weekly_pattern</b></td></tr>
+<tr><td align="left">profile_id</td></tr>
+<tr><td align="left">day_of_week</td></tr>
+<tr><td align="left">factor</td></tr>
+
+    <tr><td bgcolor="#FFFFFF"><FONT POINT-SIZE="10">CARGO</FONT></td></tr>
+</TABLE>>
+];
+  "cost_structures" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#FFF3E0" align="center"><b>cost_structures</b></td></tr>
+<tr><td align="left">id</td></tr>
+<tr><td align="left">vessel_id</td></tr>
+<tr><td align="left">effective_from</td></tr>
+<tr><td align="left">effective_to</td></tr>
+<tr><td align="left">charter_rate_daily_usd</td></tr>
+<tr><td align="left">fuel_price_per_tonne_usd</td></tr>
+<tr><td align="left">&#8230;</td></tr>
+
+    <tr><td bgcolor="#FFFFFF"><FONT POINT-SIZE="10">COSTS</FONT></td></tr>
+</TABLE>>
+];
+  "demands" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#E8F5E9" align="center"><b>demands</b></td></tr>
+<tr><td align="left">id</td></tr>
+<tr><td align="left">installation_id</td></tr>
+<tr><td align="left">cargo_type_id</td></tr>
+<tr><td align="left">quantity</td></tr>
+<tr><td align="left">unit</td></tr>
+<tr><td align="left">earliest_delivery</td></tr>
+<tr><td align="left">&#8230;</td></tr>
+
+    <tr><td bgcolor="#FFFFFF"><FONT POINT-SIZE="10">CARGO</FONT></td></tr>
+</TABLE>>
+];
+  "distance_matrix" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#E3F2FD" align="center"><b>distance_matrix</b></td></tr>
+<tr><td align="left">from_location_id</td></tr>
+<tr><td align="left">to_location_id</td></tr>
+<tr><td align="left">distance_nm</td></tr>
+<tr><td align="left">distance_km</td></tr>
+<tr><td align="left">time_12kts_h</td></tr>
+<tr><td align="left">time_14kts_h</td></tr>
+<tr><td align="left">&#8230;</td></tr>
+
+    <tr><td bgcolor="#FFFFFF"><FONT POINT-SIZE="10">NETWORK</FONT></td></tr>
+</TABLE>>
+];
+  "handling_costs" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#FFF3E0" align="center"><b>handling_costs</b></td></tr>
+<tr><td align="left">cost_structure_id</td></tr>
+<tr><td align="left">cargo_type_id</td></tr>
+<tr><td align="left">cost_per_unit</td></tr>
+<tr><td align="left">unit</td></tr>
+
+    <tr><td bgcolor="#FFFFFF"><FONT POINT-SIZE="10">COSTS</FONT></td></tr>
+</TABLE>>
+];
+  "installation_storage" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#E3F2FD" align="center"><b>installation_storage</b></td></tr>
+<tr><td align="left">installation_id</td></tr>
+<tr><td align="left">cargo_type_id</td></tr>
+<tr><td align="left">max_capacity</td></tr>
+<tr><td align="left">current_level</td></tr>
+<tr><td align="left">safety_stock</td></tr>
+<tr><td align="left">reorder_point</td></tr>
+<tr><td align="left">&#8230;</td></tr>
+
+    <tr><td bgcolor="#FFFFFF"><FONT POINT-SIZE="10">NETWORK</FONT></td></tr>
+</TABLE>>
+];
+  "installations" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#E3F2FD" align="center"><b>installations</b></td></tr>
+<tr><td align="left">id</td></tr>
+<tr><td align="left">name</td></tr>
+<tr><td align="left">type</td></tr>
+<tr><td align="left">location</td></tr>
+<tr><td align="left">water_depth_m</td></tr>
+<tr><td align="left">distance_from_base_nm</td></tr>
+<tr><td align="left">&#8230;</td></tr>
+
+    <tr><td bgcolor="#FFFFFF"><FONT POINT-SIZE="10">NETWORK</FONT></td></tr>
+</TABLE>>
+];
+  "kpis" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#FBE9E7" align="center"><b>kpis</b></td></tr>
+<tr><td align="left">solution_id</td></tr>
+<tr><td align="left">vessel_utilization</td></tr>
+<tr><td align="left">on_time_delivery_rate</td></tr>
+<tr><td align="left">avg_trip_duration_h</td></tr>
+<tr><td align="left">cost_per_tonne</td></tr>
+<tr><td align="left">fuel_efficiency_t_per_nm</td></tr>
+<tr><td align="left">&#8230;</td></tr>
+
+    <tr><td bgcolor="#FFFFFF"><FONT POINT-SIZE="10">OPTIMIZATION</FONT></td></tr>
+</TABLE>>
+];
+  "operation_windows" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#F3E5F5" align="center"><b>operation_windows</b></td></tr>
+<tr><td align="left">id</td></tr>
+<tr><td align="left">operation_type</td></tr>
+<tr><td align="left">max_wind_ms</td></tr>
+<tr><td align="left">max_wave_m</td></tr>
+<tr><td align="left">max_current_kts</td></tr>
+<tr><td align="left">min_visibility_nm</td></tr>
+<tr><td align="left">&#8230;</td></tr>
+
+    <tr><td bgcolor="#FFFFFF"><FONT POINT-SIZE="10">OPERATIONS</FONT></td></tr>
+</TABLE>>
+];
+  "optimization_runs" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#FBE9E7" align="center"><b>optimization_runs</b></td></tr>
+<tr><td align="left">id</td></tr>
+<tr><td align="left">timestamp</td></tr>
+<tr><td align="left">planning_horizon_start</td></tr>
+<tr><td align="left">planning_horizon_end</td></tr>
+<tr><td align="left">objective_function</td></tr>
+<tr><td align="left">solver</td></tr>
+<tr><td align="left">&#8230;</td></tr>
+
+    <tr><td bgcolor="#FFFFFF"><FONT POINT-SIZE="10">OPTIMIZATION</FONT></td></tr>
+</TABLE>>
+];
+  "optimization_scenarios" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#FBE9E7" align="center"><b>optimization_scenarios</b></td></tr>
+<tr><td align="left">run_id</td></tr>
+<tr><td align="left">scenario_name</td></tr>
+<tr><td align="left">scenario_type</td></tr>
+<tr><td align="left">parameters</td></tr>
+
+    <tr><td bgcolor="#FFFFFF"><FONT POINT-SIZE="10">OPTIMIZATION</FONT></td></tr>
+</TABLE>>
+];
+  "order_items" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#E8F5E9" align="center"><b>order_items</b></td></tr>
+<tr><td align="left">id</td></tr>
+<tr><td align="left">order_id</td></tr>
+<tr><td align="left">cargo_type_id</td></tr>
+<tr><td align="left">quantity</td></tr>
+<tr><td align="left">unit</td></tr>
+<tr><td align="left">compartment_id</td></tr>
+<tr><td align="left">&#8230;</td></tr>
+
+    <tr><td bgcolor="#FFFFFF"><FONT POINT-SIZE="10">CARGO</FONT></td></tr>
+</TABLE>>
+];
+  "orders" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#E8F5E9" align="center"><b>orders</b></td></tr>
+<tr><td align="left">id</td></tr>
+<tr><td align="left">demand_id</td></tr>
+<tr><td align="left">status</td></tr>
+<tr><td align="left">assigned_vessel_id</td></tr>
+<tr><td align="left">scheduled_departure</td></tr>
+<tr><td align="left">actual_departure</td></tr>
+<tr><td align="left">&#8230;</td></tr>
+
+    <tr><td bgcolor="#FFFFFF"><FONT POINT-SIZE="10">CARGO</FONT></td></tr>
+</TABLE>>
+];
+  "penalty_costs" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#FFF3E0" align="center"><b>penalty_costs</b></td></tr>
+<tr><td align="left">id</td></tr>
+<tr><td align="left">order_id</td></tr>
+<tr><td align="left">penalty_type</td></tr>
+<tr><td align="left">amount_usd</td></tr>
+<tr><td align="left">duration_h</td></tr>
+<tr><td align="left">reason</td></tr>
+<tr><td align="left">&#8230;</td></tr>
+
+    <tr><td bgcolor="#FFFFFF"><FONT POINT-SIZE="10">COSTS</FONT></td></tr>
+</TABLE>>
+];
+  "seasonal_patterns" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#E0F7FA" align="center"><b>seasonal_patterns</b></td></tr>
+<tr><td align="left">id</td></tr>
+<tr><td align="left">location</td></tr>
+<tr><td align="left">month</td></tr>
+<tr><td align="left">wave_dist_hs_lt_2m</td></tr>
+<tr><td align="left">wave_dist_hs_2_3m</td></tr>
+<tr><td align="left">wave_dist_hs_3_4m</td></tr>
+<tr><td align="left">&#8230;</td></tr>
+
+    <tr><td bgcolor="#FFFFFF"><FONT POINT-SIZE="10">ENVIRONMENT</FONT></td></tr>
+</TABLE>>
+];
+  "solution_trips" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#FBE9E7" align="center"><b>solution_trips</b></td></tr>
+<tr><td align="left">solution_id</td></tr>
+<tr><td align="left">trip_id</td></tr>
+
+    <tr><td bgcolor="#FFFFFF"><FONT POINT-SIZE="10">OPTIMIZATION</FONT></td></tr>
+</TABLE>>
+];
+  "solutions" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#FBE9E7" align="center"><b>solutions</b></td></tr>
+<tr><td align="left">id</td></tr>
+<tr><td align="left">optimization_run_id</td></tr>
+<tr><td align="left">total_cost_usd</td></tr>
+<tr><td align="left">total_distance_nm</td></tr>
+<tr><td align="left">fleet_utilization</td></tr>
+<tr><td align="left">num_trips</td></tr>
+<tr><td align="left">&#8230;</td></tr>
+
+    <tr><td bgcolor="#FFFFFF"><FONT POINT-SIZE="10">OPTIMIZATION</FONT></td></tr>
+</TABLE>>
+];
+  "supply_bases" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#E3F2FD" align="center"><b>supply_bases</b></td></tr>
+<tr><td align="left">id</td></tr>
+<tr><td align="left">name</td></tr>
+<tr><td align="left">location</td></tr>
+<tr><td align="left">port_code</td></tr>
+<tr><td align="left">max_draught_m</td></tr>
+<tr><td align="left">max_vessel_length_m</td></tr>
+<tr><td align="left">&#8230;</td></tr>
+
+    <tr><td bgcolor="#FFFFFF"><FONT POINT-SIZE="10">NETWORK</FONT></td></tr>
+</TABLE>>
+];
+  "time_windows" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#F3E5F5" align="center"><b>time_windows</b></td></tr>
+<tr><td align="left">id</td></tr>
+<tr><td align="left">installation_id</td></tr>
+<tr><td align="left">date</td></tr>
+<tr><td align="left">start_time</td></tr>
+<tr><td align="left">end_time</td></tr>
+<tr><td align="left">available</td></tr>
+<tr><td align="left">&#8230;</td></tr>
+
+    <tr><td bgcolor="#FFFFFF"><FONT POINT-SIZE="10">OPERATIONS</FONT></td></tr>
+</TABLE>>
+];
+  "trip_cargo_manifest" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#F3E5F5" align="center"><b>trip_cargo_manifest</b></td></tr>
+<tr><td align="left">id</td></tr>
+<tr><td align="left">trip_id</td></tr>
+<tr><td align="left">waypoint_id</td></tr>
+<tr><td align="left">order_item_id</td></tr>
+<tr><td align="left">cargo_type_id</td></tr>
+<tr><td align="left">quantity</td></tr>
+<tr><td align="left">&#8230;</td></tr>
+
+    <tr><td bgcolor="#FFFFFF"><FONT POINT-SIZE="10">OPERATIONS</FONT></td></tr>
+</TABLE>>
+];
+  "trip_costs" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#FFF3E0" align="center"><b>trip_costs</b></td></tr>
+<tr><td align="left">trip_id</td></tr>
+<tr><td align="left">charter_cost_usd</td></tr>
+<tr><td align="left">fuel_cost_usd</td></tr>
+<tr><td align="left">port_costs_usd</td></tr>
+<tr><td align="left">offshore_costs_usd</td></tr>
+<tr><td align="left">handling_costs_usd</td></tr>
+<tr><td align="left">&#8230;</td></tr>
+
+    <tr><td bgcolor="#FFFFFF"><FONT POINT-SIZE="10">COSTS</FONT></td></tr>
+</TABLE>>
+];
+  "trip_delays" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#F3E5F5" align="center"><b>trip_delays</b></td></tr>
+<tr><td align="left">id</td></tr>
+<tr><td align="left">trip_id</td></tr>
+<tr><td align="left">waypoint_id</td></tr>
+<tr><td align="left">reason</td></tr>
+<tr><td align="left">delay_type</td></tr>
+<tr><td align="left">duration_h</td></tr>
+<tr><td align="left">&#8230;</td></tr>
+
+    <tr><td bgcolor="#FFFFFF"><FONT POINT-SIZE="10">OPERATIONS</FONT></td></tr>
+</TABLE>>
+];
+  "trip_waypoints" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#F3E5F5" align="center"><b>trip_waypoints</b></td></tr>
+<tr><td align="left">id</td></tr>
+<tr><td align="left">trip_id</td></tr>
+<tr><td align="left">sequence</td></tr>
+<tr><td align="left">location_id</td></tr>
+<tr><td align="left">location_type</td></tr>
+<tr><td align="left">planned_arrival</td></tr>
+<tr><td align="left">&#8230;</td></tr>
+
+    <tr><td bgcolor="#FFFFFF"><FONT POINT-SIZE="10">OPERATIONS</FONT></td></tr>
+</TABLE>>
+];
+  "trips" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#F3E5F5" align="center"><b>trips</b></td></tr>
+<tr><td align="left">id</td></tr>
+<tr><td align="left">vessel_id</td></tr>
+<tr><td align="left">status</td></tr>
+<tr><td align="left">planned_departure</td></tr>
+<tr><td align="left">actual_departure</td></tr>
+<tr><td align="left">planned_arrival</td></tr>
+<tr><td align="left">&#8230;</td></tr>
+
+    <tr><td bgcolor="#FFFFFF"><FONT POINT-SIZE="10">OPERATIONS</FONT></td></tr>
+</TABLE>>
+];
+  "unmet_demands" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#FBE9E7" align="center"><b>unmet_demands</b></td></tr>
+<tr><td align="left">id</td></tr>
+<tr><td align="left">solution_id</td></tr>
+<tr><td align="left">demand_id</td></tr>
+<tr><td align="left">reason</td></tr>
+<tr><td align="left">shortfall_quantity</td></tr>
+
+    <tr><td bgcolor="#FFFFFF"><FONT POINT-SIZE="10">OPTIMIZATION</FONT></td></tr>
+</TABLE>>
+];
+  "vessel_compartments" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#FFF8E1" align="center"><b>vessel_compartments</b></td></tr>
+<tr><td align="left">id</td></tr>
+<tr><td align="left">vessel_id</td></tr>
+<tr><td align="left">compartment_type</td></tr>
+<tr><td align="left">capacity</td></tr>
+<tr><td align="left">unit</td></tr>
+<tr><td align="left">current_cargo_id</td></tr>
+<tr><td align="left">&#8230;</td></tr>
+
+    <tr><td bgcolor="#FFFFFF"><FONT POINT-SIZE="10">FLEET</FONT></td></tr>
+</TABLE>>
+];
+  "vessel_schedules" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#FFF8E1" align="center"><b>vessel_schedules</b></td></tr>
+<tr><td align="left">vessel_id</td></tr>
+<tr><td align="left">status</td></tr>
+<tr><td align="left">current_trip_id</td></tr>
+<tr><td align="left">next_available</td></tr>
+<tr><td align="left">utilization_target</td></tr>
+<tr><td align="left">ytd_utilization</td></tr>
+<tr><td align="left">&#8230;</td></tr>
+
+    <tr><td bgcolor="#FFFFFF"><FONT POINT-SIZE="10">FLEET</FONT></td></tr>
+</TABLE>>
+];
+  "vessels" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#FFF8E1" align="center"><b>vessels</b></td></tr>
+<tr><td align="left">id</td></tr>
+<tr><td align="left">name</td></tr>
+<tr><td align="left">class</td></tr>
+<tr><td align="left">loa_m</td></tr>
+<tr><td align="left">beam_m</td></tr>
+<tr><td align="left">draught_m</td></tr>
+<tr><td align="left">&#8230;</td></tr>
+
+    <tr><td bgcolor="#FFFFFF"><FONT POINT-SIZE="10">FLEET</FONT></td></tr>
+</TABLE>>
+];
+  "weather_forecasts" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#E0F7FA" align="center"><b>weather_forecasts</b></td></tr>
+<tr><td align="left">id</td></tr>
+<tr><td align="left">location_id</td></tr>
+<tr><td align="left">timestamp</td></tr>
+<tr><td align="left">forecast_horizon_h</td></tr>
+<tr><td align="left">wave_height_min_m</td></tr>
+<tr><td align="left">wave_height_mean_m</td></tr>
+<tr><td align="left">&#8230;</td></tr>
+
+    <tr><td bgcolor="#FFFFFF"><FONT POINT-SIZE="10">ENVIRONMENT</FONT></td></tr>
+</TABLE>>
+];
+  "weather_windows" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#E0F7FA" align="center"><b>weather_windows</b></td></tr>
+<tr><td align="left">id</td></tr>
+<tr><td align="left">location_id</td></tr>
+<tr><td align="left">operation_type</td></tr>
+<tr><td align="left">start_time</td></tr>
+<tr><td align="left">end_time</td></tr>
+<tr><td align="left">duration_h</td></tr>
+<tr><td align="left">&#8230;</td></tr>
+
+    <tr><td bgcolor="#FFFFFF"><FONT POINT-SIZE="10">ENVIRONMENT</FONT></td></tr>
+</TABLE>>
+];
+  "backhaul_cargo" -> "installations" [color="#607D8B", penwidth=1.0];
+  "backhaul_cargo" -> "orders" [color="#607D8B", penwidth=1.0];
+  "cargo_incompatibility" -> "cargo_types" [color="#607D8B", penwidth=1.0];
+  "compartment_compatibility" -> "vessel_compartments" [color="#607D8B", penwidth=1.0];
+  "consumption_monthly_pattern" -> "consumption_profiles" [color="#607D8B", penwidth=1.0];
+  "consumption_profiles" -> "cargo_types" [color="#607D8B", penwidth=1.0];
+  "consumption_profiles" -> "installations" [color="#607D8B", penwidth=1.0];
+  "consumption_weekly_pattern" -> "consumption_profiles" [color="#607D8B", penwidth=1.0];
+  "cost_structures" -> "vessels" [color="#607D8B", penwidth=1.0];
+  "demands" -> "cargo_types" [color="#607D8B", penwidth=1.0];
+  "demands" -> "installations" [color="#607D8B", penwidth=1.0];
+  "handling_costs" -> "cargo_types" [color="#607D8B", penwidth=1.0];
+  "handling_costs" -> "cost_structures" [color="#607D8B", penwidth=1.0];
+  "installation_storage" -> "installations" [color="#607D8B", penwidth=1.0];
+  "kpis" -> "solutions" [color="#607D8B", penwidth=1.0];
+  "optimization_scenarios" -> "optimization_runs" [color="#607D8B", penwidth=1.0];
+  "order_items" -> "cargo_types" [color="#607D8B", penwidth=1.0];
+  "order_items" -> "orders" [color="#607D8B", penwidth=1.0];
+  "order_items" -> "vessel_compartments" [color="#607D8B", penwidth=1.0];
+  "orders" -> "demands" [color="#607D8B", penwidth=1.0];
+  "orders" -> "vessels" [color="#607D8B", penwidth=1.0];
+  "penalty_costs" -> "orders" [color="#607D8B", penwidth=1.0];
+  "solution_trips" -> "solutions" [color="#607D8B", penwidth=1.0];
+  "solution_trips" -> "trips" [color="#607D8B", penwidth=1.0];
+  "solutions" -> "optimization_runs" [color="#607D8B", penwidth=1.0];
+  "time_windows" -> "installations" [color="#607D8B", penwidth=1.0];
+  "trip_cargo_manifest" -> "cargo_types" [color="#607D8B", penwidth=1.0];
+  "trip_cargo_manifest" -> "order_items" [color="#607D8B", penwidth=1.0];
+  "trip_cargo_manifest" -> "trip_waypoints" [color="#607D8B", penwidth=1.0];
+  "trip_cargo_manifest" -> "trips" [color="#607D8B", penwidth=1.0];
+  "trip_costs" -> "trips" [color="#607D8B", penwidth=1.0];
+  "trip_delays" -> "trip_waypoints" [color="#607D8B", penwidth=1.0];
+  "trip_delays" -> "trips" [color="#607D8B", penwidth=1.0];
+  "trip_waypoints" -> "trips" [color="#607D8B", penwidth=1.0];
+  "trips" -> "vessels" [color="#607D8B", penwidth=1.0];
+  "unmet_demands" -> "demands" [color="#607D8B", penwidth=1.0];
+  "unmet_demands" -> "solutions" [color="#607D8B", penwidth=1.0];
+  "vessel_compartments" -> "vessels" [color="#607D8B", penwidth=1.0];
+  "vessel_schedules" -> "vessels" [color="#607D8B", penwidth=1.0];
+}

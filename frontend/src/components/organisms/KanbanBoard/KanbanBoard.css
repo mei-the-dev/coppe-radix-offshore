@@ -1,0 +1,34 @@
+.kanban-board {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+  color: var(--text-primary);
+}
+
+.kanban-board__controls {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.kanban-board__columns {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  overflow-x: auto;
+  padding-bottom: 1rem;
+}
+
+.kanban-board__loading {
+  padding: 2rem;
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+/* Make columns scroll nicely on small screens */
+@media (max-width: 800px) {
+  .kanban-board__columns {
+    padding: 0.5rem 0;
+  }
+}

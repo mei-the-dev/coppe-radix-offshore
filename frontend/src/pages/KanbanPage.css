@@ -1,0 +1,9 @@
+.kanban-page {
+  padding: 1rem;
+}
+
+.kanban-page__title {
+  margin: 0 0 1rem 0;
+  color: var(--text-primary);
+  font-size: var(--font-size-lg);
+}
