@@ -1,0 +1,589 @@
+digraph prio_schema_detailed {
+  graph [splines=ortho, rankdir=LR, nodesep=0.65, ranksep=1];
+  node [shape=plaintext, fontname="Source Sans 3"];
+  "backhaul_cargo" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#E8F5E9" align="center" colspan="2"><b>backhaul_cargo</b></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores id.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>order_id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Identifier for order.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>installation_id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Identifier for installation.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>cargo_type</b><BR/><FONT POINT-SIZE="8">VARCHAR(100)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores cargo type.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>quantity</b><BR/><FONT POINT-SIZE="8">DECIMAL(12,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Amount related to quantity.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>unit</b><BR/><FONT POINT-SIZE="8">VARCHAR(20)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores unit.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>notes</b><BR/><FONT POINT-SIZE="8">TEXT</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores notes.</FONT></td></tr>
+    <tr><td bgcolor="#FFFFFF" colspan="2"><FONT POINT-SIZE="10">CARGO</FONT></td></tr>
+</TABLE>>
+];
+  "cargo_incompatibility" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#E8F5E9" align="center" colspan="2"><b>cargo_incompatibility</b></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>cargo_type_id_1</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores cargo type id 1.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>cargo_type_id_2</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores cargo type id 2.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>cleaning_time_h</b><BR/><FONT POINT-SIZE="8">DECIMAL(5,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores cleaning time h.</FONT></td></tr>
+    <tr><td bgcolor="#FFFFFF" colspan="2"><FONT POINT-SIZE="10">CARGO</FONT></td></tr>
+</TABLE>>
+];
+  "cargo_types" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#E8F5E9" align="center" colspan="2"><b>cargo_types</b></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores id.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>name</b><BR/><FONT POINT-SIZE="8">VARCHAR(255)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Human-readable name for name.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>category</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores category.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>density_kg_m3</b><BR/><FONT POINT-SIZE="8">DECIMAL(8,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores density kg m3.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>unit</b><BR/><FONT POINT-SIZE="8">VARCHAR(20)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores unit.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>deck_area_m2</b><BR/><FONT POINT-SIZE="8">DECIMAL(10,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Deck cargo area measured in square meters.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>deck_weight_t</b><BR/><FONT POINT-SIZE="8">DECIMAL(10,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Deck cargo weight measured in tonnes.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>preferred_unitization</b><BR/><FONT POINT-SIZE="8">VARCHAR(20)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Metadata describing how deck cargo is unitized.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>segregation_required</b><BR/><FONT POINT-SIZE="8">BOOLEAN</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores segregation required.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>loading_rate_m3h</b><BR/><FONT POINT-SIZE="8">DECIMAL(8,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Performance metric captured for solution analysis.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>discharging_rate_m3h</b><BR/><FONT POINT-SIZE="8">DECIMAL(8,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Performance metric captured for solution analysis.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>weather_sensitive</b><BR/><FONT POINT-SIZE="8">BOOLEAN</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores weather sensitive.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>handling_cost_per_unit</b><BR/><FONT POINT-SIZE="8">DECIMAL(10,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores handling cost per unit.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>storage_temp_c</b><BR/><FONT POINT-SIZE="8">DECIMAL(5,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores storage temp c.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>hazmat_class</b><BR/><FONT POINT-SIZE="8">VARCHAR(20)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores hazmat class.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>created_at</b><BR/><FONT POINT-SIZE="8">TIMESTAMP</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Timestamp of created.</FONT></td></tr>
+    <tr><td bgcolor="#FFFFFF" colspan="2"><FONT POINT-SIZE="10">CARGO</FONT></td></tr>
+</TABLE>>
+];
+  "compartment_compatibility" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#FFF8E1" align="center" colspan="2"><b>compartment_compatibility</b></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>compartment_id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Identifier for compartment.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>cargo_type_id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Identifier for cargo type.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>compatible</b><BR/><FONT POINT-SIZE="8">BOOLEAN</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores compatible.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>cleaning_time_h</b><BR/><FONT POINT-SIZE="8">DECIMAL(5,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores cleaning time h.</FONT></td></tr>
+    <tr><td bgcolor="#FFFFFF" colspan="2"><FONT POINT-SIZE="10">FLEET</FONT></td></tr>
+</TABLE>>
+];
+  "cost_structures" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#FFF3E0" align="center" colspan="2"><b>cost_structures</b></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores id.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>vessel_id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Identifier for vessel.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>effective_from</b><BR/><FONT POINT-SIZE="8">DATE</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores effective from.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>effective_to</b><BR/><FONT POINT-SIZE="8">DATE</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores effective to.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>charter_rate_daily_usd</b><BR/><FONT POINT-SIZE="8">DECIMAL(12,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Performance metric captured for solution analysis.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>fuel_price_per_tonne_usd</b><BR/><FONT POINT-SIZE="8">DECIMAL(10,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores fuel price per tonne usd.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>port_dues_usd</b><BR/><FONT POINT-SIZE="8">DECIMAL(10,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores port dues usd.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>pilotage_usd</b><BR/><FONT POINT-SIZE="8">DECIMAL(10,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores pilotage usd.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>agency_usd</b><BR/><FONT POINT-SIZE="8">DECIMAL(10,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores agency usd.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>documentation_usd</b><BR/><FONT POINT-SIZE="8">DECIMAL(10,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores documentation usd.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>crane_hourly_usd</b><BR/><FONT POINT-SIZE="8">DECIMAL(10,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores crane hourly usd.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>offshore_personnel_usd</b><BR/><FONT POINT-SIZE="8">DECIMAL(10,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores offshore personnel usd.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>created_at</b><BR/><FONT POINT-SIZE="8">TIMESTAMP</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Timestamp of created.</FONT></td></tr>
+    <tr><td bgcolor="#FFFFFF" colspan="2"><FONT POINT-SIZE="10">COSTS</FONT></td></tr>
+</TABLE>>
+];
+  "demands" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#E8F5E9" align="center" colspan="2"><b>demands</b></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores id.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>installation_id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Identifier for installation.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>cargo_type_id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Identifier for cargo type.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>quantity</b><BR/><FONT POINT-SIZE="8">DECIMAL(12,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Amount related to quantity.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>unit</b><BR/><FONT POINT-SIZE="8">VARCHAR(20)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores unit.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>earliest_delivery</b><BR/><FONT POINT-SIZE="8">TIMESTAMP</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores earliest delivery.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>latest_delivery</b><BR/><FONT POINT-SIZE="8">TIMESTAMP</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores latest delivery.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>priority</b><BR/><FONT POINT-SIZE="8">VARCHAR(20)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores priority.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>scenario</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores scenario.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>penalty_late_per_day</b><BR/><FONT POINT-SIZE="8">DECIMAL(12,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores penalty late per day.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>forecast_accuracy</b><BR/><FONT POINT-SIZE="8">DECIMAL(5,4)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores forecast accuracy.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>status</b><BR/><FONT POINT-SIZE="8">VARCHAR(20)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Current status indicator for status.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>created_at</b><BR/><FONT POINT-SIZE="8">TIMESTAMP</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Timestamp of created.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>updated_at</b><BR/><FONT POINT-SIZE="8">TIMESTAMP</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Timestamp of updated.</FONT></td></tr>
+    <tr><td bgcolor="#FFFFFF" colspan="2"><FONT POINT-SIZE="10">CARGO</FONT></td></tr>
+</TABLE>>
+];
+  "distance_matrix" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#E3F2FD" align="center" colspan="2"><b>distance_matrix</b></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>from_location_id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Geographic coordinates for this record.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>to_location_id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Geographic coordinates for this record.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>distance_nm</b><BR/><FONT POINT-SIZE="8">DECIMAL(8,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Distance from the vessel to the referenced installation.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>distance_km</b><BR/><FONT POINT-SIZE="8">DECIMAL(8,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Distance from the vessel to the referenced installation.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>time_12kts_h</b><BR/><FONT POINT-SIZE="8">DECIMAL(6,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores time 12kts h.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>time_14kts_h</b><BR/><FONT POINT-SIZE="8">DECIMAL(6,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores time 14kts h.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>weather_factor_good</b><BR/><FONT POINT-SIZE="8">DECIMAL(4,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores weather factor good.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>weather_factor_moderate</b><BR/><FONT POINT-SIZE="8">DECIMAL(4,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Performance metric captured for solution analysis.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>weather_factor_rough</b><BR/><FONT POINT-SIZE="8">DECIMAL(4,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores weather factor rough.</FONT></td></tr>
+    <tr><td bgcolor="#FFFFFF" colspan="2"><FONT POINT-SIZE="10">NETWORK</FONT></td></tr>
+</TABLE>>
+];
+  "handling_costs" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#FFF3E0" align="center" colspan="2"><b>handling_costs</b></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>cost_structure_id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Identifier for cost structure.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>cargo_type_id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Identifier for cargo type.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>cost_per_unit</b><BR/><FONT POINT-SIZE="8">DECIMAL(10,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores cost per unit.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>unit</b><BR/><FONT POINT-SIZE="8">VARCHAR(20)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores unit.</FONT></td></tr>
+    <tr><td bgcolor="#FFFFFF" colspan="2"><FONT POINT-SIZE="10">COSTS</FONT></td></tr>
+</TABLE>>
+];
+  "installation_storage" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#E3F2FD" align="center" colspan="2"><b>installation_storage</b></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>installation_id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Identifier for installation.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>cargo_type_id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Identifier for cargo type.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>max_capacity</b><BR/><FONT POINT-SIZE="8">DECIMAL(12,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores max capacity.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>current_level</b><BR/><FONT POINT-SIZE="8">DECIMAL(12,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores current level.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>safety_stock</b><BR/><FONT POINT-SIZE="8">DECIMAL(12,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores safety stock.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>reorder_point</b><BR/><FONT POINT-SIZE="8">DECIMAL(12,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores reorder point.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>unit</b><BR/><FONT POINT-SIZE="8">VARCHAR(20)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores unit.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>last_updated</b><BR/><FONT POINT-SIZE="8">TIMESTAMP</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores last updated.</FONT></td></tr>
+    <tr><td bgcolor="#FFFFFF" colspan="2"><FONT POINT-SIZE="10">NETWORK</FONT></td></tr>
+</TABLE>>
+];
+  "installations" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#E3F2FD" align="center" colspan="2"><b>installations</b></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores id.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>name</b><BR/><FONT POINT-SIZE="8">VARCHAR(255)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Human-readable name for name.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>type</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores type.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>location</b><BR/><FONT POINT-SIZE="8">GEOGRAPHY(POINT, 4326)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Geographic coordinates for this record.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>water_depth_m</b><BR/><FONT POINT-SIZE="8">DECIMAL(8,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores water depth m.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>distance_from_base_nm</b><BR/><FONT POINT-SIZE="8">DECIMAL(8,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Distance from the vessel to the referenced installation.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>production_capacity_bpd</b><BR/><FONT POINT-SIZE="8">DECIMAL(12,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores production capacity bpd.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>oil_storage_capacity_bbl</b><BR/><FONT POINT-SIZE="8">DECIMAL(15,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores oil storage capacity bbl.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>num_cranes</b><BR/><FONT POINT-SIZE="8">INTEGER</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores num cranes.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>crane_capacity_t</b><BR/><FONT POINT-SIZE="8">DECIMAL(8,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores crane capacity t.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>deck_area_m2</b><BR/><FONT POINT-SIZE="8">DECIMAL(10,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Deck cargo area measured in square meters.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>max_simultaneous_vessels</b><BR/><FONT POINT-SIZE="8">INTEGER</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores max simultaneous vessels.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>max_wind_ms</b><BR/><FONT POINT-SIZE="8">DECIMAL(5,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores max wind ms.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>max_wave_m</b><BR/><FONT POINT-SIZE="8">DECIMAL(5,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores max wave m.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>max_current_kts</b><BR/><FONT POINT-SIZE="8">DECIMAL(5,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores max current kts.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>min_visibility_nm</b><BR/><FONT POINT-SIZE="8">DECIMAL(5,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores min visibility nm.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>created_at</b><BR/><FONT POINT-SIZE="8">TIMESTAMP</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Timestamp of created.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>updated_at</b><BR/><FONT POINT-SIZE="8">TIMESTAMP</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Timestamp of updated.</FONT></td></tr>
+    <tr><td bgcolor="#FFFFFF" colspan="2"><FONT POINT-SIZE="10">NETWORK</FONT></td></tr>
+</TABLE>>
+];
+  "kpis" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#FBE9E7" align="center" colspan="2"><b>kpis</b></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>solution_id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Identifier for solution.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>vessel_utilization</b><BR/><FONT POINT-SIZE="8">DECIMAL(5,4)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Performance metric captured for solution analysis.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>on_time_delivery_rate</b><BR/><FONT POINT-SIZE="8">DECIMAL(5,4)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Performance metric captured for solution analysis.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>avg_trip_duration_h</b><BR/><FONT POINT-SIZE="8">DECIMAL(8,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores avg trip duration h.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>cost_per_tonne</b><BR/><FONT POINT-SIZE="8">DECIMAL(10,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores cost per tonne.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>fuel_efficiency_t_per_nm</b><BR/><FONT POINT-SIZE="8">DECIMAL(6,4)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores fuel efficiency t per nm.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>emergency_response_time_h</b><BR/><FONT POINT-SIZE="8">DECIMAL(6,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores emergency response time h.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>weather_delay_rate</b><BR/><FONT POINT-SIZE="8">DECIMAL(5,4)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Performance metric captured for solution analysis.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>backhaul_rate</b><BR/><FONT POINT-SIZE="8">DECIMAL(5,4)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Performance metric captured for solution analysis.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>total_emissions_co2_t</b><BR/><FONT POINT-SIZE="8">DECIMAL(15,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores total emissions co2 t.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>calculated_at</b><BR/><FONT POINT-SIZE="8">TIMESTAMPTZ</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Timestamp of calculated.</FONT></td></tr>
+    <tr><td bgcolor="#FFFFFF" colspan="2"><FONT POINT-SIZE="10">OPTIMIZATION</FONT></td></tr>
+</TABLE>>
+];
+  "operation_windows" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#F3E5F5" align="center" colspan="2"><b>operation_windows</b></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores id.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>operation_type</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores operation type.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>max_wind_ms</b><BR/><FONT POINT-SIZE="8">DECIMAL(5,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores max wind ms.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>max_wave_m</b><BR/><FONT POINT-SIZE="8">DECIMAL(5,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores max wave m.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>max_current_kts</b><BR/><FONT POINT-SIZE="8">DECIMAL(5,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores max current kts.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>min_visibility_nm</b><BR/><FONT POINT-SIZE="8">DECIMAL(5,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores min visibility nm.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>time_min_h</b><BR/><FONT POINT-SIZE="8">DECIMAL(6,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores time min h.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>time_expected_h</b><BR/><FONT POINT-SIZE="8">DECIMAL(6,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores time expected h.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>time_max_h</b><BR/><FONT POINT-SIZE="8">DECIMAL(6,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores time max h.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>efficiency_day</b><BR/><FONT POINT-SIZE="8">DECIMAL(5,4)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores efficiency day.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>efficiency_night</b><BR/><FONT POINT-SIZE="8">DECIMAL(5,4)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores efficiency night.</FONT></td></tr>
+    <tr><td bgcolor="#FFFFFF" colspan="2"><FONT POINT-SIZE="10">OPERATIONS</FONT></td></tr>
+</TABLE>>
+];
+  "optimization_runs" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#FBE9E7" align="center" colspan="2"><b>optimization_runs</b></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores id.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>timestamp</b><BR/><FONT POINT-SIZE="8">TIMESTAMPTZ</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Timestamp of timestamp.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>planning_horizon_start</b><BR/><FONT POINT-SIZE="8">TIMESTAMPTZ</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores planning horizon start.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>planning_horizon_end</b><BR/><FONT POINT-SIZE="8">TIMESTAMPTZ</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores planning horizon end.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>objective_function</b><BR/><FONT POINT-SIZE="8">TEXT</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores objective function.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>solver</b><BR/><FONT POINT-SIZE="8">VARCHAR(100)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores solver.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>solution_time_s</b><BR/><FONT POINT-SIZE="8">DECIMAL(10,3)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores solution time s.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>objective_value</b><BR/><FONT POINT-SIZE="8">DECIMAL(20,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores objective value.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>gap</b><BR/><FONT POINT-SIZE="8">DECIMAL(8,6)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores gap.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>status</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Current status indicator for status.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>num_vessels</b><BR/><FONT POINT-SIZE="8">INTEGER</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores num vessels.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>num_installations</b><BR/><FONT POINT-SIZE="8">INTEGER</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores num installations.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>num_demands</b><BR/><FONT POINT-SIZE="8">INTEGER</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores num demands.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>parameters</b><BR/><FONT POINT-SIZE="8">JSONB</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores parameters.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>created_by</b><BR/><FONT POINT-SIZE="8">VARCHAR(100)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Auditing detail for created by.</FONT></td></tr>
+    <tr><td bgcolor="#FFFFFF" colspan="2"><FONT POINT-SIZE="10">OPTIMIZATION</FONT></td></tr>
+</TABLE>>
+];
+  "optimization_scenarios" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#FBE9E7" align="center" colspan="2"><b>optimization_scenarios</b></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>run_id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Identifier for run.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>scenario_name</b><BR/><FONT POINT-SIZE="8">VARCHAR(100)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores scenario name.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>scenario_type</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores scenario type.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>parameters</b><BR/><FONT POINT-SIZE="8">JSONB</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores parameters.</FONT></td></tr>
+    <tr><td bgcolor="#FFFFFF" colspan="2"><FONT POINT-SIZE="10">OPTIMIZATION</FONT></td></tr>
+</TABLE>>
+];
+  "order_items" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#E8F5E9" align="center" colspan="2"><b>order_items</b></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores id.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>order_id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Identifier for order.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>cargo_type_id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Identifier for cargo type.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>unitization_id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">References the unitization definition that describes how this order item is stowed.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>quantity</b><BR/><FONT POINT-SIZE="8">DECIMAL(12,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Amount related to quantity.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>unit</b><BR/><FONT POINT-SIZE="8">VARCHAR(20)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores unit.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>compartment_id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Identifier for compartment.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>loaded</b><BR/><FONT POINT-SIZE="8">BOOLEAN</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores loaded.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>delivered</b><BR/><FONT POINT-SIZE="8">BOOLEAN</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores delivered.</FONT></td></tr>
+    <tr><td bgcolor="#FFFFFF" colspan="2"><FONT POINT-SIZE="10">CARGO</FONT></td></tr>
+</TABLE>>
+];
+  "orders" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#E8F5E9" align="center" colspan="2"><b>orders</b></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores id.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>demand_id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Identifier for demand.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>status</b><BR/><FONT POINT-SIZE="8">VARCHAR(20)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Current status indicator for status.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>assigned_vessel_id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Identifier for assigned vessel.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>scheduled_departure</b><BR/><FONT POINT-SIZE="8">TIMESTAMP</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores scheduled departure.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>actual_departure</b><BR/><FONT POINT-SIZE="8">TIMESTAMP</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores actual departure.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>estimated_arrival</b><BR/><FONT POINT-SIZE="8">TIMESTAMP</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores estimated arrival.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>actual_arrival</b><BR/><FONT POINT-SIZE="8">TIMESTAMP</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores actual arrival.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>total_weight_t</b><BR/><FONT POINT-SIZE="8">DECIMAL(12,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Amount related to total weight t.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>total_volume_m3</b><BR/><FONT POINT-SIZE="8">DECIMAL(12,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores total volume m3.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>created_at</b><BR/><FONT POINT-SIZE="8">TIMESTAMP</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Timestamp of created.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>updated_at</b><BR/><FONT POINT-SIZE="8">TIMESTAMP</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Timestamp of updated.</FONT></td></tr>
+    <tr><td bgcolor="#FFFFFF" colspan="2"><FONT POINT-SIZE="10">CARGO</FONT></td></tr>
+</TABLE>>
+];
+  "penalty_costs" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#FFF3E0" align="center" colspan="2"><b>penalty_costs</b></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores id.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>order_id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Identifier for order.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>penalty_type</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores penalty type.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>amount_usd</b><BR/><FONT POINT-SIZE="8">DECIMAL(15,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Amount related to amount usd.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>duration_h</b><BR/><FONT POINT-SIZE="8">DECIMAL(10,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores duration h.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>reason</b><BR/><FONT POINT-SIZE="8">TEXT</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores reason.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>incurred_at</b><BR/><FONT POINT-SIZE="8">TIMESTAMP</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Timestamp of incurred.</FONT></td></tr>
+    <tr><td bgcolor="#FFFFFF" colspan="2"><FONT POINT-SIZE="10">COSTS</FONT></td></tr>
+</TABLE>>
+];
+  "seasonal_patterns" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#E0F7FA" align="center" colspan="2"><b>seasonal_patterns</b></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores id.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>location</b><BR/><FONT POINT-SIZE="8">VARCHAR(255)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Geographic coordinates for this record.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>month</b><BR/><FONT POINT-SIZE="8">INTEGER</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores month.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>wave_dist_hs_lt_2m</b><BR/><FONT POINT-SIZE="8">DECIMAL(5,4)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores wave dist hs lt 2m.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>wave_dist_hs_2_3m</b><BR/><FONT POINT-SIZE="8">DECIMAL(5,4)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores wave dist hs 2 3m.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>wave_dist_hs_3_4m</b><BR/><FONT POINT-SIZE="8">DECIMAL(5,4)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores wave dist hs 3 4m.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>wave_dist_hs_gt_4m</b><BR/><FONT POINT-SIZE="8">DECIMAL(5,4)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores wave dist hs gt 4m.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>wind_avg_ms</b><BR/><FONT POINT-SIZE="8">DECIMAL(5,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores wind avg ms.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>workability</b><BR/><FONT POINT-SIZE="8">DECIMAL(5,4)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores workability.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>delay_probability</b><BR/><FONT POINT-SIZE="8">DECIMAL(5,4)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores delay probability.</FONT></td></tr>
+    <tr><td bgcolor="#FFFFFF" colspan="2"><FONT POINT-SIZE="10">ENVIRONMENT</FONT></td></tr>
+</TABLE>>
+];
+  "solution_trips" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#FBE9E7" align="center" colspan="2"><b>solution_trips</b></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>solution_id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Identifier for solution.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>trip_id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Identifier for trip.</FONT></td></tr>
+    <tr><td bgcolor="#FFFFFF" colspan="2"><FONT POINT-SIZE="10">OPTIMIZATION</FONT></td></tr>
+</TABLE>>
+];
+  "solutions" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#FBE9E7" align="center" colspan="2"><b>solutions</b></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores id.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>optimization_run_id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Identifier for optimization run.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>total_cost_usd</b><BR/><FONT POINT-SIZE="8">DECIMAL(20,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores total cost usd.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>total_distance_nm</b><BR/><FONT POINT-SIZE="8">DECIMAL(15,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Distance from the vessel to the referenced installation.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>fleet_utilization</b><BR/><FONT POINT-SIZE="8">DECIMAL(5,4)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Performance metric captured for solution analysis.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>num_trips</b><BR/><FONT POINT-SIZE="8">INTEGER</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores num trips.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>num_unmet_demands</b><BR/><FONT POINT-SIZE="8">INTEGER</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores num unmet demands.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>feasible</b><BR/><FONT POINT-SIZE="8">BOOLEAN</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores feasible.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>created_at</b><BR/><FONT POINT-SIZE="8">TIMESTAMPTZ</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Timestamp of created.</FONT></td></tr>
+    <tr><td bgcolor="#FFFFFF" colspan="2"><FONT POINT-SIZE="10">OPTIMIZATION</FONT></td></tr>
+</TABLE>>
+];
+  "supply_bases" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#E3F2FD" align="center" colspan="2"><b>supply_bases</b></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores id.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>name</b><BR/><FONT POINT-SIZE="8">VARCHAR(255)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Human-readable name for name.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>location</b><BR/><FONT POINT-SIZE="8">GEOGRAPHY(POINT, 4326)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Geographic coordinates for this record.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>port_code</b><BR/><FONT POINT-SIZE="8">VARCHAR(10)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores port code.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>max_draught_m</b><BR/><FONT POINT-SIZE="8">DECIMAL(5,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores max draught m.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>max_vessel_length_m</b><BR/><FONT POINT-SIZE="8">DECIMAL(6,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores max vessel length m.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>max_deadweight_t</b><BR/><FONT POINT-SIZE="8">DECIMAL(10,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Amount related to max deadweight t.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>operating_hours</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores operating hours.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>num_berths</b><BR/><FONT POINT-SIZE="8">INTEGER</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores num berths.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>loading_capacity_liquid_m3h</b><BR/><FONT POINT-SIZE="8">DECIMAL(10,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores loading capacity liquid m3h.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>loading_capacity_bulk_m3h</b><BR/><FONT POINT-SIZE="8">DECIMAL(10,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores loading capacity bulk m3h.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>loading_capacity_deck_th</b><BR/><FONT POINT-SIZE="8">DECIMAL(10,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores loading capacity deck th.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>cost_port_dues_usd</b><BR/><FONT POINT-SIZE="8">DECIMAL(10,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores cost port dues usd.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>cost_pilotage_usd</b><BR/><FONT POINT-SIZE="8">DECIMAL(10,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores cost pilotage usd.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>cost_agency_usd</b><BR/><FONT POINT-SIZE="8">DECIMAL(10,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores cost agency usd.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>cost_documentation_usd</b><BR/><FONT POINT-SIZE="8">DECIMAL(10,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores cost documentation usd.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>created_at</b><BR/><FONT POINT-SIZE="8">TIMESTAMP</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Timestamp of created.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>updated_at</b><BR/><FONT POINT-SIZE="8">TIMESTAMP</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Timestamp of updated.</FONT></td></tr>
+    <tr><td bgcolor="#FFFFFF" colspan="2"><FONT POINT-SIZE="10">NETWORK</FONT></td></tr>
+</TABLE>>
+];
+  "time_windows" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#F3E5F5" align="center" colspan="2"><b>time_windows</b></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores id.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>installation_id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Identifier for installation.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>date</b><BR/><FONT POINT-SIZE="8">DATE</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores date.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>start_time</b><BR/><FONT POINT-SIZE="8">TIME</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores start time.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>end_time</b><BR/><FONT POINT-SIZE="8">TIME</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores end time.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>available</b><BR/><FONT POINT-SIZE="8">BOOLEAN</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores available.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>conflict_type</b><BR/><FONT POINT-SIZE="8">VARCHAR(100)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores conflict type.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>preference_score</b><BR/><FONT POINT-SIZE="8">DECIMAL(5,4)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores preference score.</FONT></td></tr>
+    <tr><td bgcolor="#FFFFFF" colspan="2"><FONT POINT-SIZE="10">OPERATIONS</FONT></td></tr>
+</TABLE>>
+];
+  "trip_cargo_manifest" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#F3E5F5" align="center" colspan="2"><b>trip_cargo_manifest</b></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores id.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>trip_id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Identifier for trip.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>waypoint_id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Identifier for waypoint.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>order_item_id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Identifier for order item.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>cargo_type_id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Identifier for cargo type.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>quantity</b><BR/><FONT POINT-SIZE="8">DECIMAL(12,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Amount related to quantity.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>unit</b><BR/><FONT POINT-SIZE="8">VARCHAR(20)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores unit.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>action</b><BR/><FONT POINT-SIZE="8">VARCHAR(20)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores action.</FONT></td></tr>
+    <tr><td bgcolor="#FFFFFF" colspan="2"><FONT POINT-SIZE="10">OPERATIONS</FONT></td></tr>
+</TABLE>>
+];
+  "trip_costs" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#FFF3E0" align="center" colspan="2"><b>trip_costs</b></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>trip_id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Identifier for trip.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>charter_cost_usd</b><BR/><FONT POINT-SIZE="8">DECIMAL(12,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores charter cost usd.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>fuel_cost_usd</b><BR/><FONT POINT-SIZE="8">DECIMAL(12,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores fuel cost usd.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>port_costs_usd</b><BR/><FONT POINT-SIZE="8">DECIMAL(12,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores port costs usd.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>offshore_costs_usd</b><BR/><FONT POINT-SIZE="8">DECIMAL(12,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores offshore costs usd.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>handling_costs_usd</b><BR/><FONT POINT-SIZE="8">DECIMAL(12,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores handling costs usd.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>total_cost_usd</b><BR/><FONT POINT-SIZE="8">DECIMAL(12,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores total cost usd.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>cost_per_tonne</b><BR/><FONT POINT-SIZE="8">DECIMAL(10,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores cost per tonne.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>cost_per_nm</b><BR/><FONT POINT-SIZE="8">DECIMAL(10,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores cost per nm.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>calculated_at</b><BR/><FONT POINT-SIZE="8">TIMESTAMP</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Timestamp of calculated.</FONT></td></tr>
+    <tr><td bgcolor="#FFFFFF" colspan="2"><FONT POINT-SIZE="10">COSTS</FONT></td></tr>
+</TABLE>>
+];
+  "trip_delays" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#F3E5F5" align="center" colspan="2"><b>trip_delays</b></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores id.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>trip_id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Identifier for trip.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>waypoint_id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Identifier for waypoint.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>reason</b><BR/><FONT POINT-SIZE="8">VARCHAR(255)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores reason.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>delay_type</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores delay type.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>duration_h</b><BR/><FONT POINT-SIZE="8">DECIMAL(6,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores duration h.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>location</b><BR/><FONT POINT-SIZE="8">VARCHAR(255)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Geographic coordinates for this record.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>recorded_at</b><BR/><FONT POINT-SIZE="8">TIMESTAMP</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Timestamp of recorded.</FONT></td></tr>
+    <tr><td bgcolor="#FFFFFF" colspan="2"><FONT POINT-SIZE="10">OPERATIONS</FONT></td></tr>
+</TABLE>>
+];
+  "trip_waypoints" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#F3E5F5" align="center" colspan="2"><b>trip_waypoints</b></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores id.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>trip_id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Identifier for trip.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>sequence</b><BR/><FONT POINT-SIZE="8">INTEGER</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores sequence.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>location_id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Geographic coordinates for this record.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>location_type</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Geographic coordinates for this record.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>planned_arrival</b><BR/><FONT POINT-SIZE="8">TIMESTAMP</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores planned arrival.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>actual_arrival</b><BR/><FONT POINT-SIZE="8">TIMESTAMP</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores actual arrival.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>planned_departure</b><BR/><FONT POINT-SIZE="8">TIMESTAMP</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores planned departure.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>actual_departure</b><BR/><FONT POINT-SIZE="8">TIMESTAMP</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores actual departure.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>operation_type</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores operation type.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>service_time_h</b><BR/><FONT POINT-SIZE="8">DECIMAL(6,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores service time h.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>weather_delay_h</b><BR/><FONT POINT-SIZE="8">DECIMAL(6,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores weather delay h.</FONT></td></tr>
+    <tr><td bgcolor="#FFFFFF" colspan="2"><FONT POINT-SIZE="10">OPERATIONS</FONT></td></tr>
+</TABLE>>
+];
+  "trips" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#F3E5F5" align="center" colspan="2"><b>trips</b></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores id.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>vessel_id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Identifier for vessel.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>status</b><BR/><FONT POINT-SIZE="8">VARCHAR(20)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Current status indicator for status.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>planned_departure</b><BR/><FONT POINT-SIZE="8">TIMESTAMP</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores planned departure.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>actual_departure</b><BR/><FONT POINT-SIZE="8">TIMESTAMP</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores actual departure.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>planned_arrival</b><BR/><FONT POINT-SIZE="8">TIMESTAMP</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores planned arrival.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>actual_arrival</b><BR/><FONT POINT-SIZE="8">TIMESTAMP</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores actual arrival.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>total_distance_nm</b><BR/><FONT POINT-SIZE="8">DECIMAL(10,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Distance from the vessel to the referenced installation.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>total_duration_h</b><BR/><FONT POINT-SIZE="8">DECIMAL(8,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores total duration h.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>fuel_consumed_t</b><BR/><FONT POINT-SIZE="8">DECIMAL(10,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores fuel consumed t.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>fuel_cost_usd</b><BR/><FONT POINT-SIZE="8">DECIMAL(12,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores fuel cost usd.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>charter_cost_usd</b><BR/><FONT POINT-SIZE="8">DECIMAL(12,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores charter cost usd.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>port_costs_usd</b><BR/><FONT POINT-SIZE="8">DECIMAL(12,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores port costs usd.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>offshore_costs_usd</b><BR/><FONT POINT-SIZE="8">DECIMAL(12,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores offshore costs usd.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>handling_costs_usd</b><BR/><FONT POINT-SIZE="8">DECIMAL(12,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores handling costs usd.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>total_cost_usd</b><BR/><FONT POINT-SIZE="8">DECIMAL(12,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores total cost usd.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>optimization_run_id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Identifier for optimization run.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>created_at</b><BR/><FONT POINT-SIZE="8">TIMESTAMP</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Timestamp of created.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>updated_at</b><BR/><FONT POINT-SIZE="8">TIMESTAMP</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Timestamp of updated.</FONT></td></tr>
+    <tr><td bgcolor="#FFFFFF" colspan="2"><FONT POINT-SIZE="10">OPERATIONS</FONT></td></tr>
+</TABLE>>
+];
+  "unitizations" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#E8F5E9" align="center" colspan="2"><b>unitizations</b></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores id.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>cargo_type_id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Identifier for cargo type.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>unit_type</b><BR/><FONT POINT-SIZE="8">VARCHAR(20)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores unit type.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>unit_area_m2</b><BR/><FONT POINT-SIZE="8">DECIMAL(10,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores unit area m2.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>unit_weight_t</b><BR/><FONT POINT-SIZE="8">DECIMAL(10,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Amount related to unit weight t.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>length_m</b><BR/><FONT POINT-SIZE="8">DECIMAL(6,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores length m.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>width_m</b><BR/><FONT POINT-SIZE="8">DECIMAL(6,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores width m.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>height_m</b><BR/><FONT POINT-SIZE="8">DECIMAL(6,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores height m.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>max_stack_layers</b><BR/><FONT POINT-SIZE="8">INTEGER</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores max stack layers.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>unit_identifier</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores unit identifier.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>notes</b><BR/><FONT POINT-SIZE="8">TEXT</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores notes.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>created_at</b><BR/><FONT POINT-SIZE="8">TIMESTAMP</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Timestamp of created.</FONT></td></tr>
+    <tr><td bgcolor="#FFFFFF" colspan="2"><FONT POINT-SIZE="10">CARGO</FONT></td></tr>
+</TABLE>>
+];
+  "unmet_demands" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#FBE9E7" align="center" colspan="2"><b>unmet_demands</b></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores id.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>solution_id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Identifier for solution.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>demand_id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Identifier for demand.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>reason</b><BR/><FONT POINT-SIZE="8">TEXT</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores reason.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>shortfall_quantity</b><BR/><FONT POINT-SIZE="8">DECIMAL(12,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Amount related to shortfall quantity.</FONT></td></tr>
+    <tr><td bgcolor="#FFFFFF" colspan="2"><FONT POINT-SIZE="10">OPTIMIZATION</FONT></td></tr>
+</TABLE>>
+];
+  "vessel_compartments" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#FFF8E1" align="center" colspan="2"><b>vessel_compartments</b></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores id.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>vessel_id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Identifier for vessel.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>compartment_type</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores compartment type.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>capacity</b><BR/><FONT POINT-SIZE="8">DECIMAL(10,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores capacity.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>unit</b><BR/><FONT POINT-SIZE="8">VARCHAR(20)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores unit.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>current_cargo_id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Identifier for current cargo.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>fill_level</b><BR/><FONT POINT-SIZE="8">DECIMAL(5,4)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores fill level.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>last_cleaned</b><BR/><FONT POINT-SIZE="8">TIMESTAMP</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores last cleaned.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>created_at</b><BR/><FONT POINT-SIZE="8">TIMESTAMP</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Timestamp of created.</FONT></td></tr>
+    <tr><td bgcolor="#FFFFFF" colspan="2"><FONT POINT-SIZE="10">FLEET</FONT></td></tr>
+</TABLE>>
+];
+  "vessel_location_pings" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#FFF8E1" align="center" colspan="2"><b>vessel_location_pings</b></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores id.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>vessel_id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Identifier for vessel.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>pinged_at</b><BR/><FONT POINT-SIZE="8">TIMESTAMPTZ</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Timestamp for when the vessel location ping was recorded.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>location</b><BR/><FONT POINT-SIZE="8">GEOGRAPHY(POINT, 4326)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Geographic coordinates for this record.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>installation_id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Identifier for installation.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>distance_from_installation_m</b><BR/><FONT POINT-SIZE="8">DECIMAL(7,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Distance from the vessel to the referenced installation.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>dp_activated</b><BR/><FONT POINT-SIZE="8">BOOLEAN</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Indicates whether dynamic positioning is engaged near an installation.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>speed_kts</b><BR/><FONT POINT-SIZE="8">DECIMAL(6,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Speed measurement, usually in knots.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>heading_deg</b><BR/><FONT POINT-SIZE="8">DECIMAL(6,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Vessel heading in degrees.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>notes</b><BR/><FONT POINT-SIZE="8">TEXT</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores notes.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>distance_from_installation_m</b><BR/><FONT POINT-SIZE="8">UNKNOWN</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Distance from the vessel to the referenced installation.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>OR</b><BR/><FONT POINT-SIZE="8">distance_from_installation_m >= 0</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores or.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>distance_from_installation_m</b><BR/><FONT POINT-SIZE="8">UNKNOWN</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Distance from the vessel to the referenced installation.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>OR</b><BR/><FONT POINT-SIZE="8">distance_from_installation_m >= 500</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores or.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>OR</b><BR/><FONT POINT-SIZE="8">dp_activated = TRUE</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores or.</FONT></td></tr>
+    <tr><td bgcolor="#FFFFFF" colspan="2"><FONT POINT-SIZE="10">FLEET</FONT></td></tr>
+</TABLE>>
+];
+  "vessel_schedules" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#FFF8E1" align="center" colspan="2"><b>vessel_schedules</b></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>vessel_id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Identifier for vessel.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>status</b><BR/><FONT POINT-SIZE="8">VARCHAR(20)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Current status indicator for status.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>current_trip_id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Identifier for current trip.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>next_available</b><BR/><FONT POINT-SIZE="8">TIMESTAMP</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores next available.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>utilization_target</b><BR/><FONT POINT-SIZE="8">DECIMAL(5,4)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Performance metric captured for solution analysis.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>ytd_utilization</b><BR/><FONT POINT-SIZE="8">DECIMAL(5,4)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Performance metric captured for solution analysis.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>updated_at</b><BR/><FONT POINT-SIZE="8">TIMESTAMP</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Timestamp of updated.</FONT></td></tr>
+    <tr><td bgcolor="#FFFFFF" colspan="2"><FONT POINT-SIZE="10">FLEET</FONT></td></tr>
+</TABLE>>
+];
+  "vessels" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#FFF8E1" align="center" colspan="2"><b>vessels</b></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores id.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>name</b><BR/><FONT POINT-SIZE="8">VARCHAR(255)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Human-readable name for name.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>class</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores class.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>loa_m</b><BR/><FONT POINT-SIZE="8">DECIMAL(6,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores loa m.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>beam_m</b><BR/><FONT POINT-SIZE="8">DECIMAL(5,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores beam m.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>draught_m</b><BR/><FONT POINT-SIZE="8">DECIMAL(5,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores draught m.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>deck_cargo_capacity_t</b><BR/><FONT POINT-SIZE="8">DECIMAL(10,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores deck cargo capacity t.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>clear_deck_area_m2</b><BR/><FONT POINT-SIZE="8">DECIMAL(10,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Deck cargo area measured in square meters.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>total_deadweight_t</b><BR/><FONT POINT-SIZE="8">DECIMAL(10,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Amount related to total deadweight t.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>service_speed_kts</b><BR/><FONT POINT-SIZE="8">DECIMAL(5,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Speed measurement, usually in knots.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>operational_speed_kts</b><BR/><FONT POINT-SIZE="8">DECIMAL(5,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Speed measurement, usually in knots.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>max_speed_kts</b><BR/><FONT POINT-SIZE="8">DECIMAL(5,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Speed measurement, usually in knots.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>dp_class</b><BR/><FONT POINT-SIZE="8">VARCHAR(10)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores dp class.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>fuel_consumption_transit_td</b><BR/><FONT POINT-SIZE="8">DECIMAL(8,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores fuel consumption transit td.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>fuel_consumption_dp_td</b><BR/><FONT POINT-SIZE="8">DECIMAL(8,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores fuel consumption dp td.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>fuel_consumption_port_td</b><BR/><FONT POINT-SIZE="8">DECIMAL(8,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores fuel consumption port td.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>charter_rate_daily_usd</b><BR/><FONT POINT-SIZE="8">DECIMAL(12,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Performance metric captured for solution analysis.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>crew_size</b><BR/><FONT POINT-SIZE="8">INTEGER</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores crew size.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>accommodation_capacity</b><BR/><FONT POINT-SIZE="8">INTEGER</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores accommodation capacity.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>availability_status</b><BR/><FONT POINT-SIZE="8">VARCHAR(20)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Current status indicator for availability status.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>current_location_id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Geographic coordinates for this record.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>current_location_coords</b><BR/><FONT POINT-SIZE="8">GEOGRAPHY(POINT, 4326)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Geographic coordinates for this record.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>next_maintenance_due</b><BR/><FONT POINT-SIZE="8">DATE</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores next maintenance due.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>created_at</b><BR/><FONT POINT-SIZE="8">TIMESTAMP</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Timestamp of created.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>updated_at</b><BR/><FONT POINT-SIZE="8">TIMESTAMP</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Timestamp of updated.</FONT></td></tr>
+    <tr><td bgcolor="#FFFFFF" colspan="2"><FONT POINT-SIZE="10">FLEET</FONT></td></tr>
+</TABLE>>
+];
+  "weather_forecasts" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#E0F7FA" align="center" colspan="2"><b>weather_forecasts</b></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores id.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>location_id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Geographic coordinates for this record.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>timestamp</b><BR/><FONT POINT-SIZE="8">TIMESTAMPTZ</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Timestamp of timestamp.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>forecast_horizon_h</b><BR/><FONT POINT-SIZE="8">INTEGER</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores forecast horizon h.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>wave_height_min_m</b><BR/><FONT POINT-SIZE="8">DECIMAL(5,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores wave height min m.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>wave_height_mean_m</b><BR/><FONT POINT-SIZE="8">DECIMAL(5,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores wave height mean m.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>wave_height_max_m</b><BR/><FONT POINT-SIZE="8">DECIMAL(5,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores wave height max m.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>wind_speed_min_ms</b><BR/><FONT POINT-SIZE="8">DECIMAL(5,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Speed measurement, usually in knots.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>wind_speed_mean_ms</b><BR/><FONT POINT-SIZE="8">DECIMAL(5,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Speed measurement, usually in knots.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>wind_speed_max_ms</b><BR/><FONT POINT-SIZE="8">DECIMAL(5,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Speed measurement, usually in knots.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>wind_direction</b><BR/><FONT POINT-SIZE="8">VARCHAR(10)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores wind direction.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>current_speed_kts</b><BR/><FONT POINT-SIZE="8">DECIMAL(5,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Speed measurement, usually in knots.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>visibility_nm</b><BR/><FONT POINT-SIZE="8">DECIMAL(5,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores visibility nm.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>forecast_accuracy</b><BR/><FONT POINT-SIZE="8">DECIMAL(5,4)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores forecast accuracy.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>weather_state</b><BR/><FONT POINT-SIZE="8">VARCHAR(20)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores weather state.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>created_at</b><BR/><FONT POINT-SIZE="8">TIMESTAMPTZ</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Timestamp of created.</FONT></td></tr>
+    <tr><td bgcolor="#FFFFFF" colspan="2"><FONT POINT-SIZE="10">ENVIRONMENT</FONT></td></tr>
+</TABLE>>
+];
+  "weather_windows" [label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="4">
+    <tr><td bgcolor="#E0F7FA" align="center" colspan="2"><b>weather_windows</b></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores id.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>location_id</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Geographic coordinates for this record.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>operation_type</b><BR/><FONT POINT-SIZE="8">VARCHAR(50)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores operation type.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>start_time</b><BR/><FONT POINT-SIZE="8">TIMESTAMPTZ</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores start time.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>end_time</b><BR/><FONT POINT-SIZE="8">TIMESTAMPTZ</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores end time.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>duration_h</b><BR/><FONT POINT-SIZE="8">DECIMAL(6,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores duration h.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>confidence</b><BR/><FONT POINT-SIZE="8">DECIMAL(5,4)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores confidence.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>condition_wave_m</b><BR/><FONT POINT-SIZE="8">DECIMAL(5,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores condition wave m.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>condition_wind_ms</b><BR/><FONT POINT-SIZE="8">DECIMAL(5,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores condition wind ms.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>condition_current_kts</b><BR/><FONT POINT-SIZE="8">DECIMAL(5,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores condition current kts.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>condition_visibility_nm</b><BR/><FONT POINT-SIZE="8">DECIMAL(5,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores condition visibility nm.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>suitable</b><BR/><FONT POINT-SIZE="8">BOOLEAN</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores suitable.</FONT></td></tr>
+<tr><td align="left"><FONT POINT-SIZE="10"><b>created_at</b><BR/><FONT POINT-SIZE="8">TIMESTAMPTZ</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Timestamp of created.</FONT></td></tr>
+    <tr><td bgcolor="#FFFFFF" colspan="2"><FONT POINT-SIZE="10">ENVIRONMENT</FONT></td></tr>
+</TABLE>>
+];
+  "backhaul_cargo" -> "installations" [color="#607D8B", penwidth=1.0];
+  "backhaul_cargo" -> "orders" [color="#607D8B", penwidth=1.0];
+  "cargo_incompatibility" -> "cargo_types" [color="#607D8B", penwidth=1.0];
+  "compartment_compatibility" -> "vessel_compartments" [color="#607D8B", penwidth=1.0];
+  "cost_structures" -> "vessels" [color="#607D8B", penwidth=1.0];
+  "demands" -> "cargo_types" [color="#607D8B", penwidth=1.0];
+  "demands" -> "installations" [color="#607D8B", penwidth=1.0];
+  "handling_costs" -> "cargo_types" [color="#607D8B", penwidth=1.0];
+  "handling_costs" -> "cost_structures" [color="#607D8B", penwidth=1.0];
+  "installation_storage" -> "installations" [color="#607D8B", penwidth=1.0];
+  "kpis" -> "solutions" [color="#607D8B", penwidth=1.0];
+  "optimization_scenarios" -> "optimization_runs" [color="#607D8B", penwidth=1.0];
+  "order_items" -> "cargo_types" [color="#607D8B", penwidth=1.0];
+  "order_items" -> "orders" [color="#607D8B", penwidth=1.0];
+  "order_items" -> "unitizations" [color="#607D8B", penwidth=1.0];
+  "order_items" -> "vessel_compartments" [color="#607D8B", penwidth=1.0];
+  "orders" -> "demands" [color="#607D8B", penwidth=1.0];
+  "orders" -> "vessels" [color="#607D8B", penwidth=1.0];
+  "penalty_costs" -> "orders" [color="#607D8B", penwidth=1.0];
+  "solution_trips" -> "solutions" [color="#607D8B", penwidth=1.0];
+  "solution_trips" -> "trips" [color="#607D8B", penwidth=1.0];
+  "solutions" -> "optimization_runs" [color="#607D8B", penwidth=1.0];
+  "time_windows" -> "installations" [color="#607D8B", penwidth=1.0];
+  "trip_cargo_manifest" -> "cargo_types" [color="#607D8B", penwidth=1.0];
+  "trip_cargo_manifest" -> "order_items" [color="#607D8B", penwidth=1.0];
+  "trip_cargo_manifest" -> "trip_waypoints" [color="#607D8B", penwidth=1.0];
+  "trip_cargo_manifest" -> "trips" [color="#607D8B", penwidth=1.0];
+  "trip_costs" -> "trips" [color="#607D8B", penwidth=1.0];
+  "trip_delays" -> "trip_waypoints" [color="#607D8B", penwidth=1.0];
+  "trip_delays" -> "trips" [color="#607D8B", penwidth=1.0];
+  "trip_waypoints" -> "trips" [color="#607D8B", penwidth=1.0];
+  "trips" -> "vessels" [color="#607D8B", penwidth=1.0];
+  "unitizations" -> "cargo_types" [color="#607D8B", penwidth=1.0];
+  "unmet_demands" -> "demands" [color="#607D8B", penwidth=1.0];
+  "unmet_demands" -> "solutions" [color="#607D8B", penwidth=1.0];
+  "vessel_compartments" -> "vessels" [color="#607D8B", penwidth=1.0];
+  "vessel_location_pings" -> "installations" [color="#607D8B", penwidth=1.0];
+  "vessel_location_pings" -> "vessels" [color="#607D8B", penwidth=1.0];
+  "vessel_schedules" -> "vessels" [color="#607D8B", penwidth=1.0];
+}
