@@ -3,12 +3,14 @@
 
 from __future__ import annotations
 
+import argparse
 import re
 from pathlib import Path
 from textwrap import dedent
 
 ROOT = Path(__file__).resolve().parents[1]
-SQL_FILE = ROOT / "references" / "prio_sql_schema.sql"
+FULL_SQL_FILE = ROOT / "references" / "prio_sql_schema.sql"
+MINIMAL_SQL_FILE = ROOT / "references" / "prio_sql_schema_minimal.sql"
 DOT_FILE = ROOT / "references" / "prio_database_diagram.dot"
 DETAILED_DOT_FILE = ROOT / "references" / "prio_database_diagram_detailed.dot"
 
@@ -41,10 +43,17 @@ def parse_schema(sql: str) -> tuple[dict[str, dict[str, list[str]]], dict[str, s
 
     current_table: str | None = None
     current_domain: str = "OTHER"
+    in_constraint_block = False
 
     for raw_line in sql.splitlines():
         line = raw_line.strip()
         if not line:
+            continue
+
+        # If we are inside a multi-line CHECK/CONSTRAINT block, skip until it closes
+        if in_constraint_block:
+            if ")" in line:
+                in_constraint_block = False
             continue
 
         domain_name = normalize_domain(line)
@@ -76,6 +85,9 @@ def parse_schema(sql: str) -> tuple[dict[str, dict[str, list[str]]], dict[str, s
             continue
 
         if re.match(r"^(PRIMARY|CONSTRAINT|UNIQUE|CHECK)", line, flags=re.IGNORECASE):
+            # If this constraint opens a multi-line block, set the flag so we skip following lines until it closes
+            if "(" in line and ")" not in line:
+                in_constraint_block = True
             pk_match = re.search(r"PRIMARY KEY\s*\(([^)]+)\)", line, flags=re.IGNORECASE)
             if pk_match:
                 cols = [c.strip().strip('"') for c in pk_match.group(1).split(",")]
@@ -120,6 +132,39 @@ def humanize(name: str) -> str:
 def describe_column(name: str) -> str:
     lower = name.lower()
     base = humanize(lower)
+
+    if lower == "unitization_id":
+        return "References the unitization definition that describes how this order item is stowed."
+    if "unitization" in lower:
+        if "type" in lower:
+            return "Specifies whether the cargo uses a container or pallet unitization."
+        if "area" in lower:
+            return "Deck stowage area tied to this unitization in square meters."
+        if "weight" in lower:
+            return "Weight capacity per unitization entry in tonnes."
+        return "Metadata describing how deck cargo is unitized."
+    if "container" in lower:
+        return "Container-specific attribute used for deck cargo planning."
+    if "pallet" in lower:
+        return "Pallet-specific attribute used for deck cargo planning."
+    if "deck" in lower and "area" in lower:
+        return "Deck cargo area measured in square meters."
+    if "deck" in lower and "weight" in lower:
+        return "Deck cargo weight measured in tonnes."
+    if "dp" in lower and "activ" in lower:
+        return "Indicates whether dynamic positioning is engaged near an installation."
+    if "ping" in lower and ("time" in lower or "at" in lower):
+        return "Timestamp for when the vessel location ping was recorded."
+    if "distance" in lower:
+        return "Distance from the vessel to the referenced installation."
+    if "location" in lower:
+        return "Geographic coordinates for this record."
+    if "speed" in lower:
+        return "Speed measurement, usually in knots."
+    if "heading" in lower:
+        return "Vessel heading in degrees."
+    if "metric" in lower or "rate" in lower or "utilization" in lower or lower.startswith("kpi"):
+        return "Performance metric captured for solution analysis."
     if lower.endswith("_id") and len(lower) > 3:
         target = humanize(lower[:-3]) or "record"
         return f"Identifier for {target}."
@@ -186,7 +231,7 @@ def detailed_html_label(
     )
 
 
-def write_dot(tables: dict[str, dict[str, list[str]]], domains: dict[str, str]) -> None:
+def write_dot(tables: dict[str, dict[str, list[str]]], domains: dict[str, str], schema_name: str) -> None:
     edges = collect_edges(tables)
 
     lines = [
@@ -206,7 +251,9 @@ def write_dot(tables: dict[str, dict[str, list[str]]], domains: dict[str, str]) 
 
     lines.append("}")
     DOT_FILE.write_text("\n".join(lines) + "\n")
-    print(f"Wrote {DOT_FILE.relative_to(ROOT)} ({len(tables)} tables, {len(edges)} relationships)")
+    print(
+        f"Wrote {DOT_FILE.relative_to(ROOT)} ({len(tables)} tables, {len(edges)} relationships) from {schema_name}"
+    )
 
 
 def collect_edges(tables: dict[str, dict[str, list[str]]]) -> set[tuple[str, str]]:
@@ -217,7 +264,9 @@ def collect_edges(tables: dict[str, dict[str, list[str]]]) -> set[tuple[str, str
     return edges
 
 
-def write_detailed_dot(tables: dict[str, dict[str, list[str]]], domains: dict[str, str]) -> None:
+def write_detailed_dot(
+    tables: dict[str, dict[str, list[str]]], domains: dict[str, str], schema_name: str
+) -> None:
     edges = collect_edges(tables)
     lines = [
         "digraph prio_schema_detailed {",
@@ -236,11 +285,25 @@ def write_detailed_dot(tables: dict[str, dict[str, list[str]]], domains: dict[st
 
     lines.append("}")
     DETAILED_DOT_FILE.write_text("\n".join(lines) + "\n")
-    print(f"Wrote {DETAILED_DOT_FILE.relative_to(ROOT)} ({len(tables)} tables, {len(edges)} relationships)")
+    print(
+        f"Wrote {DETAILED_DOT_FILE.relative_to(ROOT)} ({len(tables)} tables, {len(edges)} relationships) from {schema_name}"
+    )
 
 
 if __name__ == "__main__":
-    schema = SQL_FILE.read_text()
+    parser = argparse.ArgumentParser(
+        description="Generate Graphviz DOT files for the PRIO database schema"
+    )
+    parser.add_argument(
+        "--schema",
+        choices=("minimal", "full"),
+        default="minimal",
+        help="Choose between the compact (default) or complete schema",
+    )
+    args = parser.parse_args()
+
+    sql_file = MINIMAL_SQL_FILE if args.schema == "minimal" else FULL_SQL_FILE
+    schema = sql_file.read_text()
     tables, domains = parse_schema(schema)
-    write_dot(tables, domains)
-    write_detailed_dot(tables, domains)
+    write_dot(tables, domains, sql_file.name)
+    write_detailed_dot(tables, domains, sql_file.name)

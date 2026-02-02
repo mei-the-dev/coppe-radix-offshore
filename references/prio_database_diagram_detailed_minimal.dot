@@ -458,11 +458,6 @@ digraph prio_schema_detailed {
 <tr><td align="left"><FONT POINT-SIZE="10"><b>speed_kts</b><BR/><FONT POINT-SIZE="8">DECIMAL(6,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Speed measurement, usually in knots.</FONT></td></tr>
 <tr><td align="left"><FONT POINT-SIZE="10"><b>heading_deg</b><BR/><FONT POINT-SIZE="8">DECIMAL(6,2)</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Vessel heading in degrees.</FONT></td></tr>
 <tr><td align="left"><FONT POINT-SIZE="10"><b>notes</b><BR/><FONT POINT-SIZE="8">TEXT</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores notes.</FONT></td></tr>
-<tr><td align="left"><FONT POINT-SIZE="10"><b>distance_from_installation_m</b><BR/><FONT POINT-SIZE="8">UNKNOWN</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Distance from the vessel to the referenced installation.</FONT></td></tr>
-<tr><td align="left"><FONT POINT-SIZE="10"><b>OR</b><BR/><FONT POINT-SIZE="8">distance_from_installation_m >= 0</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores or.</FONT></td></tr>
-<tr><td align="left"><FONT POINT-SIZE="10"><b>distance_from_installation_m</b><BR/><FONT POINT-SIZE="8">UNKNOWN</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Distance from the vessel to the referenced installation.</FONT></td></tr>
-<tr><td align="left"><FONT POINT-SIZE="10"><b>OR</b><BR/><FONT POINT-SIZE="8">distance_from_installation_m >= 500</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores or.</FONT></td></tr>
-<tr><td align="left"><FONT POINT-SIZE="10"><b>OR</b><BR/><FONT POINT-SIZE="8">dp_activated = TRUE</FONT></FONT></td><td align="left"><FONT POINT-SIZE="8">Stores or.</FONT></td></tr>
     <tr><td bgcolor="#FFFFFF" colspan="2"><FONT POINT-SIZE="10">FLEET</FONT></td></tr>
 </TABLE>>
 ];
