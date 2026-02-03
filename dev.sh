@@ -23,11 +23,15 @@ done
 echo "Starting local dev environment"
 
 if [ "$START_DB" -eq 1 ]; then
-  if command -v docker-compose >/dev/null 2>&1 || command -v docker >/dev/null 2>&1; then
+  # Prefer the legacy `docker-compose` command, fall back to `docker compose` if available
+  if command -v docker-compose >/dev/null 2>&1; then
     echo "Bringing up Postgres via docker-compose (background)..."
-    docker-compose up -d postgres
+    docker-compose up -d postgres || { echo "Failed to start Postgres with docker-compose. Is Docker running and configured?" >&2; exit 1; }
+  elif command -v docker >/dev/null 2>&1 && docker compose version >/dev/null 2>&1; then
+    echo "Bringing up Postgres via 'docker compose' (background)..."
+    docker compose up -d postgres || { echo "Failed to start Postgres with 'docker compose'. Is Docker running and configured?" >&2; exit 1; }
   else
-    echo "docker-compose is not available. Please start Postgres manually or install docker-compose." >&2
+    echo "docker-compose / docker compose are not available. Please start Postgres manually or install Docker with the Compose plugin." >&2
     exit 1
   fi
 fi
