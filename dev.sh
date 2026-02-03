@@ -26,10 +26,10 @@ if [ "$START_DB" -eq 1 ]; then
   # Prefer the legacy `docker-compose` command, fall back to `docker compose` if available
   if command -v docker-compose >/dev/null 2>&1; then
     echo "Bringing up Postgres via docker-compose (background)..."
-    docker-compose up -d postgres || { echo "Failed to start Postgres with docker-compose. Is Docker running and configured?" >&2; exit 1; }
+    docker-compose up -d postgres || { echo "Failed to start Postgres with docker-compose. Is Docker running and configured? If you see permission errors try 'sudo docker-compose up -d postgres' or add your user to the 'docker' group." >&2; exit 1; }
   elif command -v docker >/dev/null 2>&1 && docker compose version >/dev/null 2>&1; then
     echo "Bringing up Postgres via 'docker compose' (background)..."
-    docker compose up -d postgres || { echo "Failed to start Postgres with 'docker compose'. Is Docker running and configured?" >&2; exit 1; }
+    docker compose up -d postgres || { echo "Failed to start Postgres with 'docker compose'. Is Docker running and configured? If you see permission errors try 'sudo docker compose up -d postgres' or add your user to the 'docker' group." >&2; exit 1; }
   else
     echo "docker-compose / docker compose are not available. Please start Postgres manually or install Docker with the Compose plugin." >&2
     exit 1
