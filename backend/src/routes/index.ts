@@ -19,6 +19,8 @@ import timeWindowsRouter from './operations/timeWindows';
 import weatherRouter from './weather';
 import optimizationRouter from './optimization';
 import analyticsRouter from './analytics';
+import schemaRouter from './schema';
+import dataOverviewRouter from './analytics/dataOverview';
 
 /** Mount all API routes onto the Express app. */
 export function mountRoutes(app: Express): void {
@@ -50,4 +52,6 @@ export function mountRoutes(app: Express): void {
   app.use('/weather', weatherRouter);
   app.use('/optimization', optimizationRouter);
   app.use('/analytics', analyticsRouter);
+  app.use('/analytics/data-overview', dataOverviewRouter);
+  app.use('/schema', schemaRouter);
 }

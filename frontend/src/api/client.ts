@@ -9,6 +9,7 @@ import {
   logApiUrlInDev,
 } from './config';
 import { fetchWithAuth, handleNetworkError } from './request';
+import type { DataOverviewResponse } from '../types';
 
 logApiUrlInDev();
 
@@ -238,5 +239,16 @@ export const prioAPI = {
       fetchAPI<any>(`/analytics/kpis?${queryString(p ?? {})}`),
     getVesselPerformance: (id: string) =>
       fetchAPI<any>(`/analytics/vessels/${id}/performance`),
+    getDataOverview: () =>
+      fetchAPI<DataOverviewResponse>('/analytics/data-overview'),
+  },
+  schema: {
+    getDiagram: async (): Promise<string> => {
+      const response = await fetch(`${baseUrl}/schema/diagram`);
+      if (!response.ok) {
+        throw new Error('Failed to load database diagram');
+      }
+      return response.text();
+    },
   },
 };

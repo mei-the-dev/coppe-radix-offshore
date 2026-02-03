@@ -68,6 +68,8 @@ export interface CargoItem {
   incompatibleWith?: string[];
 }
 
+export type CargoCatalogDefinition = Omit<CargoItem, 'id' | 'destination'>;
+
 export interface Berth {
   id: string;
   name: string;
@@ -100,6 +102,44 @@ export interface Installation {
   id: string;
   name: string;
   distance: number; // NM
+  type?: string;
+  basin?: string;
+}
+
+export interface InstallationSummary {
+  id: string;
+  name: string;
+  distance: number;
+  type?: string;
+  basin?: string;
+}
+
+export interface CargoCompatibilityRule {
+  fromCargo: string;
+  toCargo: string;
+  cleaningTimeHours: number;
+  compatible: boolean;
+}
+
+export interface DataOverviewResponse {
+  updatedAt: string;
+  counts: {
+    vessels: number;
+    installations: number;
+    cargoTypes: number;
+    berths: number;
+  };
+  vessels: Vessel[];
+  installations: InstallationSummary[];
+  cargoCatalog: CargoCatalogDefinition[];
+  berths: Berth[];
+  compatibilityRules: CargoCompatibilityRule[];
+  breakdowns: {
+    fleetByType: Record<string, number>;
+    fleetByStatus: Record<string, number>;
+    installationsByType: Record<string, number>;
+    cargoByCategory: Record<string, number>;
+  };
 }
 
 // Re-export trip types

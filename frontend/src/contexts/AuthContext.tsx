@@ -9,6 +9,9 @@ interface AuthContextType {
   loading: boolean;
 }
 
+const BYPASS_LOGIN = import.meta.env.DEV && import.meta.env.VITE_BYPASS_LOGIN === 'true';
+const DEV_BYPASS_TOKEN = 'dev-bypass-token';
+
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
@@ -16,6 +19,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (BYPASS_LOGIN) {
+      setAuthToken(DEV_BYPASS_TOKEN);
+      setIsAuthenticated(true);
+      setLoading(false);
+      return;
+    }
+
     // Check if we have a token on mount
     const token = getAuthToken();
     if (token) {
@@ -42,6 +52,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const login = async (username: string, password: string) => {
+    if (BYPASS_LOGIN) {
+      setAuthToken(DEV_BYPASS_TOKEN);
+      setIsAuthenticated(true);
+      return;
+    }
     try {
       await auth.login(username, password);
       setIsAuthenticated(true);

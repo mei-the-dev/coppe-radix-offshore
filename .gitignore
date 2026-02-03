@@ -68,6 +68,7 @@ frontend/dist/
 
 # Environment files (keep .env.example)
 .env
+db.env
 .env.*
 !.env.example
 

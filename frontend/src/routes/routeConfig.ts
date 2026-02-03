@@ -4,7 +4,8 @@ export const NAV_ITEMS = [
   { path: '/planning', label: 'Planning', icon: 'planning' },
   { path: '/simulation', label: 'Visualization', icon: 'simulation' },
   { path: '/model', label: 'Model', icon: 'model' },
-  { path: '/data', label: 'Data Structure', icon: 'data' },
+  { path: '/diagram', label: 'Diagram', icon: 'diagram' },
+  { path: '/data', label: 'Data Explorer', icon: 'data' },
   { path: '/metrics', label: 'Metrics', icon: 'metrics' },
 ] as const;
 

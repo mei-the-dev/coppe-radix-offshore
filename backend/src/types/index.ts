@@ -75,6 +75,37 @@ export interface CargoItem {
   incompatibleWith?: string[]; // Cargo type IDs
 }
 
+export type CargoCatalogDefinition = Omit<CargoItem, 'id' | 'volume' | 'weight' | 'destination'>;
+
+export interface InstallationSummary {
+  id: string;
+  name: string;
+  distance: number; // nautical miles from base
+  type?: string;
+  basin?: string;
+}
+
+export interface DataOverviewResponse {
+  updatedAt: string;
+  counts: {
+    vessels: number;
+    installations: number;
+    cargoTypes: number;
+    berths: number;
+  };
+  vessels: Vessel[];
+  installations: InstallationSummary[];
+  cargoCatalog: CargoCatalogDefinition[];
+  berths: Berth[];
+  compatibilityRules: CargoCompatibilityRule[];
+  breakdowns: {
+    fleetByType: Record<string, number>;
+    fleetByStatus: Record<string, number>;
+    installationsByType: Record<string, number>;
+    cargoByCategory: Record<string, number>;
+  };
+}
+
 export interface Berth {
   id: string;
   name: string;
@@ -112,4 +143,40 @@ export interface CargoCompatibilityRule {
   toCargo: string;
   cleaningTimeHours: number;
   compatible: boolean;
+}
+
+export interface DistanceMatrixEntry {
+  fromLocationId: string;
+  toLocationId: string;
+  distanceNm: number;
+  time12ktsHours: number;
+  weatherFactorGood: number;
+  weatherFactorModerate: number;
+  weatherFactorRough: number;
+}
+
+export interface InstallationStorageEntry {
+  installationId: string;
+  cargoTypeId: string;
+  maxCapacity: number;
+  currentLevel: number;
+  safetyStock: number;
+  unit: 'm3' | 'tonnes';
+}
+
+export type CompartmentType = 'LiquidTank' | 'DryBulk' | 'DeckSpace';
+
+export interface VesselCompartmentSummary {
+  id: string;
+  vesselId: string;
+  compartmentType: CompartmentType;
+  capacity: number;
+  unit: 'm3' | 'tonnes' | 'm2';
+}
+
+export interface VesselScheduleSummary {
+  vesselId: string;
+  status: 'Loading' | 'Transit' | 'Offshore' | 'Returning' | 'Idle' | 'Maintenance';
+  currentTripId?: string;
+  nextAvailable?: string;
 }

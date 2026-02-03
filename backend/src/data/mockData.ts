@@ -3,7 +3,18 @@
  * Grouped by domain: vessels, berths, cargo catalog, compatibility rules.
  * For production, replace with real DB or split into data/vessels.ts, data/berths.ts, etc.
  */
-import { Vessel, Berth, CargoItem, CargoCompatibilityRule, VesselType } from '../types';
+import {
+  Vessel,
+  Berth,
+  CargoCatalogDefinition,
+  CargoCompatibilityRule,
+  VesselType,
+  InstallationSummary,
+  DistanceMatrixEntry,
+  InstallationStorageEntry,
+  VesselCompartmentSummary,
+  VesselScheduleSummary,
+} from '../types';
 
 // Vessel Fleet Data (from inventory.md section 2.1-2.2)
 export const mockVessels: Vessel[] = [
@@ -147,7 +158,7 @@ export const mockBerths: Berth[] = [
 ];
 
 // Cargo Catalog (from inventory.md section 3.1)
-export const mockCargoCatalog: Omit<CargoItem, 'id' | 'volume' | 'weight' | 'destination'>[] = [
+export const mockCargoCatalog: CargoCatalogDefinition[] = [
   // Liquid Bulk
   {
     type: 'diesel',
@@ -304,7 +315,7 @@ export const mockCargoCatalog: Omit<CargoItem, 'id' | 'volume' | 'weight' | 'des
 // Cargo Compatibility Matrix (from inventory.md section 3.3)
 export const mockCompatibilityRules: CargoCompatibilityRule[] = [
   // Diesel compatibility
-  { fromCargo: 'diesel', toCargo: 'water', cleaningTimeHours: 4, compatible: false },
+  { fromCargo: 'diesel', toCargo: 'fresh_water', cleaningTimeHours: 4, compatible: false },
   { fromCargo: 'diesel', toCargo: 'drilling_mud_obm', cleaningTimeHours: 0, compatible: true },
   { fromCargo: 'diesel', toCargo: 'drilling_mud_wbm', cleaningTimeHours: 2, compatible: false },
   { fromCargo: 'diesel', toCargo: 'brine', cleaningTimeHours: 2, compatible: false },
@@ -349,13 +360,117 @@ export const mockCompatibilityRules: CargoCompatibilityRule[] = [
 ];
 
 // Installation destinations (from inventory.md section 1.2)
-export const mockInstallations = [
-  { id: 'fpso-bravo', name: 'FPSO Bravo (Tubarão Martelo)', distance: 70 }, // NM
-  { id: 'platform-polvo', name: 'Platform Polvo A', distance: 70 },
-  { id: 'fpso-valente', name: 'FPSO Valente (Frade)', distance: 67 },
-  { id: 'fpso-forte', name: 'FPSO Forte (Albacora Leste)', distance: 75 },
-  { id: 'fpso-peregrino', name: 'FPSO Peregrino', distance: 46 },
-  { id: 'platform-peregrino-a', name: 'Platform Peregrino A', distance: 46 },
-  { id: 'platform-peregrino-b', name: 'Platform Peregrino B', distance: 46 },
-  { id: 'platform-peregrino-c', name: 'Platform Peregrino C', distance: 46 },
+export const mockInstallations: InstallationSummary[] = [
+  { id: 'fpso-bravo', name: 'FPSO Bravo (Tubarão Martelo)', distance: 70, type: 'FPSO' },
+  { id: 'platform-polvo', name: 'Platform Polvo A', distance: 70, type: 'Fixed Platform' },
+  { id: 'fpso-valente', name: 'FPSO Valente (Frade)', distance: 67, type: 'FPSO' },
+  { id: 'fpso-forte', name: 'FPSO Forte (Albacora Leste)', distance: 75, type: 'FPSO' },
+  { id: 'fpso-peregrino', name: 'FPSO Peregrino', distance: 46, type: 'FPSO' },
+  { id: 'platform-peregrino-a', name: 'Platform Peregrino A', distance: 46, type: 'Wellhead Platform' },
+  { id: 'platform-peregrino-b', name: 'Platform Peregrino B', distance: 46, type: 'Wellhead Platform' },
+  { id: 'platform-peregrino-c', name: 'Platform Peregrino C', distance: 46, type: 'Wellhead Platform' },
+];
+
+export const mockDistanceMatrix: DistanceMatrixEntry[] = [
+  {
+    fromLocationId: 'porto-acu',
+    toLocationId: 'fpso-peregrino',
+    distanceNm: 46,
+    time12ktsHours: 3.8,
+    weatherFactorGood: 1,
+    weatherFactorModerate: 1.15,
+    weatherFactorRough: 1.3,
+  },
+  {
+    fromLocationId: 'porto-acu',
+    toLocationId: 'fpso-valente',
+    distanceNm: 67,
+    time12ktsHours: 5.6,
+    weatherFactorGood: 1,
+    weatherFactorModerate: 1.2,
+    weatherFactorRough: 1.35,
+  },
+  {
+    fromLocationId: 'porto-acu',
+    toLocationId: 'fpso-bravo',
+    distanceNm: 70,
+    time12ktsHours: 5.8,
+    weatherFactorGood: 1,
+    weatherFactorModerate: 1.2,
+    weatherFactorRough: 1.35,
+  },
+  {
+    fromLocationId: 'platform-polvo',
+    toLocationId: 'fpso-bravo',
+    distanceNm: 5.9,
+    time12ktsHours: 0.5,
+    weatherFactorGood: 1,
+    weatherFactorModerate: 1.1,
+    weatherFactorRough: 1.25,
+  },
+];
+
+export const mockInstallationStorage: InstallationStorageEntry[] = [
+  {
+    installationId: 'fpso-bravo',
+    cargoTypeId: 'diesel',
+    maxCapacity: 1500,
+    currentLevel: 800,
+    safetyStock: 400,
+    unit: 'm3',
+  },
+  {
+    installationId: 'fpso-bravo',
+    cargoTypeId: 'fresh_water',
+    maxCapacity: 900,
+    currentLevel: 500,
+    safetyStock: 300,
+    unit: 'm3',
+  },
+  {
+    installationId: 'fpso-valente',
+    cargoTypeId: 'methanol',
+    maxCapacity: 400,
+    currentLevel: 120,
+    safetyStock: 100,
+    unit: 'm3',
+  },
+];
+
+export const mockVesselCompartments: VesselCompartmentSummary[] = [
+  {
+    id: 'comp-psv-alpha-1',
+    vesselId: 'vessel-001',
+    compartmentType: 'LiquidTank',
+    capacity: 500,
+    unit: 'm3',
+  },
+  {
+    id: 'comp-psv-alpha-2',
+    vesselId: 'vessel-001',
+    compartmentType: 'DryBulk',
+    capacity: 300,
+    unit: 'tonnes',
+  },
+  {
+    id: 'comp-psv-beta-1',
+    vesselId: 'vessel-002',
+    compartmentType: 'LiquidTank',
+    capacity: 550,
+    unit: 'm3',
+  },
+];
+
+export const mockVesselSchedules: VesselScheduleSummary[] = [
+  {
+    vesselId: 'vessel-001',
+    status: 'Idle',
+    nextAvailable: new Date(Date.now() + 6 * 60 * 60 * 1000).toISOString(),
+  },
+  {
+    vesselId: 'vessel-002',
+    status: 'Transit',
+    currentTripId: 'trip-002',
+    nextAvailable: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+  },
 ];

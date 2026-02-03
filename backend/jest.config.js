@@ -12,6 +12,6 @@ module.exports = {
     '!src/index.ts',
   ],
   moduleFileExtensions: ['ts', 'js', 'json'],
-  setupFilesAfterEnv: [],
+  setupFilesAfterEnv: ['<rootDir>/src/test-support/setupEnv.ts'],
   testTimeout: 10000,
 };
