@@ -139,11 +139,16 @@ JWT_SECRET=your-secret-key
 ```
 VITE_API_URL=http://localhost:3001
 VITE_BYPASS_LOGIN=true
+VITE_USE_MOCKS=true
 ```
 
 Local auth bypass (dev only)
 - Frontend: set `VITE_BYPASS_LOGIN=true` to skip the login UI; the client will send a fixed dev token.
 - Backend: in non-production environments the middleware accepts the dev token (`dev-bypass-token` by default, override with `DEV_BYPASS_TOKEN`). Set `ALLOW_DEV_BYPASS=false` to disable the bypass or leave it enabled for local convenience. Never rely on this in production.
+
+Local mocks for /data and /diagram
+- Set `VITE_USE_MOCKS=true` (default in the example) to let the frontend fall back to bundled mock data for the Data Explorer and Diagram pages when the API is offline.
+- When disabled (`VITE_USE_MOCKS=false`), the frontend will only use live API responses.
 
 ## Features
 
