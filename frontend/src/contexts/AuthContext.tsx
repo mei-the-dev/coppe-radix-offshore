@@ -9,7 +9,7 @@ interface AuthContextType {
   loading: boolean;
 }
 
-const BYPASS_LOGIN = import.meta.env.DEV && import.meta.env.VITE_BYPASS_LOGIN === 'true';
+const BYPASS_LOGIN = import.meta.env.DEV && (import.meta.env.VITE_BYPASS_LOGIN === 'true' || import.meta.env.VITE_BYPASS_LOGIN === undefined);
 const DEV_BYPASS_TOKEN = 'dev-bypass-token';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
