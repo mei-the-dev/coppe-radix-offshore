@@ -119,6 +119,11 @@ Frontend runs on `http://localhost:5173`
 
 The frontend will automatically connect to the backend API. Make sure both servers are running for full functionality.
 
+Alternative: single-run script
+```bash
+./dev.sh        # starts Postgres (if --db) and runs backend + frontend dev servers
+```
+
 ### Environment Variables
 
 Create `.env` files in `backend/` and `frontend/` directories as needed:
