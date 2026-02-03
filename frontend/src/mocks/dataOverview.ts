@@ -1,4 +1,4 @@
-import { DataOverviewResponse } from '../types';
+import type { DataOverviewResponse } from '../types';
 
 export const mockDataOverview: DataOverviewResponse = {
   updatedAt: new Date().toISOString(),
